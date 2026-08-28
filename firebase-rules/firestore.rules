@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ---------------------------------------------------------------------
+    // USERS — a user may create/update only their own profile document.
+    // Private fields (email, phone) are only ever read by the client that
+    // needs to render "my profile"; listing/seller cards read only the
+    // public subset (displayName, photoURL) via denormalized fields on the
+    // listing itself, never by reading another user's doc directly.
+    // ---------------------------------------------------------------------
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId)
+        && request.resource.data.uid == resource.data.uid; // uid immutable
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------------
+    // LISTINGS — anyone can read active listings; only the owner can
+    // create/edit/delete their own. viewCount may be incremented by any
+    // signed-in-or-not client (anonymous view tracking) but no other field
+    // may change in that same request.
+    // ---------------------------------------------------------------------
+    match /listings/{listingId} {
+      allow read: if true;
+
+      allow create: if isSignedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.status in ['active', 'inactive']
+        && request.resource.data.ratingAvg == 0
+        && request.resource.data.ratingCount == 0;
+
+      allow update: if (
+          // Owner editing their own listing (ratings stay untouched here)
+          isOwner(resource.data.ownerId)
+          && request.resource.data.ratingAvg == resource.data.ratingAvg
+          && request.resource.data.ratingCount == resource.data.ratingCount
+          && request.resource.data.ownerId == resource.data.ownerId
+        ) || (
+          // Anonymous/any viewer incrementing viewCount by exactly 1, nothing else
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount'])
+          && request.resource.data.viewCount == resource.data.viewCount + 1
+        ) || (
+          // Rating transaction (any signed-in user) updates only rating aggregates
+          isSignedIn()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ratingAvg', 'ratingCount'])
+        );
+
+      allow delete: if isOwner(resource.data.ownerId);
+    }
+
+    // ---------------------------------------------------------------------
+    // RATINGS — one rating doc per (user, listing), id = `${listingId}_${userId}`.
+    // A user may only create/update their own rating, once per listing.
+    // ---------------------------------------------------------------------
+    match /ratings/{ratingId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && ratingId == request.resource.data.listingId + '_' + request.auth.uid
+        && request.resource.data.value >= 1 && request.resource.data.value <= 5;
+      allow update: if isOwner(resource.data.userId)
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.listingId == resource.data.listingId
+        && request.resource.data.value >= 1 && request.resource.data.value <= 5;
+      allow delete: if isOwner(resource.data.userId);
+    }
+
+    // ---------------------------------------------------------------------
+    // FAVORITES — id = `${userId}_${listingId}`. Users manage only their own.
+    // ---------------------------------------------------------------------
+    match /favorites/{favId} {
+      allow read: if isOwner(resource.data.userId);
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && favId == request.auth.uid + '_' + request.resource.data.listingId;
+      allow delete: if isOwner(resource.data.userId);
+      allow update: if false;
+    }
+  }
+}

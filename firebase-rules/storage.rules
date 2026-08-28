@@ -1,0 +1,42 @@
+rules_version = '2';
+
+// TAPAR.AZ — Firebase Storage Security Rules
+// Enforces: users can only upload media for their own listings; validates
+// authentication, file type, and file size. Deploy: firebase deploy --only storage:rules
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isImage() {
+      return request.resource.contentType.matches('image/(jpeg|png|webp)');
+    }
+
+    function isVideo() {
+      return request.resource.contentType.matches('video/(mp4|quicktime|webm)');
+    }
+
+    // listings/{userId}/{listingId}/{fileName}
+    match /listings/{userId}/{listingId}/{fileName} {
+      allow read: if true; // media must be publicly viewable on listing cards/details
+
+      allow write: if isSignedIn()
+                   && request.auth.uid == userId
+                   && (
+                        (isImage() && request.resource.size < 8 * 1024 * 1024)
+                        ||
+                        (isVideo() && request.resource.size < 100 * 1024 * 1024)
+                      );
+
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Default-deny everything else in the bucket
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

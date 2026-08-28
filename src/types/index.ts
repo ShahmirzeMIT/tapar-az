@@ -1,0 +1,134 @@
+export type CategoryKey =
+  | 'avtomobiller'
+  | 'daşınmaz_əmlak'
+  | 'iş_elanları'
+  | 'xidmətlər'
+  | 'elektronika'
+  | 'ev_bağ';
+
+export type ListingStatus = 'active' | 'inactive' | 'sold';
+
+export interface MediaItem {
+  url: string;
+  path: string; // storage path, needed for deletion
+  type: 'image' | 'video';
+  order: number;
+}
+
+// Flexible attributes bag — keyed by field name from the category's FieldSchema[].
+export type ListingAttributes = Record<string, string | number | boolean | string[] | undefined>;
+
+export interface Listing {
+  id: string;
+  ownerId: string;
+  ownerName: string;
+  category: CategoryKey;
+  subcategory: string;
+  title: string;
+  price: number | null; // null when priceHidden true
+  priceHidden?: boolean;
+  currency: 'AZN';
+  city: string;
+  district?: string;
+  address?: string;
+  description: string;
+  media: MediaItem[];
+  attributes: ListingAttributes;
+  status: ListingStatus;
+  viewCount: number;
+  ratingAvg: number;
+  ratingCount: number;
+  createdAt: number; // epoch ms
+  updatedAt: number;
+  aiAssisted?: boolean;
+}
+
+export interface UserProfile {
+  uid: string;
+  displayName: string;
+  email: string;
+  phone?: string;
+  photoURL?: string;
+  createdAt: number;
+}
+
+export interface Rating {
+  id: string;
+  listingId: string;
+  userId: string;
+  value: number; // 1-5
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface Favorite {
+  id: string;
+  userId: string;
+  listingId: string;
+  createdAt: number;
+}
+
+export type FieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'select'
+  | 'multiselect'
+  | 'radio'
+  | 'checkbox'
+  | 'switch'
+  | 'date'
+  | 'tags';
+
+export interface FieldOption {
+  label: string;
+  value: string;
+}
+
+export interface FieldCondition {
+  field: string; // name of the field this depends on
+  equals?: string | number | boolean;
+  in?: (string | number)[];
+  notEquals?: string | number | boolean;
+}
+
+export interface FieldSchema {
+  name: string;
+  label: string;
+  type: FieldType;
+  required?: boolean;
+  options?: FieldOption[];
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  showIf?: FieldCondition;
+  colSpan?: 1 | 2; // grid layout hint
+  helpText?: string;
+}
+
+export interface SubcategoryConfig {
+  key: string;
+  label: string;
+  fields: FieldSchema[];
+}
+
+export interface CategoryConfig {
+  key: CategoryKey;
+  label: string;
+  icon: string;
+  subcategories: SubcategoryConfig[];
+}
+
+export interface AIListingDraft {
+  title: string;
+  description: string;
+  category: CategoryKey | null;
+  subcategory: string | null;
+  price: number | null;
+  city: string | null;
+  attributes: ListingAttributes;
+  keywords: string[];
+  tags: string[];
+  highlights: string[];
+  warnings: string[]; // e.g. "AI could not determine mileage — please fill manually"
+}

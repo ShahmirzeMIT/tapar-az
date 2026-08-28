@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import { HeartOutlined, HeartFilled, StarFilled, VideoCameraFilled, EnvironmentOutlined, TeamOutlined } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, StarFilled, VideoCameraFilled, EnvironmentOutlined, TeamOutlined, EyeOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import type { Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
-import { formatDateTime, formatPrice, formatRelativeDate } from '@/utils/format';
+import { formatDateTime, formatPrice } from '@/utils/format';
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   const { user } = useAuth();
@@ -72,8 +72,8 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="inline-flex items-center gap-1">
             <EnvironmentOutlined /> {listing.city}
           </span>
-          <span title={`Əlavə olunub: ${formatDateTime(listing.createdAt)}`}>
-            Əlavə olunub: {formatRelativeDate(listing.createdAt)}
+          <span>
+            Əlavə olunub: {formatDateTime(listing.createdAt)}
           </span>
         </div>
 
@@ -85,7 +85,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           </span>
           {listing.viewCount > 0 && (
             <span className="inline-flex items-center gap-1 text-muted">
-              <TeamOutlined /> {listing.viewCount}
+              <EyeOutlined /> {listing.viewCount}
             </span>
           )}
         </div>

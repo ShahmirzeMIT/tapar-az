@@ -2,6 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-background: 255 255 255;
+  --color-overlay: 17 24 39;
+  --color-background-secondary: 249 250 251;
+  --color-card: 255 255 255;
+  --color-input: 255 255 255;
+  --color-text-primary: 17 24 39;
+  --color-text-secondary: 75 85 99;
+  --color-text-muted: 156 163 175;
+  --color-border: 229 231 235;
+  --color-border-light: 243 244 246;
+  --color-primary: 255 90 0;
+  --color-primary-hover: 230 79 0;
+  --color-primary-light: 255 241 232;
+  --color-success: 22 163 74;
+  --color-success-hover: 21 128 61;
+  --color-success-light: 236 253 243;
+  --color-danger: 239 68 68;
+  --color-danger-hover: 220 38 38;
+  --color-danger-light: 254 242 242;
+  --color-info: 37 99 235;
+  --color-info-light: 239 246 255;
+  --color-premium: 245 158 11;
+  --color-premium-light: 255 251 235;
+  --color-footer: 255 248 243;
+}
+
+.dark {
+  --color-background: 15 15 15;
+  --color-overlay: 15 15 15;
+  --color-background-secondary: 23 23 23;
+  --color-card: 31 31 31;
+  --color-input: 38 38 38;
+  --color-text-primary: 255 255 255;
+  --color-text-secondary: 163 163 163;
+  --color-text-muted: 115 115 115;
+  --color-border: 51 51 51;
+  --color-border-light: 51 51 51;
+  --color-primary: 255 90 0;
+  --color-primary-hover: 230 79 0;
+  --color-primary-light: 68 35 20;
+  --color-success: 34 197 94;
+  --color-success-hover: 21 128 61;
+  --color-success-light: 20 50 30;
+  --color-danger: 239 68 68;
+  --color-danger-hover: 220 38 38;
+  --color-danger-light: 69 25 25;
+  --color-info: 59 130 246;
+  --color-info-light: 23 37 84;
+  --color-premium: 245 158 11;
+  --color-premium-light: 69 45 12;
+  --color-footer: 23 23 23;
+}
+
 html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -9,6 +63,8 @@ html, body {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
+  background: rgb(var(--color-background));
+  color: rgb(var(--color-text-primary));
 }
 
 /* Thin, editorial scrollbars — avoid the "generic SaaS" look */
@@ -20,13 +76,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cfcfcb;
+  background: rgb(var(--color-border));
   border-radius: 0;
 }
-.dark ::-webkit-scrollbar-thumb {
-  background: #3a3a3a;
-}
-
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -34,16 +86,42 @@ body {
   overflow: hidden;
 }
 
-/* Ant Design overrides for sharp, premium black & white identity */
+/* Centralized marketplace styling for all Ant Design controls. */
 .ant-btn {
-  border-radius: 2px !important;
+  border-radius: 8px !important;
 }
 .ant-input,
 .ant-input-affix-wrapper,
 .ant-select-selector,
 .ant-input-number {
-  border-radius: 2px !important;
+  border-radius: 8px !important;
+  background: rgb(var(--color-input)) !important;
+  border-color: rgb(var(--color-border)) !important;
 }
 .ant-card {
-  border-radius: 2px !important;
+  border-radius: 12px !important;
+  background: rgb(var(--color-card));
+  border-color: rgb(var(--color-border));
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.06);
+}
+
+.ant-input:hover,
+.ant-input-affix-wrapper:hover,
+.ant-select:hover .ant-select-selector,
+.ant-input-number:hover {
+  border-color: rgb(var(--color-primary-hover)) !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper-focused,
+.ant-select-focused .ant-select-selector,
+.ant-input-number-focused {
+  border-color: rgb(var(--color-primary)) !important;
+  box-shadow: 0 0 0 2px rgb(var(--color-primary) / 0.15) !important;
+}
+
+.ant-rate-star-full,
+.ant-rate-star-half .ant-rate-star-first,
+.ant-rate-star-half .ant-rate-star-second {
+  color: rgb(var(--color-premium)) !important;
 }

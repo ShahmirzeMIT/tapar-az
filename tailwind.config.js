@@ -5,13 +5,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#0A0A0A',
-        paper: '#FFFFFF',
-        offwhite: '#F7F7F5',
-        line: '#E4E4E1',
-        'line-dark': '#2A2A2A',
-        graphite: '#1C1C1C',
-        muted: '#6B6B6B',
+        background: 'rgb(var(--color-background) / <alpha-value>)',
+        overlay: 'rgb(var(--color-overlay) / <alpha-value>)',
+        ink: 'rgb(var(--color-text-primary) / <alpha-value>)',
+        paper: 'rgb(var(--color-card) / <alpha-value>)',
+        offwhite: 'rgb(var(--color-background-secondary) / <alpha-value>)',
+        line: 'rgb(var(--color-border) / <alpha-value>)',
+        'line-dark': 'rgb(var(--color-border) / <alpha-value>)',
+        graphite: 'rgb(var(--color-input) / <alpha-value>)',
+        muted: 'rgb(var(--color-text-muted) / <alpha-value>)',
+        action: 'rgb(var(--color-primary) / <alpha-value>)',
+        success: 'rgb(var(--color-success) / <alpha-value>)',
+        urgent: 'rgb(var(--color-danger) / <alpha-value>)',
+        info: 'rgb(var(--color-info) / <alpha-value>)',
+        premium: 'rgb(var(--color-premium) / <alpha-value>)',
+        footer: 'rgb(var(--color-footer) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['"Inter"', 'system-ui', 'sans-serif'],
@@ -22,6 +30,10 @@ export default {
       },
       transitionTimingFunction: {
         editorial: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      boxShadow: {
+        card: '0 2px 8px rgba(17, 24, 39, 0.06)',
+        'card-hover': '0 4px 12px rgba(17, 24, 39, 0.08)',
       },
     },
   },

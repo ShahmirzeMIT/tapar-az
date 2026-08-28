@@ -25,11 +25,11 @@ export default function DynamicForm({ fields, values, onChange, errors }: Dynami
         <div key={field.name} className={field.colSpan === 2 ? 'sm:col-span-2' : ''}>
           <label className="block text-sm font-medium mb-1.5 text-ink dark:text-white">
             {field.label}
-            {field.required && <span className="text-red-500 ml-0.5">*</span>}
+            {field.required && <span className="text-urgent ml-0.5">*</span>}
           </label>
           {renderControl(field, values, onChange)}
           {field.helpText && <p className="mt-1 text-xs text-muted">{field.helpText}</p>}
-          {errors?.[field.name] && <p className="mt-1 text-xs text-red-500">{errors[field.name]}</p>}
+          {errors?.[field.name] && <p className="mt-1 text-xs text-urgent">{errors[field.name]}</p>}
         </div>
       ))}
     </div>

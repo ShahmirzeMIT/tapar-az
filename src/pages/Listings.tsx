@@ -113,9 +113,12 @@ export default function Listings() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white">
-          {searchTerm ? `"${searchTerm}" üçün nəticələr` : 'Bütün Elanlar'}
-        </h1>
+        <div>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white">
+            {searchTerm ? `"${searchTerm}" üçün nəticələr` : 'Bütün Elanlar'}
+          </h1>
+          <p className="text-sm text-muted mt-1">{listings.length} elan göstərilir</p>
+        </div>
         <div className="flex items-center gap-2">
           <Select
             value={sort} onChange={setSort} className="w-44"
@@ -132,14 +135,14 @@ export default function Listings() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-8">
-        <aside className="hidden lg:block">{filterPanel}</aside>
+        <aside className="hidden lg:block bg-paper dark:bg-graphite border border-line dark:border-line-dark rounded-xl shadow-card p-5 h-fit">{filterPanel}</aside>
 
         <Drawer title="Filtrlər" open={drawerOpen} onClose={() => setDrawerOpen(false)} placement="left">
           {filterPanel}
         </Drawer>
 
         <div>
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {error && <p className="text-urgent text-sm mb-4">{error}</p>}
 
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

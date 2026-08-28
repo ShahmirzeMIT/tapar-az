@@ -9,8 +9,8 @@ import { useAuth } from '@/context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
-    isActive ? 'text-ink dark:text-white' : 'text-muted hover:text-ink dark:hover:text-white'
+  `relative text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
+    isActive ? 'text-action after:absolute after:-bottom-5 after:left-0 after:right-0 after:h-0.5 after:bg-action' : 'text-muted hover:text-action'
   }`;
 
 export default function Header() {
@@ -33,10 +33,10 @@ export default function Header() {
   return (
     <>
       {/* Desktop / tablet header */}
-      <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-ink/95 backdrop-blur border-b border-line dark:border-line-dark">
+      <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
           <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
-            TAPAR<span className="text-muted">.AZ</span>
+            <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
           <nav className="flex items-center gap-6 shrink-0">
@@ -56,7 +56,7 @@ export default function Header() {
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onPressEnter={handleSearch}
-              suffix={<SearchOutlined className="cursor-pointer text-muted" onClick={handleSearch} />}
+              suffix={<SearchOutlined className="cursor-pointer text-action" onClick={handleSearch} />}
             />
           </div>
 
@@ -64,7 +64,7 @@ export default function Header() {
             <ThemeToggle />
             <Link
               to="/elan-yerlesdir"
-              className="inline-flex items-center gap-1.5 bg-ink dark:bg-white text-white dark:text-ink px-4 py-2 text-sm font-semibold tracking-tight hover:opacity-85 transition-opacity"
+              className="inline-flex items-center gap-1.5 bg-action text-white px-4 py-2 text-sm font-semibold tracking-tight hover:opacity-85 transition-opacity"
             >
               <PlusOutlined /> Elan yerləşdir
             </Link>
@@ -81,17 +81,17 @@ export default function Header() {
       </header>
 
       {/* Mobile top bar (logo + theme) */}
-      <header className="md:hidden sticky top-0 z-40 bg-paper/95 dark:bg-ink/95 backdrop-blur border-b border-line dark:border-line-dark">
+      <header className="md:hidden sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark">
         <div className="px-4 h-14 flex items-center justify-between">
           <Link to="/" className="font-display text-lg font-bold tracking-tightest text-ink dark:text-white">
-            TAPAR<span className="text-muted">.AZ</span>
+            <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
           <ThemeToggle />
         </div>
       </header>
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-paper dark:bg-ink border-t border-line dark:border-line-dark">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-paper dark:bg-offwhite border-t border-line dark:border-line-dark">
         <div className="grid grid-cols-5 h-16">
           <MobileNavItem to="/" icon={<HomeOutlined />} label="Ana" end />
           <MobileNavItem to="/elanlar" icon={<SearchOutlined />} label="Axtar" />
@@ -120,7 +120,7 @@ function MobileNavItem({
       <span
         className={
           prominent
-            ? 'w-9 h-9 rounded-full bg-ink dark:bg-white text-white dark:text-ink flex items-center justify-center text-base -mt-4 shadow-lg'
+            ? 'w-9 h-9 rounded-full bg-action text-white flex items-center justify-center text-base -mt-4 shadow-lg'
             : 'text-lg'
         }
       >

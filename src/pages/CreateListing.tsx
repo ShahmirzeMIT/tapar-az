@@ -129,7 +129,7 @@ export default function CreateListing() {
             <button
               key={c.key}
               onClick={() => { setCategory(c.key); setSubcategory(undefined); }}
-              className={`p-6 border text-left transition-colors ${category === c.key ? 'border-ink dark:border-white bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-ink dark:hover:border-white'}`}
+              className={`p-6 border text-left transition-colors ${category === c.key ? 'border-action bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-action'}`}
             >
               <p className="font-semibold text-ink dark:text-white">{c.label}</p>
             </button>
@@ -144,7 +144,7 @@ export default function CreateListing() {
             <button
               key={s.key}
               onClick={() => setSubcategory(s.key)}
-              className={`p-6 border text-left transition-colors ${subcategory === s.key ? 'border-ink dark:border-white bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-ink dark:hover:border-white'}`}
+              className={`p-6 border text-left transition-colors ${subcategory === s.key ? 'border-action bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-action'}`}
             >
               <p className="font-semibold text-ink dark:text-white">{s.label}</p>
             </button>
@@ -241,7 +241,7 @@ export default function CreateListing() {
               <p className="text-sm"><strong>Başlıq:</strong> {draft.title}</p>
               <p className="text-sm mt-1"><strong>Təsvir:</strong> {draft.description}</p>
               {draft.warnings.length > 0 && (
-                <ul className="mt-2 text-xs text-amber-600 list-disc list-inside">
+                <ul className="mt-2 text-xs text-urgent list-disc list-inside">
                   {draft.warnings.map((w, i) => <li key={i}>{w}</li>)}
                 </ul>
               )}
@@ -291,7 +291,7 @@ export default function CreateListing() {
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
     <label className="block text-sm font-medium mb-1.5 text-ink dark:text-white">
-      {children}{required && <span className="text-red-500 ml-0.5">*</span>}
+      {children}{required && <span className="text-urgent ml-0.5">*</span>}
     </label>
   );
 }

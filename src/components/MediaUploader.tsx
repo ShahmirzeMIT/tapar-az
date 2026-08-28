@@ -58,7 +58,7 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
     <div>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
         {media.map((item, index) => (
-          <div key={item.path} className="relative aspect-square border border-line dark:border-line-dark group overflow-hidden bg-offwhite dark:bg-black">
+          <div key={item.path} className="relative aspect-square border border-line dark:border-line-dark group overflow-hidden bg-offwhite dark:bg-graphite">
             {item.type === 'image' ? (
               <img src={item.url} alt="" className="w-full h-full object-cover" />
             ) : (
@@ -69,11 +69,11 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
             )}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
               <button type="button" onClick={() => moveItem(index, -1)} className="text-white text-xs px-1.5 py-1 bg-black/60 rounded">◀</button>
-              <button type="button" onClick={() => handleDelete(item)} className="text-white text-xs px-1.5 py-1 bg-red-600/90 rounded"><DeleteOutlined /></button>
+              <button type="button" onClick={() => handleDelete(item)} className="text-white text-xs px-1.5 py-1 bg-urgent/90 rounded"><DeleteOutlined /></button>
               <button type="button" onClick={() => moveItem(index, 1)} className="text-white text-xs px-1.5 py-1 bg-black/60 rounded">▶</button>
             </div>
             {index === 0 && (
-              <span className="absolute top-1 left-1 bg-ink text-white text-[9px] px-1.5 py-0.5 font-semibold">ƏSAS</span>
+              <span className="absolute top-1 left-1 bg-action text-white text-[9px] px-1.5 py-0.5 font-semibold">ƏSAS</span>
             )}
           </div>
         ))}
@@ -85,7 +85,7 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
           accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm,.mov"
           disabled={uploading}
         >
-          <div className="aspect-square border-2 border-dashed border-line dark:border-line-dark flex flex-col items-center justify-center cursor-pointer hover:border-ink dark:hover:border-white transition-colors text-muted">
+          <div className="aspect-square border-2 border-dashed border-line dark:border-line-dark flex flex-col items-center justify-center cursor-pointer hover:border-action transition-colors text-muted">
             <PlusOutlined className="text-xl" />
             <span className="text-xs mt-1">Əlavə et</span>
           </div>
@@ -97,7 +97,7 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
           {Object.entries(progress).map(([name, pct]) => (
             <div key={name}>
               <p className="text-xs text-muted mb-0.5 truncate">{name}</p>
-              <Progress percent={pct} size="small" strokeColor="#0A0A0A" />
+              <Progress percent={pct} size="small" strokeColor="#FF5A00" />
             </div>
           ))}
         </div>

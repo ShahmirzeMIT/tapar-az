@@ -35,7 +35,7 @@ export default function Home() {
             />
             <button
               onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
-              className="bg-ink dark:bg-white text-white dark:text-ink px-6 font-semibold hover:opacity-85 transition-opacity flex items-center gap-2"
+              className="bg-action text-white px-6 font-semibold hover:opacity-85 transition-opacity flex items-center gap-2"
             >
               <SearchOutlined /> Axtar
             </button>
@@ -51,7 +51,7 @@ export default function Home() {
             <Link
               key={cat.key}
               to={`/elanlar?category=${cat.key}`}
-              className="group border border-line dark:border-line-dark p-5 text-center hover:border-ink dark:hover:border-white hover:-translate-y-0.5 transition-all duration-200 ease-editorial bg-paper dark:bg-graphite"
+              className="group border border-line dark:border-line-dark p-5 text-center hover:border-action hover:-translate-y-0.5 transition-all duration-200 ease-editorial bg-paper dark:bg-graphite"
             >
               <p className="text-sm font-medium text-ink dark:text-white">{cat.label}</p>
             </Link>
@@ -68,7 +68,7 @@ export default function Home() {
       {/* AI CTA — main differentiator, PRD §16 */}
       <section className="my-16">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-ink dark:bg-white text-white dark:text-ink px-8 py-14 md:py-20 text-center relative overflow-hidden">
+          <div className="bg-action text-white px-8 py-14 md:py-20 text-center relative overflow-hidden">
             <BulbFilled className="text-3xl mb-4 opacity-90" />
             <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest">
               Elanınızı AI ilə saniyələr<br className="hidden md:block" /> içində yaradın
@@ -79,7 +79,7 @@ export default function Home() {
             </p>
             <Link
               to="/ai-elan"
-              className="mt-8 inline-flex items-center gap-2 bg-white dark:bg-ink text-ink dark:text-white px-7 py-3 font-semibold hover:opacity-85 transition-opacity"
+              className="mt-8 inline-flex items-center gap-2 bg-paper text-ink px-7 py-3 font-semibold hover:opacity-85 transition-opacity"
             >
               AI ilə elan yerləşdir <ArrowRightOutlined />
             </Link>

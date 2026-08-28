@@ -30,9 +30,9 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <Link
       to={`/elanlar/${listing.id}`}
-      className="group block border border-line dark:border-line-dark bg-paper dark:bg-graphite hover:border-ink dark:hover:border-white transition-colors duration-200 ease-editorial"
+      className="group block rounded-xl border border-line dark:border-line-dark bg-paper dark:bg-graphite shadow-card hover:shadow-card-hover hover:-translate-y-0.5 hover:border-action transition-all duration-200 ease-editorial overflow-hidden"
     >
-      <div className="relative aspect-[4/3] bg-offwhite dark:bg-black overflow-hidden">
+      <div className="relative aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden">
         {coverImage ? (
           <img
             src={coverImage}
@@ -47,13 +47,13 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <button
           onClick={handleFavClick}
           aria-label="Sevimlilərə əlavə et"
-          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-black/70 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform"
+          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-graphite/70 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform"
         >
-          {fav ? <HeartFilled className="text-red-500" /> : <HeartOutlined className="text-ink dark:text-white" />}
+          {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined className="text-ink dark:text-white" />}
         </button>
 
         {hasVideo && (
-          <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-ink/85 text-white text-[10px] font-semibold px-2 py-1 rounded-sm">
+          <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-action/85 text-white text-[10px] font-semibold px-2 py-1 rounded-sm">
             <VideoCameraFilled /> VIDEO
           </span>
         )}
@@ -64,7 +64,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.title}
         </h3>
 
-        <p className="mt-1.5 text-lg font-bold tracking-tight text-ink dark:text-white">
+        <p className="mt-1.5 text-lg font-bold tracking-tight text-success">
           {listing.priceHidden || listing.price == null ? 'Razılaşma yolu ilə' : formatPrice(listing.price)}
         </p>
 
@@ -79,7 +79,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
 
         <div className="mt-2 flex items-center justify-between text-xs">
           <span className="inline-flex items-center gap-1 text-ink dark:text-white">
-            <StarFilled className="text-yellow-500" />
+            <StarFilled className="text-premium" />
             {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : '—'}
             <span className="text-muted">({listing.ratingCount})</span>
           </span>

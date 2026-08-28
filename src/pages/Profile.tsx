@@ -112,7 +112,7 @@ function MyListingsTab({
     <div className="divide-y divide-line dark:divide-line-dark border-t border-b border-line dark:border-line-dark mt-2">
       {listings.map((l) => (
         <div key={l.id} className="flex items-center gap-4 py-4">
-          <div className="w-20 h-16 bg-offwhite dark:bg-black shrink-0 overflow-hidden border border-line dark:border-line-dark">
+          <div className="w-20 h-16 bg-offwhite dark:bg-graphite shrink-0 overflow-hidden border border-line dark:border-line-dark">
             {l.media[0] && (l.media[0].type === 'video' ? (
               <video src={l.media[0].url} muted className="w-full h-full object-cover" />
             ) : (
@@ -144,7 +144,7 @@ function MyListingsTab({
                       onConfirm={() => onDelete(l.id).then(() => message.success('Elan silindi.'))}
                       okText="Bəli" cancelText="Xeyr"
                     >
-                      <span className="text-red-500">Sil</span>
+                      <span className="text-urgent">Sil</span>
                     </Popconfirm>
                   ),
                 },

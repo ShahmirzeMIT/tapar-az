@@ -54,7 +54,7 @@ export default function ListingDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8">
         {/* GALLERY */}
         <div>
-          <div className="aspect-[4/3] bg-offwhite dark:bg-black border border-line dark:border-line-dark overflow-hidden">
+          <div className="aspect-[4/3] bg-offwhite dark:bg-graphite border border-line dark:border-line-dark overflow-hidden">
             {current ? (
               current.type === 'video' ? (
                 <video src={current.url} controls className="w-full h-full object-contain" />
@@ -71,7 +71,7 @@ export default function ListingDetail() {
                 <button
                   key={m.path}
                   onClick={() => setActiveMedia(i)}
-                  className={`shrink-0 w-16 h-16 border ${i === activeMedia ? 'border-ink dark:border-white' : 'border-line dark:border-line-dark'} overflow-hidden`}
+                  className={`shrink-0 w-16 h-16 border ${i === activeMedia ? 'border-action' : 'border-line dark:border-line-dark'} overflow-hidden`}
                 >
                   {m.type === 'video' ? (
                     <video src={m.url} className="w-full h-full object-cover" muted />
@@ -111,7 +111,7 @@ export default function ListingDetail() {
         {/* SIDEBAR */}
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white">{listing.title}</h1>
-          <p className="mt-2 text-3xl font-bold text-ink dark:text-white">
+          <p className="mt-2 text-3xl font-bold text-success">
             {listing.priceHidden || listing.price == null ? 'Razılaşma yolu ilə' : formatPrice(listing.price)}
           </p>
           <div className="mt-3 flex items-center gap-4 text-sm text-muted">
@@ -129,14 +129,14 @@ export default function ListingDetail() {
               <div>
                 <p className="font-semibold text-ink dark:text-white">{listing.ownerName}</p>
                 <p className="text-xs text-muted inline-flex items-center gap-1">
-                  <StarFilled className="text-yellow-500" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
+                  <StarFilled className="text-premium" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
                 </p>
               </div>
             </div>
             <div className="mt-4">
               <button
                 onClick={() => setShowPhone(true)}
-                className="w-full bg-ink dark:bg-white text-white dark:text-ink py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
+                className="w-full bg-action text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
               >
                 <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
               </button>
@@ -156,10 +156,10 @@ export default function ListingDetail() {
       )}
 
       {/* MOBILE STICKY ACTIONS — does not block the gallery */}
-      <div className="md:hidden fixed bottom-16 inset-x-0 z-30 bg-paper dark:bg-ink border-t border-line dark:border-line-dark p-3 flex gap-2">
+      <div className="md:hidden fixed bottom-16 inset-x-0 z-30 bg-paper dark:bg-offwhite border-t border-line dark:border-line-dark p-3 flex gap-2">
         <button
           onClick={() => setShowPhone(true)}
-          className="w-full bg-ink dark:bg-white text-white dark:text-ink py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+          className="w-full bg-action text-white py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
         >
           <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
         </button>

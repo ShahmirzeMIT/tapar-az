@@ -20,6 +20,14 @@ export default function Listings() {
   const [attributeFilters, setAttributeFilters] = useState<ListingAttributes>({});
   const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
+  const [appliedFilters, setAppliedFilters] = useState({
+    category,
+    city,
+    subcategory,
+    minPrice,
+    maxPrice,
+    attributes: {} as ListingAttributes,
+  });
   const [sort, setSort] = useState<ListingFilters['sort']>('newest');
   const searchTerm = params.get('q') ?? undefined;
 
@@ -37,9 +45,15 @@ export default function Listings() {
   const filterFields = selectedSubcategory?.fields ?? categoryConfig?.subcategories.flatMap((s) => s.fields) ?? [];
 
   const filters = useMemo<ListingFilters>(() => ({
-    category, city, minPrice, maxPrice, sort, searchTerm, subcategory,
-    attributes: attributeFilters,
-  }), [category, city, minPrice, maxPrice, sort, searchTerm, subcategory, attributeFilters]);
+    category: appliedFilters.category,
+    city: appliedFilters.city,
+    minPrice: appliedFilters.minPrice,
+    maxPrice: appliedFilters.maxPrice,
+    sort,
+    searchTerm,
+    subcategory: appliedFilters.subcategory,
+    attributes: appliedFilters.attributes,
+  }), [appliedFilters, sort, searchTerm]);
 
   const { listings, loading, loadingMore, hasMore, loadMore, error } = useListings(filters);
 
@@ -59,6 +73,21 @@ export default function Listings() {
     setCategory(value);
     setSubcategory(undefined);
     setAttributeFilters({});
+  };
+
+  const applyFilters = () => {
+    setAppliedFilters({ category, city, subcategory, minPrice, maxPrice, attributes: attributeFilters });
+    setDrawerOpen(false);
+  };
+
+  const clearFilters = () => {
+    setCategory(undefined);
+    setCity(undefined);
+    setSubcategory(undefined);
+    setMinPrice(undefined);
+    setMaxPrice(undefined);
+    setAttributeFilters({});
+    setAppliedFilters({ category: undefined, city: undefined, subcategory: undefined, minPrice: undefined, maxPrice: undefined, attributes: {} });
   };
 
   const filterPanel = (
@@ -107,6 +136,10 @@ export default function Listings() {
           <InputNumber className="w-full" placeholder="maks" value={maxPrice} onChange={(v) => setMaxPrice(v ?? undefined)} />
         </div>
       </FilterField>
+      <div className="pt-1 space-y-2">
+        <Button type="primary" block onClick={applyFilters}>Axtar</Button>
+        <Button block onClick={clearFilters}>Filtrləri təmizlə</Button>
+      </div>
     </div>
   );
 

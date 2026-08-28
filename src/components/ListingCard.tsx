@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { HeartOutlined, HeartFilled, StarFilled, VideoCameraFilled, EnvironmentOutlined, TeamOutlined, EyeOutlined } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, StarFilled, VideoCameraFilled, EnvironmentOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import type { Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
@@ -72,8 +72,8 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="inline-flex items-center gap-1">
             <EnvironmentOutlined /> {listing.city}
           </span>
-          <span>
-            Əlavə olunub: {formatDateTime(listing.createdAt)}
+          <span title={`Əlavə olunub: ${formatDateTime(listing.createdAt)}`} className="inline-flex items-center gap-1">
+            <CalendarOutlined /> {formatDateTime(listing.createdAt)}
           </span>
         </div>
 
@@ -89,6 +89,10 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             </span>
           )}
         </div>
+
+        <span className="mt-4 flex w-full items-center justify-center rounded-lg bg-action px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-action/90">
+          Ətraflı bax
+        </span>
       </div>
     </Link>
   );

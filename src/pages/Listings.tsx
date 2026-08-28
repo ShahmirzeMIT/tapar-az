@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Select, InputNumber, Button, Drawer, Skeleton, Empty } from 'antd';
+import { Select, InputNumber, Input, Button, Drawer, Skeleton, Empty, Switch } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
-import { CATEGORIES } from '@/config/categories';
+import { CATEGORIES, getCategory } from '@/config/categories';
 import { useListings, type ListingFilters } from '@/hooks/useListings';
 import ListingCard from '@/components/ListingCard';
-import type { CategoryKey } from '@/types';
+import type { CategoryKey, FieldSchema, ListingAttributes } from '@/types';
+import { visibleFields } from '@/utils/conditionalFields';
 
 const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
 
@@ -15,6 +16,8 @@ export default function Listings() {
 
   const [category, setCategory] = useState<CategoryKey | undefined>(params.get('category') as CategoryKey ?? undefined);
   const [city, setCity] = useState<string | undefined>(params.get('city') ?? undefined);
+  const [subcategory, setSubcategory] = useState<string | undefined>(params.get('subcategory') ?? undefined);
+  const [attributeFilters, setAttributeFilters] = useState<ListingAttributes>({});
   const [minPrice, setMinPrice] = useState<number | undefined>(undefined);
   const [maxPrice, setMaxPrice] = useState<number | undefined>(undefined);
   const [sort, setSort] = useState<ListingFilters['sort']>('newest');
@@ -24,25 +27,73 @@ export default function Listings() {
     const next = new URLSearchParams(params);
     category ? next.set('category', category) : next.delete('category');
     city ? next.set('city', city) : next.delete('city');
+    subcategory ? next.set('subcategory', subcategory) : next.delete('subcategory');
     setParams(next, { replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, city]);
+  }, [category, city, subcategory]);
+
+  const categoryConfig = getCategory(category);
+  const selectedSubcategory = categoryConfig?.subcategories.find((s) => s.key === subcategory);
+  const filterFields = selectedSubcategory?.fields ?? categoryConfig?.subcategories.flatMap((s) => s.fields) ?? [];
 
   const filters = useMemo<ListingFilters>(() => ({
-    category, city, minPrice, maxPrice, sort, searchTerm,
-  }), [category, city, minPrice, maxPrice, sort, searchTerm]);
+    category, city, minPrice, maxPrice, sort, searchTerm, subcategory,
+    attributes: attributeFilters,
+  }), [category, city, minPrice, maxPrice, sort, searchTerm, subcategory, attributeFilters]);
 
   const { listings, loading, loadingMore, hasMore, loadMore, error } = useListings(filters);
+
+  const updateAttributeFilter = (name: string, value: ListingAttributes[string]) => {
+    setAttributeFilters((previous) => {
+      const next = { ...previous };
+      if (value === undefined || value === '' || value === false || (Array.isArray(value) && value.length === 0)) {
+        delete next[name];
+      } else {
+        next[name] = value;
+      }
+      return next;
+    });
+  };
+
+  const handleCategoryChange = (value: CategoryKey | undefined) => {
+    setCategory(value);
+    setSubcategory(undefined);
+    setAttributeFilters({});
+  };
 
   const filterPanel = (
     <div className="space-y-5">
       <FilterField label="Kateqoriya">
         <Select
           className="w-full" allowClear placeholder="Bütün kateqoriyalar"
-          value={category} onChange={setCategory}
+          value={category} onChange={handleCategoryChange}
           options={CATEGORIES.map((c) => ({ label: c.label, value: c.key }))}
         />
       </FilterField>
+      {categoryConfig && categoryConfig.subcategories.length > 1 && (
+        <FilterField label="Alt kateqoriya">
+          <Select
+            className="w-full" allowClear placeholder="Bütün alt kateqoriyalar"
+            value={subcategory} onChange={(value) => { setSubcategory(value); setAttributeFilters({}); }}
+            options={categoryConfig.subcategories.map((s) => ({ label: s.label, value: s.key }))}
+          />
+        </FilterField>
+      )}
+      {categoryConfig && filterFields.filter(isFilterableField).length > 0 && (
+        <div className="border-t border-line dark:border-line-dark pt-5 space-y-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">Kateqoriya detalları</p>
+          {visibleFields(filterFields, attributeFilters)
+            .filter(isFilterableField)
+            .map((field) => (
+              <AttributeFilter
+                key={field.name}
+                field={field}
+                value={attributeFilters[field.name]}
+                onChange={updateAttributeFilter}
+              />
+            ))}
+        </div>
+      )}
       <FilterField label="Şəhər">
         <Select
           className="w-full" allowClear placeholder="Bütün şəhərlər"
@@ -111,6 +162,52 @@ export default function Listings() {
         </div>
       </div>
     </div>
+  );
+}
+
+function isFilterableField(field: FieldSchema) {
+  return ['select', 'radio', 'multiselect', 'number', 'text', 'switch'].includes(field.type);
+}
+
+function AttributeFilter({
+  field, value, onChange,
+}: {
+  field: FieldSchema;
+  value: ListingAttributes[string];
+  onChange: (name: string, value: ListingAttributes[string]) => void;
+}) {
+  return (
+    <FilterField label={field.label}>
+      {field.type === 'number' ? (
+        <InputNumber
+          className="w-full"
+          min={field.min}
+          max={field.max}
+          placeholder="İstənilən"
+          value={typeof value === 'number' ? value : undefined}
+          onChange={(next) => onChange(field.name, next ?? undefined)}
+        />
+      ) : field.type === 'text' ? (
+        <Input
+          className="w-full"
+          placeholder={field.placeholder ?? 'Axtar'}
+          value={typeof value === 'string' ? value : ''}
+          onChange={(event) => onChange(field.name, event.target.value)}
+        />
+      ) : field.type === 'switch' ? (
+        <Switch checked={Boolean(value)} onChange={(checked) => onChange(field.name, checked)} />
+      ) : (
+        <Select
+          className="w-full"
+          allowClear
+          mode={field.type === 'multiselect' ? 'multiple' : undefined}
+          placeholder="İstənilən"
+          value={value as string | string[] | undefined}
+          options={field.options}
+          onChange={(next) => onChange(field.name, next)}
+        />
+      )}
+    </FilterField>
   );
 }
 

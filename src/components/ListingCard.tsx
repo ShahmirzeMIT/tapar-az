@@ -4,7 +4,7 @@ import { message } from 'antd';
 import type { Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
-import { formatPrice, formatRelativeDate } from '@/utils/format';
+import { formatDateTime, formatPrice, formatRelativeDate } from '@/utils/format';
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   const { user } = useAuth();
@@ -72,7 +72,9 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="inline-flex items-center gap-1">
             <EnvironmentOutlined /> {listing.city}
           </span>
-          <span>{formatRelativeDate(listing.createdAt)}</span>
+          <span title={`Əlavə olunub: ${formatDateTime(listing.createdAt)}`}>
+            Əlavə olunub: {formatRelativeDate(listing.createdAt)}
+          </span>
         </div>
 
         <div className="mt-2 flex items-center justify-between text-xs">

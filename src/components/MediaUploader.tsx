@@ -12,6 +12,10 @@ interface MediaUploaderProps {
 
 const MAX_IMAGES = 10;
 
+function isVideoFile(file: File): boolean {
+  return file.type.startsWith('video/') || /\.(mp4|mov|webm)$/i.test(file.name);
+}
+
 export default function MediaUploader({ listingId, media, onChange }: MediaUploaderProps) {
   const { uploadFile, deleteFile, progress, uploading } = useStorageUpload();
 
@@ -19,7 +23,7 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
   const hasVideo = media.some((m) => m.type === 'video');
 
   const beforeUpload: UploadProps['beforeUpload'] = async (file) => {
-    const isVideo = file.type.startsWith('video/');
+    const isVideo = isVideoFile(file);
     if (isVideo && hasVideo) {
       message.warning('Yalnız bir video yükləyə bilərsiniz.');
       return Upload.LIST_IGNORE;
@@ -74,7 +78,13 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
           </div>
         ))}
 
-        <Upload beforeUpload={beforeUpload} showUploadList={false} multiple accept="image/*,video/mp4,video/quicktime,video/webm">
+        <Upload
+          beforeUpload={beforeUpload}
+          showUploadList={false}
+          multiple
+          accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm,.mov"
+          disabled={uploading}
+        >
           <div className="aspect-square border-2 border-dashed border-line dark:border-line-dark flex flex-col items-center justify-center cursor-pointer hover:border-ink dark:hover:border-white transition-colors text-muted">
             <PlusOutlined className="text-xl" />
             <span className="text-xs mt-1">Əlavə et</span>

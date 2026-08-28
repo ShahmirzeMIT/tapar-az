@@ -29,6 +29,7 @@ export interface Listing {
   priceHidden?: boolean;
   currency: 'AZN';
   city: string;
+  phone?: string;
   district?: string;
   address?: string;
   description: string;

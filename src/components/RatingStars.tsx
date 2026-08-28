@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Rate, Modal, message } from 'antd';
-import { StarFilled } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import { useRating } from '@/hooks/useRating';
 
@@ -12,6 +11,13 @@ export default function RatingStars({
   const [open, setOpen] = useState(false);
   const [thankYou, setThankYou] = useState(false);
   const [pendingValue, setPendingValue] = useState<number | null>(null);
+  const [displayAvg, setDisplayAvg] = useState(ratingAvg);
+  const [displayCount, setDisplayCount] = useState(ratingCount);
+
+  useEffect(() => {
+    setDisplayAvg(ratingAvg);
+    setDisplayCount(ratingCount);
+  }, [ratingAvg, ratingCount]);
 
   const handleOpen = () => {
     if (!user) {
@@ -25,6 +31,12 @@ export default function RatingStars({
     if (pendingValue == null) return;
     try {
       await submitRating(pendingValue);
+      const nextCount = myRating ? displayCount : displayCount + 1;
+      const nextTotal = myRating
+        ? displayAvg * displayCount - myRating + pendingValue
+        : displayAvg * displayCount + pendingValue;
+      setDisplayCount(nextCount);
+      setDisplayAvg(Math.round((nextTotal / nextCount) * 10) / 10);
       setOpen(false);
       setThankYou(true);
     } catch {
@@ -33,13 +45,13 @@ export default function RatingStars({
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1.5">
-        <StarFilled className="text-yellow-500 text-lg" />
+    <div className="flex flex-wrap items-center gap-3">
+      <div className="flex items-center gap-2">
+        <Rate disabled allowHalf value={displayCount > 0 ? displayAvg : 0} className="text-base" />
         <span className="text-lg font-semibold text-ink dark:text-white">
-          {ratingCount > 0 ? ratingAvg.toFixed(1) : '—'}
+          {displayCount > 0 ? displayAvg.toFixed(1) : '—'}
         </span>
-        <span className="text-sm text-muted">({ratingCount} rəy)</span>
+        <span className="text-sm text-muted">({displayCount} rəy)</span>
       </div>
       <button
         onClick={handleOpen}

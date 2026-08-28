@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert } from 'antd';
 import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
@@ -31,11 +31,16 @@ export default function CreateListing() {
   const [price, setPrice] = useState<number | undefined>(prefill?.price ?? undefined);
   const [priceHidden, setPriceHidden] = useState(false);
   const [city, setCity] = useState<string | undefined>(prefill?.city ?? undefined);
+  const [phone, setPhone] = useState(profile?.phone ?? '');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState(prefill?.description ?? '');
   const [attributes, setAttributes] = useState<ListingAttributes>(prefill?.attributes ?? {});
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [publishing, setPublishing] = useState(false);
+
+  useEffect(() => {
+    if (profile?.phone && !phone) setPhone(profile.phone);
+  }, [profile?.phone, phone]);
 
   // A stable draft id used for storage paths before the Firestore doc exists
   const draftId = useMemo(() => doc(collection(db, 'listings')).id, []);
@@ -50,7 +55,7 @@ export default function CreateListing() {
     switch (s) {
       case 0: return Boolean(category);
       case 1: return Boolean(subcategory);
-      case 2: return Boolean(title && city && description);
+      case 2: return Boolean(title && city && phone.trim() && description);
       default: return true;
     }
   };
@@ -77,7 +82,7 @@ export default function CreateListing() {
 
   const handlePublish = async () => {
     if (!user) { message.error('Zəhmət olmasa daxil olun.'); return; }
-    if (!category || !subcategory || !title || !city) { message.error('Zəhmət olmasa bütün tələb olunan sahələri doldurun.'); return; }
+    if (!category || !subcategory || !title || !city || !phone.trim()) { message.error('Telefon nömrəsi daxil olmaqla bütün tələb olunan sahələri doldurun.'); return; }
 
     setPublishing(true);
     try {
@@ -90,7 +95,7 @@ export default function CreateListing() {
         price: priceHidden ? null : price ?? null,
         priceHidden,
         currency: 'AZN',
-        city, address, description,
+        city, phone: phone.trim(), address, description,
         media,
         attributes: cleanedAttrs,
         status: 'active',
@@ -165,6 +170,16 @@ export default function CreateListing() {
             <div>
               <FieldLabel required>Şəhər</FieldLabel>
               <Select className="w-full" value={city} onChange={setCity} options={CITIES.map((c) => ({ label: c, value: c }))} />
+            </div>
+            <div>
+              <FieldLabel required>Telefon nömrəsi</FieldLabel>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Məs: +994 50 123 45 67"
+                inputMode="tel"
+              />
+              <p className="mt-1 text-xs text-muted">Alıcılar bu nömrəni “Telefonu göstər” düyməsi ilə görəcək.</p>
             </div>
             <div className="sm:col-span-2">
               <FieldLabel>Ünvan</FieldLabel>

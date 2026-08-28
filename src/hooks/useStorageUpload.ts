@@ -9,6 +9,18 @@ const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm'];
 const MAX_IMAGE_MB = 8;
 const MAX_VIDEO_MB = 100;
 
+function contentTypeFor(file: File): string {
+  if (file.type) return file.type;
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  if (extension === 'mov') return 'video/quicktime';
+  if (extension === 'webm') return 'video/webm';
+  if (extension === 'mp4') return 'video/mp4';
+  if (extension === 'jpg' || extension === 'jpeg') return 'image/jpeg';
+  if (extension === 'png') return 'image/png';
+  if (extension === 'webp') return 'image/webp';
+  return '';
+}
+
 export interface UploadProgressState {
   [fileName: string]: number; // 0-100
 }
@@ -19,8 +31,9 @@ export function useStorageUpload() {
   const [uploading, setUploading] = useState(false);
 
   const validate = (file: File): string | null => {
-    const isImage = IMAGE_TYPES.includes(file.type);
-    const isVideo = VIDEO_TYPES.includes(file.type);
+    const type = contentTypeFor(file);
+    const isImage = IMAGE_TYPES.includes(type);
+    const isVideo = VIDEO_TYPES.includes(type);
     if (!isImage && !isVideo) return 'Yalnız JPG, PNG, WEBP şəkil və ya MP4, MOV, WEBM video qəbul olunur.';
     if (isImage && file.size > MAX_IMAGE_MB * 1024 * 1024) return `Şəkil ${MAX_IMAGE_MB}MB-dan böyük ola bilməz.`;
     if (isVideo && file.size > MAX_VIDEO_MB * 1024 * 1024) return `Video ${MAX_VIDEO_MB}MB-dan böyük ola bilməz.`;
@@ -33,10 +46,13 @@ export function useStorageUpload() {
       if (err) return reject(new Error(err));
       if (!user) return reject(new Error('Zəhmət olmasa daxil olun.'));
 
-      const isVideo = VIDEO_TYPES.includes(file.type);
+      const contentType = contentTypeFor(file);
+      const isVideo = VIDEO_TYPES.includes(contentType);
       const path = `listings/${user.uid}/${listingId}/${Date.now()}_${file.name}`;
       const storageRef = ref(storage, path);
-      const task = uploadBytesResumable(storageRef, file);
+      // Explicit metadata is important for browsers that report an empty or
+      // generic MIME type for MOV/video files; Storage rules validate this type.
+      const task = uploadBytesResumable(storageRef, file, { contentType });
 
       setUploading(true);
       task.on(

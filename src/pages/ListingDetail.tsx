@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Breadcrumb, Skeleton, Result, Avatar } from 'antd';
 import {
-  EnvironmentOutlined, PhoneOutlined, MessageOutlined, UserOutlined, StarFilled,
+  EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled,
 } from '@ant-design/icons';
 import { useListing } from '@/hooks/useListing';
 import { useListings } from '@/hooks/useListings';
@@ -10,7 +10,7 @@ import RatingStars from '@/components/RatingStars';
 import { ActiveViewersFull } from '@/components/ActiveViewers';
 import ListingCard from '@/components/ListingCard';
 import { getCategory, getSubcategory } from '@/config/categories';
-import { formatPrice, formatRelativeDate } from '@/utils/format';
+import { formatDateTime, formatPrice, formatRelativeDate } from '@/utils/format';
 
 export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
@@ -116,7 +116,7 @@ export default function ListingDetail() {
           </p>
           <div className="mt-3 flex items-center gap-4 text-sm text-muted">
             <span className="inline-flex items-center gap-1"><EnvironmentOutlined /> {listing.city}</span>
-            <span>{formatRelativeDate(listing.createdAt)}</span>
+            <span title={formatDateTime(listing.createdAt)}>Əlavə olunub: {formatRelativeDate(listing.createdAt)}</span>
           </div>
 
           <div className="mt-4"><RatingStars listingId={listing.id} ratingAvg={listing.ratingAvg} ratingCount={listing.ratingCount} /></div>
@@ -133,15 +133,12 @@ export default function ListingDetail() {
                 </p>
               </div>
             </div>
-            <div className="hidden md:flex gap-2 mt-4">
-              <button className="flex-1 bg-ink dark:bg-white text-white dark:text-ink py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85">
-                <MessageOutlined /> Yazın
-              </button>
+            <div className="mt-4">
               <button
                 onClick={() => setShowPhone(true)}
-                className="flex-1 border border-line dark:border-line-dark py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-offwhite dark:hover:bg-graphite"
+                className="w-full bg-ink dark:bg-white text-white dark:text-ink py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
               >
-                <PhoneOutlined /> {showPhone ? 'Nömrəni göstər' : 'Telefonu göstər'}
+                <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
               </button>
             </div>
           </div>
@@ -160,11 +157,11 @@ export default function ListingDetail() {
 
       {/* MOBILE STICKY ACTIONS — does not block the gallery */}
       <div className="md:hidden fixed bottom-16 inset-x-0 z-30 bg-paper dark:bg-ink border-t border-line dark:border-line-dark p-3 flex gap-2">
-        <button className="flex-1 bg-ink dark:bg-white text-white dark:text-ink py-3 text-sm font-semibold inline-flex items-center justify-center gap-2">
-          <MessageOutlined /> Yazın
-        </button>
-        <button className="flex-1 border border-line dark:border-line-dark py-3 text-sm font-semibold inline-flex items-center justify-center gap-2">
-          <PhoneOutlined /> Zəng et
+        <button
+          onClick={() => setShowPhone(true)}
+          className="w-full bg-ink dark:bg-white text-white dark:text-ink py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+        >
+          <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
         </button>
       </div>
     </div>

@@ -38,6 +38,8 @@ service cloud.firestore {
       allow create: if isSignedIn()
         && request.resource.data.ownerId == request.auth.uid
         && request.resource.data.status in ['active', 'inactive']
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 7
         && request.resource.data.ratingAvg == 0
         && request.resource.data.ratingCount == 0;
 
@@ -47,6 +49,8 @@ service cloud.firestore {
           && request.resource.data.ratingAvg == resource.data.ratingAvg
           && request.resource.data.ratingCount == resource.data.ratingCount
           && request.resource.data.ownerId == resource.data.ownerId
+          && request.resource.data.phone is string
+          && request.resource.data.phone.size() >= 7
         ) || (
           // Anonymous/any viewer incrementing viewCount by exactly 1, nothing else
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount'])

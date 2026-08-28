@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
 import type { Listing, ListingStatus } from '@/types';
@@ -12,11 +12,19 @@ export function useMyListings() {
 
   useEffect(() => {
     if (!user) { setListings([]); setLoading(false); return; }
-    const q = query(collection(db, 'listings'), where('ownerId', '==', user.uid), orderBy('createdAt', 'desc'));
+    // Keep this query owner-only. Adding orderBy('createdAt') creates a
+    // composite index requirement; sorting locally is sufficient here.
+    const q = query(collection(db, 'listings'), where('ownerId', '==', user.uid));
     const unsub = onSnapshot(q, (snap) => {
-      setListings(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Listing));
+      const next = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Listing);
+      next.sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
+      setListings(next);
       setLoading(false);
-    }, () => setLoading(false));
+    }, (error) => {
+      console.error('Failed to load my listings:', error);
+      setListings([]);
+      setLoading(false);
+    });
     return unsub;
   }, [user]);
 
@@ -29,4 +37,12 @@ export function useMyListings() {
   }, []);
 
   return { listings, loading, setStatus, remove };
+}
+
+function toMillis(value: unknown): number {
+  if (typeof value === 'number') return value;
+  if (value && typeof (value as { toMillis?: () => number }).toMillis === 'function') {
+    return (value as { toMillis: () => number }).toMillis();
+  }
+  return 0;
 }

@@ -9,7 +9,7 @@ import {
   updateProfile,
   type User,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '@/firebase/config';
 import type { UserProfile } from '@/types';
 
@@ -22,6 +22,7 @@ interface AuthContextValue {
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  updateUserProfile: (displayName: string, phone: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -82,8 +83,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const updateUserProfile = async (displayName: string, phone: string) => {
+    if (!auth.currentUser) throw new Error('İstifadəçi daxil olmayıb.');
+    const cleanName = displayName.trim();
+    if (!cleanName) throw new Error('Ad Soyad boş ola bilməz.');
+    await updateProfile(auth.currentUser, { displayName: cleanName });
+    await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+      displayName: cleanName,
+      phone: phone.trim(),
+    });
+    setProfile((previous) => previous ? { ...previous, displayName: cleanName, phone: phone.trim() } : previous);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, register, loginWithGoogle, logout, resetPassword }}>
+    <AuthContext.Provider value={{ user, profile, loading, login, register, loginWithGoogle, logout, resetPassword, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

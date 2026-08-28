@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Skeleton } from 'antd';
-import { SearchOutlined, ArrowRightOutlined, BulbFilled } from '@ant-design/icons';
+import {
+  SearchOutlined, ArrowRightOutlined, BulbFilled, CarOutlined, HomeOutlined,
+  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined,
+} from '@ant-design/icons';
 import { CATEGORIES } from '@/config/categories';
 import { useListings } from '@/hooks/useListings';
 import ListingCard from '@/components/ListingCard';
@@ -19,10 +22,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
           <p className="market-section-label mb-4">Al, sat, rahat tap</p>
           <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tightest text-ink dark:text-white">
-            Azərbaycanın müasir<br />elanlar bazarı
+            Azərbaycanda al və sat
           </h1>
           <p className="mt-4 text-base md:text-lg text-muted max-w-xl mx-auto">
-            Avtomobil, daşınmaz əmlak, iş elanları və daha çoxu — AI dəstəyi ilə saniyələr içində.
+            İstədiyiniz məhsulu tapın, elanınızı saniyələr içində yerləşdirin.
           </p>
 
           <div className="mt-8 max-w-xl mx-auto flex gap-2">
@@ -36,13 +39,13 @@ export default function Home() {
             />
             <button
               onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
-              className="bg-action text-white px-6 font-semibold hover:opacity-85 transition-opacity flex items-center gap-2"
+              className="market-action px-6"
             >
               <SearchOutlined /> Axtar
             </button>
           </div>
           <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted">
-            {['Avtomobil', 'Ev və bağ', 'Elektronika', 'İş elanları'].map((item) => (
+            {['iPhone', 'Avtomobil', 'Laptop', 'PlayStation', 'Ev', 'Mebel'].map((item) => (
               <button key={item} onClick={() => navigate(`/elanlar?q=${encodeURIComponent(item)}`)} className="rounded-full border border-line dark:border-line-dark bg-paper dark:bg-graphite px-3 py-1.5 hover:border-action hover:text-action transition-colors">
                 {item}
               </button>
@@ -61,7 +64,11 @@ export default function Home() {
               to={`/elanlar?category=${cat.key}`}
               className="group market-surface p-5 text-center hover:border-action hover:-translate-y-0.5 transition-all duration-200 ease-editorial"
             >
-              <p className="text-sm font-medium text-ink dark:text-white">{cat.label}</p>
+                <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-offwhite dark:bg-graphite text-ink dark:text-white group-hover:bg-action/10 group-hover:text-action transition-colors">
+                <CategoryIcon name={cat.icon} />
+              </span>
+              <p className="text-sm font-semibold text-ink dark:text-white group-hover:text-action transition-colors">{cat.label}</p>
+              <p className="mt-1 text-xs text-muted">Elanlara bax</p>
             </Link>
           ))}
         </div>
@@ -73,23 +80,31 @@ export default function Home() {
         <ListingGrid listings={latest} loading={latestLoading} />
       </section>
 
-      {/* AI CTA — main differentiator, PRD §16 */}
+      {/* TRUST */}
+      <section className="max-w-7xl mx-auto px-6 py-4 md:py-10">
+        <div className="market-surface grid grid-cols-1 md:grid-cols-3 gap-6 p-6 md:p-8">
+          <TrustItem icon={<SafetyCertificateOutlined />} title="Daha güvənli alış-veriş" text="Telefonu təsdiqlənmiş satıcıları asanlıqla tanıyın." />
+          <TrustItem icon={<SearchOutlined />} title="Axtardığınızı tez tapın" text="Ağıllı filterlər və kateqoriyalarla vaxtınıza qənaət edin." />
+          <TrustItem icon={<TeamOutlined />} title="Aktiv alıcı icması" text="Elanınızı minlərlə potensial alıcıya göstərin." />
+        </div>
+      </section>
+
+      {/* SELL CTA */}
       <section className="my-16">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-action text-white px-8 py-14 md:py-20 text-center relative overflow-hidden shadow-card">
-            <BulbFilled className="text-3xl mb-4 opacity-90" />
-            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest">
-              Elanınızı AI ilə saniyələr<br className="hidden md:block" /> içində yaradın
+          <div className="bg-action/10 border border-action/20 px-8 py-14 md:py-20 text-center relative overflow-hidden shadow-card">
+            <BulbFilled className="text-action text-3xl mb-4" />
+            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest text-ink dark:text-white">
+              Satışa başlamaq çox asandır
             </h2>
-            <p className="mt-4 text-sm md:text-base opacity-80 max-w-lg mx-auto">
-              Sadəcə nə satdığınızı yazın — TAPAR.AZ süni intellekti başlığı, təsviri və detalları
-              sizin üçün hazırlayır. Siz yalnız yoxlayıb dərc edirsiniz.
+            <p className="mt-4 text-sm md:text-base text-secondary dark:text-muted max-w-lg mx-auto">
+              Elanınızı yerləşdirin, doğru alıcıya çatın. İstəsəniz AI köməkçisi başlıq və təsviri də sizin üçün hazırlayar.
             </p>
             <Link
               to="/ai-elan"
-              className="market-secondary-action mt-8 bg-paper text-ink px-7 py-3 hover:border-white"
+              className="market-action mt-8 px-7 py-3"
             >
-              AI ilə elan yerləşdir <ArrowRightOutlined />
+              Elan yerləşdir <ArrowRightOutlined />
             </Link>
           </div>
         </div>
@@ -100,6 +115,26 @@ export default function Home() {
         <SectionHeading title="Populyar avtomobillər" linkTo="/avtomobiller" />
         <ListingGrid listings={cars} loading={carsLoading} />
       </section>
+    </div>
+  );
+}
+
+function CategoryIcon({ name }: { name: string }) {
+  const icons: Record<string, ReactNode> = {
+    car: <CarOutlined />, home: <HomeOutlined />, briefcase: <TeamOutlined />,
+    tool: <ToolOutlined />, laptop: <LaptopOutlined />, gift: <GiftOutlined />,
+  };
+  return icons[name] ?? <GiftOutlined />;
+}
+
+function TrustItem({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-action/10 text-action text-lg">{icon}</span>
+      <div>
+        <h3 className="font-semibold text-ink dark:text-white">{title}</h3>
+        <p className="mt-1 text-sm leading-relaxed text-muted">{text}</p>
+      </div>
     </div>
   );
 }

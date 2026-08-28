@@ -39,3 +39,12 @@ export function formatDateTime(value: unknown): string {
     hour: '2-digit', minute: '2-digit',
   }).format(new Date(epochMs));
 }
+
+/** Stable full date for listings and messages; never changes to relative text. */
+export function formatFullDateTime(value: unknown): string {
+  const epochMs = toEpochMs(value);
+  if (!epochMs) return 'Tarix qeyd edilməyib';
+  const date = new Date(epochMs);
+  const pad = (part: number) => String(part).padStart(2, '0');
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}

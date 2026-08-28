@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Input, Avatar, Dropdown } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined,
+  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
   HomeOutlined, BulbOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
+import { useMessages } from '@/hooks/useMessages';
 import ThemeToggle from './ThemeToggle';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -15,6 +16,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Header() {
   const { user, profile, logout } = useAuth();
+  const { unreadCount } = useMessages(user?.uid);
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
 
@@ -26,6 +28,7 @@ export default function Header() {
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
     { key: 'listings', label: <Link to="/profil/elanlarim">Mənim elanlarım</Link> },
     { key: 'favorites', label: <Link to="/favoriler">Sevimlilər</Link> },
+    { key: 'messages', label: <Link to="/mesajlar">Mesajlar</Link> },
     { type: 'divider' as const },
     { key: 'logout', label: 'Çıxış', onClick: () => logout() },
   ];
@@ -61,6 +64,12 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
+            {user && (
+              <Link to="/mesajlar" aria-label="Mesajlar" title="Mesajlar" className="relative text-muted hover:text-action text-lg transition-colors">
+                <MessageOutlined />
+                {unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}
+              </Link>
+            )}
             <ThemeToggle />
             <Link
               to="/elan-yerlesdir"
@@ -86,7 +95,10 @@ export default function Header() {
           <Link to="/" className="font-display text-lg font-bold tracking-tightest text-ink dark:text-white">
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center gap-4">
+            {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

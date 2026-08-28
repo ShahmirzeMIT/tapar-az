@@ -47,7 +47,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         <button
           onClick={handleFavClick}
           aria-label="Sevimlilərə əlavə et"
-          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-graphite/70 backdrop-blur flex items-center justify-center hover:scale-110 transition-transform"
+            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-graphite/70 backdrop-blur flex items-center justify-center hover:scale-110 hover:text-action transition-all"
         >
           {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined className="text-ink dark:text-white" />}
         </button>
@@ -60,7 +60,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
       </div>
 
       <div className="p-3.5">
-        <h3 className="text-sm font-medium text-ink dark:text-white line-clamp-2 leading-snug min-h-[2.5em]">
+        <h3 className="text-sm font-semibold text-ink dark:text-white group-hover:text-action line-clamp-2 leading-snug min-h-[2.5em] transition-colors">
           {listing.title}
         </h3>
 

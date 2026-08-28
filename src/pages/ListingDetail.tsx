@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Breadcrumb, Skeleton, Result, Avatar } from 'antd';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Breadcrumb, Skeleton, Result, Avatar, message } from 'antd';
 import {
   EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled,
 } from '@ant-design/icons';
@@ -10,13 +10,28 @@ import RatingStars from '@/components/RatingStars';
 import { ActiveViewersFull } from '@/components/ActiveViewers';
 import ListingCard from '@/components/ListingCard';
 import { getCategory, getSubcategory } from '@/config/categories';
-import { formatDateTime, formatPrice, formatRelativeDate } from '@/utils/format';
+import { formatDateTime, formatFullDateTime, formatPrice } from '@/utils/format';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { listing, loading, error } = useListing(id);
   const [activeMedia, setActiveMedia] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
+
+  const handleMessageClick = () => {
+    if (!user) {
+      navigate('/login', { state: { from: `/elanlar/${id}` } });
+      return;
+    }
+    if (user.uid === listing?.ownerId) {
+      message.info('Öz elanınıza mesaj göndərə bilməzsiniz.');
+      return;
+    }
+    if (listing) navigate(`/mesajlar/${listing.id}`);
+  };
 
   const { listings: similar } = useListings({ category: listing?.category, sort: 'newest' });
 
@@ -114,9 +129,9 @@ export default function ListingDetail() {
           <p className="mt-2 text-3xl font-bold text-success">
             {listing.priceHidden || listing.price == null ? 'Razılaşma yolu ilə' : formatPrice(listing.price)}
           </p>
-          <div className="mt-3 flex items-center gap-4 text-sm text-muted">
+          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted">
             <span className="inline-flex items-center gap-1"><EnvironmentOutlined /> {listing.city}</span>
-            <span title={formatDateTime(listing.createdAt)}>Əlavə olunub: {formatRelativeDate(listing.createdAt)}</span>
+            <span title={formatDateTime(listing.createdAt)}>Yerləşdirilib: {formatFullDateTime(listing.createdAt)}</span>
           </div>
 
           <div className="mt-4"><RatingStars listingId={listing.id} ratingAvg={listing.ratingAvg} ratingCount={listing.ratingCount} /></div>
@@ -127,13 +142,21 @@ export default function ListingDetail() {
             <div className="flex items-center gap-3">
               <Avatar size={44} icon={<UserOutlined />} className="bg-graphite" />
               <div>
+                <p className="text-[11px] uppercase tracking-wide text-muted mb-0.5">Elan sahibi</p>
                 <p className="font-semibold text-ink dark:text-white">{listing.ownerName}</p>
                 <p className="text-xs text-muted inline-flex items-center gap-1">
                   <StarFilled className="text-action" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
                 </p>
               </div>
             </div>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
+              <span className="rounded-lg bg-offwhite dark:bg-graphite px-3 py-2">Satıcı: {listing.ownerName}</span>
+              <span className="rounded-lg bg-offwhite dark:bg-graphite px-3 py-2 text-right">{formatFullDateTime(listing.createdAt)}</span>
+            </div>
             <div className="mt-4">
+              <button onClick={handleMessageClick} className="market-secondary-action mb-2 w-full">
+                Satıcıya mesaj yaz
+              </button>
               <button
                 onClick={() => setShowPhone(true)}
                 className="w-full bg-action text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
@@ -157,9 +180,12 @@ export default function ListingDetail() {
 
       {/* MOBILE STICKY ACTIONS — does not block the gallery */}
       <div className="md:hidden fixed bottom-16 inset-x-0 z-30 bg-paper dark:bg-offwhite border-t border-line dark:border-line-dark p-3 flex gap-2">
+        <button onClick={handleMessageClick} className="market-secondary-action w-1/2 py-3">
+          Mesaj yaz
+        </button>
         <button
           onClick={() => setShowPhone(true)}
-          className="w-full bg-action text-white py-3 text-sm font-semibold inline-flex items-center justify-center gap-2"
+          className="market-action w-1/2 py-3"
         >
           <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
         </button>

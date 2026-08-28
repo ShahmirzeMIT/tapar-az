@@ -183,7 +183,9 @@ export default function Listings() {
               {Array.from({ length: 9 }).map((_, i) => <Skeleton.Image key={i} active className="!w-full !h-48" />)}
             </div>
           ) : listings.length === 0 ? (
-            <Empty description="Bu filtrlərə uyğun elan tapılmadı" className="py-20" />
+            <Empty description="Bu filtrlərə uyğun elan tapılmadı" className="py-20">
+              <Button type="primary" onClick={clearFilters}>Filtrləri təmizlə</Button>
+            </Empty>
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

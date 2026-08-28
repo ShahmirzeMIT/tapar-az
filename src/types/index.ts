@@ -69,6 +69,20 @@ export interface Favorite {
   createdAt: number;
 }
 
+export interface ListingMessage {
+  id: string;
+  listingId: string;
+  listingTitle: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  participants: string[];
+  text: string;
+  createdAt: unknown;
+  clientCreatedAt?: number;
+  readBy?: string[];
+}
+
 export type FieldType =
   | 'text'
   | 'textarea'

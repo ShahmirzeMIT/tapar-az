@@ -17,6 +17,7 @@ import Login from '@/pages/auth/Login';
 import Register from '@/pages/auth/Register';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import NotFound from '@/pages/NotFound';
+import Messages from '@/pages/Messages';
 
 export default function App() {
   return (
@@ -28,6 +29,8 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/elanlar" element={<Listings />} />
               <Route path="/elanlar/:id" element={<ListingDetail />} />
+              <Route path="/mesajlar" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/mesajlar/:listingId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/elan-yerlesdir" element={<ProtectedRoute><CreateListing /></ProtectedRoute>} />
               <Route path="/ai-elan" element={<AIListing />} />
               <Route path="/avtomobiller" element={<Automobiles />} />

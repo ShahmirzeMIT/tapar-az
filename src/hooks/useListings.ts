@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-
+import { collection, getDocs, limit, query, startAfter, where, type DocumentSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import type { CategoryKey, Listing, ListingAttributes } from '@/types';
 
@@ -15,14 +14,43 @@ export interface ListingFilters {
   attributes?: ListingAttributes;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 function numericValue(value: unknown): number {
   if (typeof value === 'number') return value;
-  if (value && typeof (value as { toMillis?: () => number }).toMillis === 'function') {
-    return (value as { toMillis: () => number }).toMillis();
-  }
+  if (value && typeof (value as { toMillis?: () => number }).toMillis === 'function') return (value as { toMillis: () => number }).toMillis();
   return 0;
+}
+
+function matches(listing: Listing, filters: ListingFilters) {
+  if (filters.category && listing.category !== filters.category) return false;
+  if (filters.subcategory && listing.subcategory !== filters.subcategory) return false;
+  if (filters.city && listing.city !== filters.city) return false;
+  if (filters.minPrice !== undefined && numericValue(listing.price) < filters.minPrice) return false;
+  if (filters.maxPrice !== undefined && numericValue(listing.price) > filters.maxPrice) return false;
+  if (filters.searchTerm?.trim()) {
+    const search = filters.searchTerm.trim().toLowerCase();
+    if (!`${listing.title ?? ''} ${listing.description ?? ''}`.toLowerCase().includes(search)) return false;
+  }
+  return Object.entries(filters.attributes ?? {}).every(([name, selected]) => {
+    if (selected === undefined || selected === '' || selected === false) return true;
+    const actual = listing.attributes?.[name];
+    if (Array.isArray(selected)) return selected.length === 0 || (Array.isArray(actual) && selected.every((value) => actual.includes(value)));
+    if (typeof selected === 'string' && typeof actual === 'string') return actual.toLowerCase().includes(selected.toLowerCase());
+    return actual === selected;
+  });
+}
+
+function sortListings(items: Listing[], sort: ListingFilters['sort']) {
+  return [...items].sort((a, b) => {
+    switch (sort) {
+      case 'cheapest': return numericValue(a.price) - numericValue(b.price);
+      case 'expensive': return numericValue(b.price) - numericValue(a.price);
+      case 'most_viewed': return numericValue(b.viewCount) - numericValue(a.viewCount);
+      case 'top_rated': return numericValue(b.ratingAvg) - numericValue(a.ratingAvg);
+      default: return numericValue(b.createdAt) - numericValue(a.createdAt);
+    }
+  });
 }
 
 export function useListings(filters: ListingFilters) {
@@ -31,95 +59,51 @@ export function useListings(filters: ListingFilters) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const allListingsRef = useRef<Listing[]>([]);
-  const visibleCountRef = useRef(PAGE_SIZE);
+  const cursorRef = useRef<DocumentSnapshot | null>(null);
+  const requestRef = useRef(0);
+  const filtersRef = useRef(filters);
 
-  const fetchListings = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  useEffect(() => { filtersRef.current = filters; }, [filters]);
+
+  const fetchNextPage = useCallback(async (reset: boolean) => {
+    const requestId = reset ? ++requestRef.current : requestRef.current;
+    if (reset) {
+      setLoading(true); setError(null); cursorRef.current = null; setHasMore(true);
+    } else setLoadingMore(true);
 
     try {
-      // Only status is queried server-side: this uses Firestore's built-in
-      // single-field index and does not require a composite index.
-      const snapshot = await getDocs(
-        query(collection(db, 'listings'), where('status', '==', 'active'))
-      );
-      let docs = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() }) as Listing
-      );
-
-      if (filters.category) docs = docs.filter((listing) => listing.category === filters.category);
-      if (filters.subcategory) docs = docs.filter((listing) => listing.subcategory === filters.subcategory);
-      if (filters.city) docs = docs.filter((listing) => listing.city === filters.city);
-      if (filters.minPrice !== undefined) {
-        docs = docs.filter((listing) => numericValue(listing.price) >= filters.minPrice!);
+      let cursor = cursorRef.current;
+      let sourceHasMore = true;
+      let matched: Listing[] = [];
+      while (sourceHasMore && matched.length < PAGE_SIZE) {
+        const base = [where('status', '==', 'active'), limit(PAGE_SIZE)] as const;
+        const pageQuery = cursor
+          ? query(collection(db, 'listings'), base[0], startAfter(cursor), base[1])
+          : query(collection(db, 'listings'), base[0], base[1]);
+        const snapshot = await getDocs(pageQuery);
+        cursor = snapshot.docs[snapshot.docs.length - 1] ?? cursor;
+        sourceHasMore = snapshot.docs.length === PAGE_SIZE;
+        const page = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }) as Listing);
+        matched = matched.concat(page.filter((item) => matches(item, filtersRef.current)));
+        if (snapshot.empty) break;
       }
-      if (filters.maxPrice !== undefined) {
-        docs = docs.filter((listing) => numericValue(listing.price) <= filters.maxPrice!);
-      }
-      if (filters.searchTerm?.trim()) {
-        const search = filters.searchTerm.trim().toLowerCase();
-        docs = docs.filter((listing) =>
-          String(listing.title ?? '').toLowerCase().includes(search) ||
-          String(listing.description ?? '').toLowerCase().includes(search)
-        );
-      }
-
-      if (filters.attributes) {
-        docs = docs.filter((listing) => Object.entries(filters.attributes!).every(([name, selected]) => {
-          if (selected === undefined || selected === '' || selected === false) return true;
-          const actual = listing.attributes?.[name];
-          if (Array.isArray(selected)) {
-            if (selected.length === 0) return true;
-            return selected.every((value) => Array.isArray(actual) && actual.includes(value));
-          }
-          if (typeof selected === 'string' && typeof actual === 'string') {
-            return actual.toLowerCase().includes(selected.toLowerCase());
-          }
-          return actual === selected;
-        }));
-      }
-
-      docs.sort((a, b) => {
-        switch (filters.sort) {
-          case 'cheapest': return numericValue(a.price) - numericValue(b.price);
-          case 'expensive': return numericValue(b.price) - numericValue(a.price);
-          case 'most_viewed': return numericValue(b.viewCount) - numericValue(a.viewCount);
-          case 'top_rated': return numericValue(b.ratingAvg) - numericValue(a.ratingAvg);
-          case 'newest':
-          default: return numericValue(b.createdAt) - numericValue(a.createdAt);
-        }
-      });
-
-      allListingsRef.current = docs;
-      visibleCountRef.current = PAGE_SIZE;
-      setListings(docs.slice(0, PAGE_SIZE));
-      setHasMore(docs.length > PAGE_SIZE);
+      if (reset && requestId !== requestRef.current) return;
+      cursorRef.current = cursor;
+      setListings((previous) => reset ? sortListings(matched, filtersRef.current.sort) : sortListings(previous.concat(matched), filtersRef.current.sort));
+      setHasMore(sourceHasMore);
     } catch (err) {
-      console.error('Failed to load listings:', err);
+      if (reset && requestId !== requestRef.current) return;
       setError(err instanceof Error ? err.message : 'Elanları yükləmək mümkün olmadı.');
     } finally {
-      setLoading(false);
+      if (reset) setLoading(false); else setLoadingMore(false);
     }
-  }, [filters.category, filters.city, filters.minPrice, filters.maxPrice, filters.sort, filters.searchTerm, filters.subcategory, filters.attributes]);
+  }, []);
 
-  useEffect(() => {
-    void fetchListings();
-  }, [fetchListings]);
+  useEffect(() => { void fetchNextPage(true); }, [fetchNextPage, filters.category, filters.city, filters.minPrice, filters.maxPrice, filters.sort, filters.searchTerm, filters.subcategory, filters.attributes]);
 
   const loadMore = useCallback(() => {
-    if (loading || loadingMore || !hasMore) return;
-    setLoadingMore(true);
-    visibleCountRef.current += PAGE_SIZE;
-    const nextListings = allListingsRef.current.slice(0, visibleCountRef.current);
-    setListings(nextListings);
-    setHasMore(nextListings.length < allListingsRef.current.length);
-    setLoadingMore(false);
-  }, [loading, loadingMore, hasMore]);
-
-  const refetch = useCallback(() => {
-    void fetchListings();
-  }, [fetchListings]);
-
+    if (!loading && !loadingMore && hasMore) void fetchNextPage(false);
+  }, [fetchNextPage, hasMore, loading, loadingMore]);
+  const refetch = useCallback(() => { void fetchNextPage(true); }, [fetchNextPage]);
   return { listings, loading, loadingMore, hasMore, error, loadMore, refetch };
 }

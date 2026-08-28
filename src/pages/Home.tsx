@@ -82,6 +82,10 @@ export default function Home() {
 
       {/* TRUST */}
       <section className="max-w-7xl mx-auto px-6 py-4 md:py-10">
+        <div className="mb-5">
+          <p className="market-section-label mb-2">Niyə TAPAR.AZ?</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-ink dark:text-white">Axtardığını tap, güvənlə al</h2>
+        </div>
         <div className="market-surface grid grid-cols-1 md:grid-cols-3 gap-6 p-6 md:p-8">
           <TrustItem icon={<SafetyCertificateOutlined />} title="Daha güvənli alış-veriş" text="Telefonu təsdiqlənmiş satıcıları asanlıqla tanıyın." />
           <TrustItem icon={<SearchOutlined />} title="Axtardığınızı tez tapın" text="Ağıllı filterlər və kateqoriyalarla vaxtınıza qənaət edin." />

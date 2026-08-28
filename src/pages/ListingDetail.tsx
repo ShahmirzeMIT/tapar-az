@@ -149,10 +149,7 @@ export default function ListingDetail() {
                 </p>
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
-              <span className="rounded-lg bg-offwhite dark:bg-graphite px-3 py-2">Satıcı: {listing.ownerName}</span>
-              <span className="rounded-lg bg-offwhite dark:bg-graphite px-3 py-2 text-right">{formatFullDateTime(listing.createdAt)}</span>
-            </div>
+          
             <div className="mt-4">
               <button onClick={handleMessageClick} className="market-secondary-action mb-2 w-full">
                 Satıcıya mesaj yaz

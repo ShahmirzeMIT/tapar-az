@@ -41,12 +41,12 @@ export default function Header() {
     <>
       {/* Desktop / tablet header */}
       <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark shadow-[0_2px_12px_rgba(17,24,39,0.04)]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4 xl:gap-8">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
           <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
-          <nav className="flex items-center gap-4 xl:gap-6 shrink-0">
+          <nav className="flex items-center gap-6 shrink-0">
             <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
             <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
             <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
@@ -57,7 +57,7 @@ export default function Header() {
             </NavLink>
           </nav>
 
-          <div className="w-56 lg:w-64 xl:w-80 shrink-0">
+          <div className="flex-1 max-w-md">
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchValue}

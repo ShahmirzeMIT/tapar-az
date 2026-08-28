@@ -7,11 +7,13 @@ import { useListings, type ListingFilters } from '@/hooks/useListings';
 import ListingCard from '@/components/ListingCard';
 import type { CategoryKey, FieldSchema, ListingAttributes } from '@/types';
 import { visibleFields } from '@/utils/conditionalFields';
+import { useTranslation } from 'react-i18next';
 
 const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
 
 export default function Listings() {
   const [params, setParams] = useSearchParams();
+  const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const [category, setCategory] = useState<CategoryKey | undefined>(params.get('category') as CategoryKey ?? undefined);
@@ -80,17 +82,17 @@ export default function Listings() {
 
   const filterPanel = (
     <div className="space-y-5">
-      <FilterField label="Kateqoriya">
+        <FilterField label={t('category')}>
         <Select
-          className="w-full" allowClear placeholder="Bütün kateqoriyalar"
+          className="w-full" allowClear placeholder={t('allCategories')}
           value={category} onChange={handleCategoryChange}
           options={CATEGORIES.map((c) => ({ label: c.label, value: c.key }))}
         />
       </FilterField>
       {categoryConfig && categoryConfig.subcategories.length > 1 && (
-        <FilterField label="Alt kateqoriya">
+        <FilterField label={t('subcategory')}>
           <Select
-            className="w-full" allowClear placeholder="Bütün alt kateqoriyalar"
+            className="w-full" allowClear placeholder={t('allSubcategories')}
             value={subcategory} onChange={(value) => { setSubcategory(value); setAttributeFilters({}); }}
             options={categoryConfig.subcategories.map((s) => ({ label: s.label, value: s.key }))}
           />
@@ -111,14 +113,14 @@ export default function Listings() {
             ))}
         </div>
       )}
-      <FilterField label="Şəhər">
+          <FilterField label={t('city')}>
         <Select
-          className="w-full" allowClear placeholder="Bütün şəhərlər"
+          className="w-full" allowClear placeholder={t('allCities')}
           value={city} onChange={setCity}
           options={CITIES.map((c) => ({ label: c, value: c }))}
         />
       </FilterField>
-      <FilterField label="Qiymət aralığı (AZN)">
+      <FilterField label={t('priceRange')}>
         <div className="flex gap-2">
           <InputNumber className="w-full" placeholder="min" value={minPrice} onChange={(v) => setMinPrice(v ?? undefined)} />
           <InputNumber className="w-full" placeholder="maks" value={maxPrice} onChange={(v) => setMaxPrice(v ?? undefined)} />
@@ -133,22 +135,22 @@ export default function Listings() {
         <div>
           <p className="market-section-label mb-2">TAPAR.AZ marketplace</p>
           <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white">
-            {searchTerm ? `"${searchTerm}" üçün nəticələr` : 'Bütün Elanlar'}
+            {searchTerm ? `"${searchTerm}"` : t('allListings')}
           </h1>
-          <p className="text-sm text-muted mt-1">{listings.length} elan göstərilir</p>
+          <p className="text-sm text-muted mt-1">{listings.length} {t('shown')}</p>
         </div>
         <div className="flex items-center gap-2">
           <Select
             value={sort} onChange={setSort} className="w-44"
             options={[
-              { label: 'Əvvəlcə yeni', value: 'newest' },
-              { label: 'Ucuzdan bahaya', value: 'cheapest' },
-              { label: 'Bahadan ucuza', value: 'expensive' },
-              { label: 'Ən çox baxılan', value: 'most_viewed' },
-              { label: 'Ən yüksək reytinq', value: 'top_rated' },
+              { label: t('newest'), value: 'newest' },
+              { label: t('cheapest'), value: 'cheapest' },
+              { label: t('expensive'), value: 'expensive' },
+              { label: t('mostViewed'), value: 'most_viewed' },
+              { label: t('topRated'), value: 'top_rated' },
             ]}
           />
-          <Button className="lg:hidden" icon={<FilterOutlined />} onClick={() => setDrawerOpen(true)}>Filtr</Button>
+          <Button className="lg:hidden" icon={<FilterOutlined />} onClick={() => setDrawerOpen(true)}>{t('filters')}</Button>
         </div>
       </div>
 
@@ -167,7 +169,7 @@ export default function Listings() {
               {Array.from({ length: 9 }).map((_, i) => <Skeleton.Image key={i} active className="!w-full !h-48" />)}
             </div>
           ) : listings.length === 0 ? (
-            <Empty description="Bu filtrlərə uyğun elan tapılmadı" className="py-20" />
+          <Empty description={t('noResults')} className="py-20" />
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

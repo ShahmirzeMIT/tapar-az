@@ -5,9 +5,11 @@ import type { Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
 import { formatDateTime, formatPrice } from '@/utils/format';
+import { useTranslation } from 'react-i18next';
 
 export default function ListingCard({ listing }: { listing: Listing }) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { isFavorite, toggleFavorite } = useFavorites();
   const fav = isFavorite(listing.id);
   const hasVideo = listing.media.some((m) => m.type === 'video');
@@ -41,7 +43,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-editorial"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted text-xs">Şəkil yoxdur</div>
+          <div className="w-full h-full flex items-center justify-center text-muted text-xs">{t('noImage')}</div>
         )}
 
         <button
@@ -65,7 +67,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         </h3>
 
         <p className="mt-1.5 text-lg font-bold tracking-tight text-success">
-          {listing.priceHidden || listing.price == null ? 'Razılaşma yolu ilə' : formatPrice(listing.price)}
+          {listing.priceHidden || listing.price == null ? t('negotiable') : formatPrice(listing.price)}
         </p>
 
         <div className="mt-2 flex items-center justify-between text-xs text-muted">
@@ -73,7 +75,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             <EnvironmentOutlined /> {listing.city}
           </span>
           <span title={`Əlavə olunub: ${formatDateTime(listing.createdAt)}`} className="inline-flex items-center gap-1">
-            <CalendarOutlined /> {formatDateTime(listing.createdAt)}
+            <CalendarOutlined /> {t('added')}: {formatDateTime(listing.createdAt)}
           </span>
         </div>
 
@@ -81,17 +83,17 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <span className="inline-flex items-center gap-1 text-ink dark:text-white">
             <StarFilled className="text-action" />
             {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : '—'}
-            <span className="text-muted">({listing.ratingCount})</span>
+            <span className="text-muted">({listing.ratingCount} {t('rating')})</span>
           </span>
           {listing.viewCount > 0 && (
             <span className="inline-flex items-center gap-1 text-muted">
-              <EyeOutlined /> {listing.viewCount}
+            <EyeOutlined /> {listing.viewCount} {t('viewers')}
             </span>
           )}
         </div>
 
         <span className="market-action mt-4 w-full">
-          Ətraflı bax
+          {t('details')}
         </span>
       </div>
     </Link>

@@ -8,9 +8,11 @@ import {
 import { CATEGORIES } from '@/config/categories';
 import { useListings } from '@/hooks/useListings';
 import ListingCard from '@/components/ListingCard';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [q, setQ] = useState('');
   const { listings: latest, loading: latestLoading } = useListings({ sort: 'newest' });
   const { listings: cars, loading: carsLoading } = useListings({ category: 'avtomobiller', sort: 'newest' });
@@ -20,18 +22,18 @@ export default function Home() {
       {/* HERO */}
       <section className="border-b border-line dark:border-line-dark bg-offwhite dark:bg-graphite">
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
-          <p className="market-section-label mb-4">Al, sat, rahat tap</p>
+          <p className="market-section-label mb-4">{t('heroKicker')}</p>
           <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tightest text-ink dark:text-white">
-            Azərbaycanda al və sat
+            {t('heroTitle')}
           </h1>
           <p className="mt-4 text-base md:text-lg text-muted max-w-xl mx-auto">
-            İstədiyiniz məhsulu tapın, elanınızı saniyələr içində yerləşdirin.
+            {t('heroText')}
           </p>
 
           <div className="mt-8 max-w-xl mx-auto flex gap-2">
             <Input
               size="large"
-              placeholder="Nə axtarırsınız?"
+              placeholder={t('searchPlaceholder')}
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onPressEnter={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
@@ -41,7 +43,7 @@ export default function Home() {
               onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
               className="market-action px-6"
             >
-              <SearchOutlined /> Axtar
+              <SearchOutlined /> {t('search')}
             </button>
           </div>
           <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted">
@@ -56,7 +58,7 @@ export default function Home() {
 
       {/* POPULAR CATEGORIES */}
       <section className="max-w-7xl mx-auto px-6 py-14">
-        <SectionHeading title="Populyar kateqoriyalar" />
+        <SectionHeading title={t('popularCategories')} />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-6">
           {CATEGORIES.map((cat) => (
             <Link
@@ -68,7 +70,7 @@ export default function Home() {
                 <CategoryIcon name={cat.icon} />
               </span>
               <p className="text-sm font-semibold text-ink dark:text-white group-hover:text-action transition-colors">{cat.label}</p>
-              <p className="mt-1 text-xs text-muted">Elanlara bax</p>
+              <p className="mt-1 text-xs text-muted">{t('browseAds')}</p>
             </Link>
           ))}
         </div>
@@ -76,20 +78,20 @@ export default function Home() {
 
       {/* LATEST LISTINGS */}
       <section className="max-w-7xl mx-auto px-6 py-6">
-        <SectionHeading title="Ən son elanlar" linkTo="/elanlar" />
+        <SectionHeading title={t('latest')} linkTo="/elanlar" />
         <ListingGrid listings={latest} loading={latestLoading} />
       </section>
 
       {/* TRUST */}
       <section className="max-w-7xl mx-auto px-6 py-4 md:py-10">
         <div className="mb-5">
-          <p className="market-section-label mb-2">Niyə TAPAR.AZ?</p>
-          <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-ink dark:text-white">Axtardığını tap, güvənlə al</h2>
+          <p className="market-section-label mb-2">{t('why')}</p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-ink dark:text-white">{t('trustTitle')}</h2>
         </div>
         <div className="market-surface grid grid-cols-1 md:grid-cols-3 gap-6 p-6 md:p-8">
-          <TrustItem icon={<SafetyCertificateOutlined />} title="Daha güvənli alış-veriş" text="Telefonu təsdiqlənmiş satıcıları asanlıqla tanıyın." />
-          <TrustItem icon={<SearchOutlined />} title="Axtardığınızı tez tapın" text="Ağıllı filterlər və kateqoriyalarla vaxtınıza qənaət edin." />
-          <TrustItem icon={<TeamOutlined />} title="Aktiv alıcı icması" text="Elanınızı minlərlə potensial alıcıya göstərin." />
+          <TrustItem icon={<SafetyCertificateOutlined />} title={t('trust1')} text={t('trustText1')} />
+          <TrustItem icon={<SearchOutlined />} title={t('trust2')} text={t('trustText2')} />
+          <TrustItem icon={<TeamOutlined />} title={t('trust3')} text={t('trustText3')} />
         </div>
       </section>
 
@@ -99,7 +101,7 @@ export default function Home() {
           <div className="bg-action/10 border border-action/20 px-8 py-14 md:py-20 text-center relative overflow-hidden shadow-card">
             <BulbFilled className="text-action text-3xl mb-4" />
             <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest text-ink dark:text-white">
-              Satışa başlamaq çox asandır
+              {t('sellEasy')}
             </h2>
             <p className="mt-4 text-sm md:text-base text-secondary dark:text-muted max-w-lg mx-auto">
               Elanınızı yerləşdirin, doğru alıcıya çatın. İstəsəniz AI köməkçisi başlıq və təsviri də sizin üçün hazırlayar.
@@ -108,7 +110,7 @@ export default function Home() {
               to="/ai-elan"
               className="market-action mt-8 px-7 py-3"
             >
-              Elan yerləşdir <ArrowRightOutlined />
+              {t('placeYourAd')} <ArrowRightOutlined />
             </Link>
           </div>
         </div>
@@ -116,7 +118,7 @@ export default function Home() {
 
       {/* POPULAR AUTOMOBILES */}
       <section className="max-w-7xl mx-auto px-6 pb-16">
-        <SectionHeading title="Populyar avtomobillər" linkTo="/avtomobiller" />
+        <SectionHeading title={t('popularCars')} linkTo="/avtomobiller" />
         <ListingGrid listings={cars} loading={carsLoading} />
       </section>
     </div>
@@ -144,12 +146,13 @@ function TrustItem({ icon, title, text }: { icon: ReactNode; title: string; text
 }
 
 function SectionHeading({ title, linkTo }: { title: string; linkTo?: string }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
       <h2 className="font-display text-xl md:text-2xl font-bold tracking-tight text-ink dark:text-white">{title}</h2>
       {linkTo && (
         <Link to={linkTo} className="text-sm font-medium text-muted hover:text-ink dark:hover:text-white inline-flex items-center gap-1">
-          Hamısına bax <ArrowRightOutlined className="text-xs" />
+          {t('viewAll')} <ArrowRightOutlined className="text-xs" />
         </Link>
       )}
     </div>

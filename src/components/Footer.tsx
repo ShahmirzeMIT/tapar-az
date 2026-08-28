@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="hidden md:block border-t border-line dark:border-line-dark mt-20 bg-footer">
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-4 gap-10">
@@ -9,18 +11,18 @@ export default function Footer() {
             TAPAR<span className="text-action">.AZ</span>
           </div>
           <p className="text-sm text-secondary dark:text-muted leading-relaxed">
-            Azərbaycanın müasir elanlar bazarı. AI dəstəyi ilə sürətli və rahat alqı-satqı.
+            {t('heroText')}
           </p>
         </div>
-        <FooterCol title="Kateqoriyalar" links={[
-          ['Avtomobillər', '/avtomobiller'], ['Daşınmaz Əmlak', '/kateqoriyalar'],
-          ['İş Elanları', '/kateqoriyalar'], ['Xidmətlər', '/kateqoriyalar'],
+        <FooterCol title={t('categories')} links={[
+          [t('cars'), '/avtomobiller'], [t('category.daşınmaz_əmlak'), '/kateqoriyalar'],
+          [t('category.iş_elanları'), '/kateqoriyalar'], [t('category.xidmətlər'), '/kateqoriyalar'],
         ]} />
         <FooterCol title="Platform" links={[
-          ['Elan yerləşdir', '/elan-yerlesdir'], ['AI Elan', '/ai-elan'],
-          ['Sevimlilər', '/favoriler'], ['Profil', '/profil'],
+          [t('placeAd'), '/elan-yerlesdir'], [t('aiListing'), '/ai-elan'],
+          [t('favorites'), '/favoriler'], [t('messages'), '/mesajlar'],
         ]} />
-        <FooterCol title="Hesab" links={[['Daxil ol', '/login'], ['Qeydiyyat', '/register']]} />
+        <FooterCol title="Account" links={[[t('login'), '/login'], ['Register', '/register']]} />
       </div>
       <div className="border-t border-line dark:border-line-dark py-5 text-center text-xs text-muted">
         © {new Date().getFullYear()} TAPAR.AZ — Bütün hüquqlar qorunur.

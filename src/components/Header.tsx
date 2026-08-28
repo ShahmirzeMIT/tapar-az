@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Input, Avatar, Dropdown } from 'antd';
+import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
   SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
   HomeOutlined, BulbOutlined,
@@ -8,6 +8,8 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useMessages } from '@/hooks/useMessages';
 import ThemeToggle from './ThemeToggle';
+import { useLanguage } from '@/context/LanguageContext';
+import { useTranslation } from 'react-i18next';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `relative text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
@@ -17,6 +19,8 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 export default function Header() {
   const { user, profile, logout } = useAuth();
   const { unreadCount } = useMessages(user?.uid);
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
 
@@ -37,25 +41,25 @@ export default function Header() {
     <>
       {/* Desktop / tablet header */}
       <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark shadow-[0_2px_12px_rgba(17,24,39,0.04)]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4 xl:gap-8">
           <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
-          <nav className="flex items-center gap-6 shrink-0">
-            <NavLink to="/" end className={navLinkClass}>Ana səhifə</NavLink>
-            <NavLink to="/elanlar" className={navLinkClass}>Elanlar</NavLink>
-            <NavLink to="/avtomobiller" className={navLinkClass}>Avtomobillər</NavLink>
-            <NavLink to="/kateqoriyalar" className={navLinkClass}>Kateqoriyalar</NavLink>
-            <NavLink to="/favoriler" className={navLinkClass}>Favorilər</NavLink>
+          <nav className="flex items-center gap-4 xl:gap-6 shrink-0">
+            <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
+            <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
+            <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
+            <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
+            <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
             <NavLink to="/ai-elan" className={navLinkClass}>
-              <span className="inline-flex items-center gap-1"><BulbOutlined /> AI Elan</span>
+              <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
             </NavLink>
           </nav>
 
-          <div className="flex-1 max-w-md">
+          <div className="w-56 lg:w-64 xl:w-80 shrink-0">
             <Input
-              placeholder="Axtar..."
+              placeholder={t('searchPlaceholder')}
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               onPressEnter={handleSearch}
@@ -70,12 +74,13 @@ export default function Header() {
                 {unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}
               </Link>
             )}
+            <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
             <ThemeToggle />
             <Link
               to="/elan-yerlesdir"
               className="market-action px-4 py-2 shadow-[0_5px_12px_rgb(var(--color-primary)/0.2)]"
             >
-              <PlusOutlined /> Elan yerləşdir
+              <PlusOutlined /> {t('placeAd')}
             </Link>
 
             {user ? (
@@ -83,7 +88,7 @@ export default function Header() {
                 <Avatar src={profile?.photoURL} icon={<UserOutlined />} className="cursor-pointer bg-graphite" />
               </Dropdown>
             ) : (
-              <Link to="/login" className="text-sm font-medium hover:opacity-70">Daxil ol</Link>
+              <Link to="/login" className="text-sm font-medium hover:opacity-70">{t('login')}</Link>
             )}
           </div>
         </div>
@@ -97,6 +102,7 @@ export default function Header() {
           </Link>
           <div className="flex items-center gap-4">
             {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
+            <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
             <ThemeToggle />
           </div>
         </div>
@@ -105,11 +111,11 @@ export default function Header() {
       {/* Mobile bottom navigation */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-paper dark:bg-offwhite border-t border-line dark:border-line-dark">
         <div className="grid grid-cols-5 h-16">
-          <MobileNavItem to="/" icon={<HomeOutlined />} label="Ana" end />
-          <MobileNavItem to="/elanlar" icon={<SearchOutlined />} label="Axtar" />
-          <MobileNavItem to="/elan-yerlesdir" icon={<PlusOutlined />} label="Yerləşdir" prominent />
-          <MobileNavItem to="/favoriler" icon={<HeartOutlined />} label="Sevimli" />
-          <MobileNavItem to={user ? '/profil' : '/login'} icon={<UserOutlined />} label="Profil" />
+          <MobileNavItem to="/" icon={<HomeOutlined />} label={t('home')} end />
+          <MobileNavItem to="/elanlar" icon={<SearchOutlined />} label={t('search')} />
+          <MobileNavItem to="/elan-yerlesdir" icon={<PlusOutlined />} label={t('placeAd')} prominent />
+          <MobileNavItem to="/favoriler" icon={<HeartOutlined />} label={t('favorites')} />
+          <MobileNavItem to={user ? '/profil' : '/login'} icon={<UserOutlined />} label={t('login')} />
         </div>
       </nav>
     </>

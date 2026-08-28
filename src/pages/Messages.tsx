@@ -9,6 +9,7 @@ import { useListing } from '@/hooks/useListing';
 import { formatFullDateTime } from '@/utils/format';
 import type { ListingMessage } from '@/types';
 import { messageMillis, useMessages } from '@/hooks/useMessages';
+import { useTranslation } from 'react-i18next';
 
 const { TextArea } = Input;
 
@@ -16,6 +17,7 @@ export default function Messages() {
   const { listingId } = useParams<{ listingId?: string }>();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { t } = useTranslation();
   const { listing, loading: listingLoading } = useListing(listingId);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -70,8 +72,8 @@ export default function Messages() {
       <div className="max-w-5xl mx-auto px-6 py-10">
         <p className="market-section-label mb-2">Əlaqə mərkəzi</p>
         <div className="flex items-center gap-3">
-          <h1 className="font-display text-3xl font-bold text-ink dark:text-white">Mesajlar</h1>
-          {unreadCount > 0 && <span className="rounded-full bg-urgent px-2.5 py-1 text-xs font-bold text-white">{unreadCount} yeni</span>}
+        <h1 className="font-display text-3xl font-bold text-ink dark:text-white">{t('messages')}</h1>
+          {unreadCount > 0 && <span className="rounded-full bg-urgent px-2.5 py-1 text-xs font-bold text-white">{unreadCount} {t('newMessages')}</span>}
         </div>
         <div className="market-surface mt-6 p-6">
           {loading ? <Skeleton active /> : messages.length === 0 ? <Empty description="Hələ mesajınız yoxdur" /> : (
@@ -92,7 +94,7 @@ export default function Messages() {
 
   return (
     <div className="max-w-3xl mx-auto px-6 py-8 pb-28">
-      <Link to={`/elanlar/${listingId}`} className="inline-flex items-center gap-2 text-sm text-muted hover:text-action mb-5"><ArrowLeftOutlined /> Elana qayıt</Link>
+      <Link to={`/elanlar/${listingId}`} className="inline-flex items-center gap-2 text-sm text-muted hover:text-action mb-5"><ArrowLeftOutlined /> {t('backToAd')}</Link>
       <div className="market-surface overflow-hidden">
         <div className="border-b border-line dark:border-line-dark p-5 flex items-center gap-3">
           <Avatar icon={<UserOutlined />} className="bg-action" />
@@ -106,8 +108,8 @@ export default function Messages() {
           })}
         </div>
         <div className="border-t border-line dark:border-line-dark p-4 flex gap-2">
-          <TextArea value={text} onChange={(event) => setText(event.target.value)} onPressEnter={(event) => { if (!event.shiftKey) { event.preventDefault(); void sendMessage(); } }} autoSize={{ minRows: 1, maxRows: 4 }} placeholder="Mesajınızı yazın..." />
-          <Button type="primary" icon={<SendOutlined />} loading={sending} disabled={!text.trim() || !recipientId} onClick={() => void sendMessage}>Göndər</Button>
+          <TextArea value={text} onChange={(event) => setText(event.target.value)} onPressEnter={(event) => { if (!event.shiftKey) { event.preventDefault(); void sendMessage(); } }} autoSize={{ minRows: 1, maxRows: 4 }} placeholder={t('writeMessage')} />
+          <Button type="primary" icon={<SendOutlined />} loading={sending} disabled={!text.trim() || !recipientId} onClick={() => void sendMessage}>{t('send')}</Button>
         </div>
       </div>
     </div>

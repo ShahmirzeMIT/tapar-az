@@ -12,11 +12,13 @@ import ListingCard from '@/components/ListingCard';
 import { getCategory, getSubcategory } from '@/config/categories';
 import { formatDateTime, formatFullDateTime, formatPrice } from '@/utils/format';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function ListingDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { listing, loading, error } = useListing(id);
   const [activeMedia, setActiveMedia] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
@@ -60,7 +62,7 @@ export default function ListingDetail() {
         className="mb-4 text-sm"
         items={[
           { title: <Link to="/">Ana səhifə</Link> },
-          { title: <Link to="/elanlar">Elanlar</Link> },
+            { title: <Link to="/elanlar">{t('listings')}</Link> },
           { title: category?.label ?? listing.category },
           { title: listing.title },
         ]}
@@ -131,7 +133,7 @@ export default function ListingDetail() {
           </p>
           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted">
             <span className="inline-flex items-center gap-1"><EnvironmentOutlined /> {listing.city}</span>
-            <span title={formatDateTime(listing.createdAt)}>Yerləşdirilib: {formatFullDateTime(listing.createdAt)}</span>
+              <span title={formatDateTime(listing.createdAt)}>{t('added')}: {formatFullDateTime(listing.createdAt)}</span>
           </div>
 
           <div className="mt-4"><RatingStars listingId={listing.id} ratingAvg={listing.ratingAvg} ratingCount={listing.ratingCount} /></div>
@@ -142,7 +144,7 @@ export default function ListingDetail() {
             <div className="flex items-center gap-3">
               <Avatar size={44} icon={<UserOutlined />} className="bg-graphite" />
               <div>
-                <p className="text-[11px] uppercase tracking-wide text-muted mb-0.5">Elan sahibi</p>
+                <p className="text-[11px] uppercase tracking-wide text-muted mb-0.5">{t('seller')}</p>
                 <p className="font-semibold text-ink dark:text-white">{listing.ownerName}</p>
                 <p className="text-xs text-muted inline-flex items-center gap-1">
                   <StarFilled className="text-action" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
@@ -152,13 +154,13 @@ export default function ListingDetail() {
           
             <div className="mt-4">
               <button onClick={handleMessageClick} className="market-secondary-action mb-2 w-full">
-                Satıcıya mesaj yaz
+                {t('messageSeller')}
               </button>
               <button
                 onClick={() => setShowPhone(true)}
                 className="w-full bg-action text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
               >
-                <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
+                <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
               </button>
             </div>
           </div>
@@ -184,7 +186,7 @@ export default function ListingDetail() {
           onClick={() => setShowPhone(true)}
           className="market-action w-1/2 py-3"
         >
-          <PhoneOutlined /> {showPhone ? (listing.phone || 'Telefon əlavə edilməyib') : 'Telefonu göstər'}
+          <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
         </button>
       </div>
     </div>

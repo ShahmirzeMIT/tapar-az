@@ -18,14 +18,16 @@ import Register from '@/pages/auth/Register';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import NotFound from '@/pages/NotFound';
 import Messages from '@/pages/Messages';
+import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Layout>
-            <Routes>
+      <LanguageProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Layout>
+              <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/elanlar" element={<Listings />} />
               <Route path="/elanlar/:id" element={<ListingDetail />} />
@@ -42,10 +44,11 @@ export default function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
-      </AuthProvider>
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

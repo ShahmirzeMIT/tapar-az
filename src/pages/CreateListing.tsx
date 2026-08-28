@@ -129,7 +129,7 @@ export default function CreateListing() {
             <button
               key={c.key}
               onClick={() => { setCategory(c.key); setSubcategory(undefined); }}
-              className={`p-6 border text-left transition-colors ${category === c.key ? 'border-action bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-action'}`}
+              className={`market-surface p-6 text-left transition-all ${category === c.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
               <p className="font-semibold text-ink dark:text-white">{c.label}</p>
             </button>
@@ -144,7 +144,7 @@ export default function CreateListing() {
             <button
               key={s.key}
               onClick={() => setSubcategory(s.key)}
-              className={`p-6 border text-left transition-colors ${subcategory === s.key ? 'border-action bg-offwhite dark:bg-graphite' : 'border-line dark:border-line-dark hover:border-action'}`}
+              className={`market-surface p-6 text-left transition-all ${subcategory === s.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
               <p className="font-semibold text-ink dark:text-white">{s.label}</p>
             </button>
@@ -256,7 +256,7 @@ export default function CreateListing() {
 
       {/* STEP 5: PREVIEW */}
       {step === 5 && (
-        <div className="border border-line dark:border-line-dark p-6 max-w-sm">
+        <div className="market-surface p-6 max-w-sm">
           <p className="text-xs text-muted mb-1">{categoryConfig?.label} / {subConfig?.label}</p>
           <h3 className="font-semibold text-lg text-ink dark:text-white">{title || 'Başlıqsız elan'}</h3>
           <p className="text-2xl font-bold mt-1 text-ink dark:text-white">

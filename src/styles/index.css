@@ -67,6 +67,24 @@ body {
   color: rgb(var(--color-text-primary));
 }
 
+@layer components {
+  .market-surface {
+    @apply bg-paper dark:bg-graphite border border-line dark:border-line-dark rounded-xl shadow-card;
+  }
+
+  .market-section-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.14em] text-action;
+  }
+
+  .market-action {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-action px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-action/90 hover:-translate-y-px active:translate-y-0;
+  }
+
+  .market-secondary-action {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line dark:border-line-dark bg-paper dark:bg-graphite px-4 py-2.5 text-sm font-semibold text-ink dark:text-white transition-colors hover:border-action hover:text-action;
+  }
+}
+
 /* Thin, editorial scrollbars — avoid the "generic SaaS" look */
 ::-webkit-scrollbar {
   width: 8px;
@@ -89,6 +107,9 @@ body {
 /* Centralized marketplace styling for all Ant Design controls. */
 .ant-btn {
   border-radius: 8px !important;
+}
+.ant-btn-primary {
+  box-shadow: 0 5px 12px rgb(var(--color-primary) / 0.18) !important;
 }
 .ant-input,
 .ant-input-affix-wrapper,

@@ -79,7 +79,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
 
         <div className="mt-2 flex items-center justify-between text-xs">
           <span className="inline-flex items-center gap-1 text-ink dark:text-white">
-            <StarFilled className="text-premium" />
+            <StarFilled className="text-action" />
             {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : '—'}
             <span className="text-muted">({listing.ratingCount})</span>
           </span>
@@ -90,7 +90,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
 
-        <span className="mt-4 flex w-full items-center justify-center rounded-lg bg-action px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-action/90">
+        <span className="market-action mt-4 w-full">
           Ətraflı bax
         </span>
       </div>

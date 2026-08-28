@@ -17,6 +17,7 @@ export default function Home() {
       {/* HERO */}
       <section className="border-b border-line dark:border-line-dark bg-offwhite dark:bg-graphite">
         <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
+          <p className="market-section-label mb-4">Al, sat, rahat tap</p>
           <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tightest text-ink dark:text-white">
             Azərbaycanın müasir<br />elanlar bazarı
           </h1>
@@ -40,6 +41,13 @@ export default function Home() {
               <SearchOutlined /> Axtar
             </button>
           </div>
+          <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted">
+            {['Avtomobil', 'Ev və bağ', 'Elektronika', 'İş elanları'].map((item) => (
+              <button key={item} onClick={() => navigate(`/elanlar?q=${encodeURIComponent(item)}`)} className="rounded-full border border-line dark:border-line-dark bg-paper dark:bg-graphite px-3 py-1.5 hover:border-action hover:text-action transition-colors">
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -51,7 +59,7 @@ export default function Home() {
             <Link
               key={cat.key}
               to={`/elanlar?category=${cat.key}`}
-              className="group border border-line dark:border-line-dark p-5 text-center hover:border-action hover:-translate-y-0.5 transition-all duration-200 ease-editorial bg-paper dark:bg-graphite"
+              className="group market-surface p-5 text-center hover:border-action hover:-translate-y-0.5 transition-all duration-200 ease-editorial"
             >
               <p className="text-sm font-medium text-ink dark:text-white">{cat.label}</p>
             </Link>
@@ -68,7 +76,7 @@ export default function Home() {
       {/* AI CTA — main differentiator, PRD §16 */}
       <section className="my-16">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-action text-white px-8 py-14 md:py-20 text-center relative overflow-hidden">
+          <div className="bg-action text-white px-8 py-14 md:py-20 text-center relative overflow-hidden shadow-card">
             <BulbFilled className="text-3xl mb-4 opacity-90" />
             <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest">
               Elanınızı AI ilə saniyələr<br className="hidden md:block" /> içində yaradın
@@ -79,7 +87,7 @@ export default function Home() {
             </p>
             <Link
               to="/ai-elan"
-              className="mt-8 inline-flex items-center gap-2 bg-paper text-ink px-7 py-3 font-semibold hover:opacity-85 transition-opacity"
+              className="market-secondary-action mt-8 bg-paper text-ink px-7 py-3 hover:border-white"
             >
               AI ilə elan yerləşdir <ArrowRightOutlined />
             </Link>
@@ -114,7 +122,7 @@ function ListingGrid({ listings, loading }: { listings: import('@/types').Listin
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="border border-line dark:border-line-dark p-3">
+          <div key={i} className="market-surface p-3">
             <Skeleton.Image active className="!w-full !h-40" />
             <Skeleton active paragraph={{ rows: 2 }} title={false} className="mt-2" />
           </div>

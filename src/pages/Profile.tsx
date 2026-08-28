@@ -22,7 +22,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="market-surface flex items-center gap-4 mb-8 p-5">
         <Avatar size={64} src={profile?.photoURL} icon={<UserOutlined />} className="bg-graphite" />
         <div>
           <h1 className="font-display text-xl font-bold text-ink dark:text-white">{profile?.displayName ?? user.displayName}</h1>
@@ -44,7 +44,7 @@ export default function Profile() {
             label: 'Şəxsi məlumat',
             children: (
               <div className="max-w-xl grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="md:col-span-2 border border-line dark:border-line-dark p-5 space-y-4">
+                <div className="market-surface md:col-span-2 p-5 space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1.5 text-ink dark:text-white">Ad Soyad</label>
                     <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
@@ -112,7 +112,7 @@ function MyListingsTab({
     <div className="divide-y divide-line dark:divide-line-dark border-t border-b border-line dark:border-line-dark mt-2">
       {listings.map((l) => (
         <div key={l.id} className="flex items-center gap-4 py-4">
-          <div className="w-20 h-16 bg-offwhite dark:bg-graphite shrink-0 overflow-hidden border border-line dark:border-line-dark">
+          <div className="w-20 h-16 bg-offwhite dark:bg-graphite shrink-0 overflow-hidden border border-line dark:border-line-dark rounded-lg">
             {l.media[0] && (l.media[0].type === 'video' ? (
               <video src={l.media[0].url} muted className="w-full h-full object-cover" />
             ) : (

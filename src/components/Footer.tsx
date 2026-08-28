@@ -8,7 +8,7 @@ export default function Footer() {
           <div className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white mb-3">
             TAPAR<span className="text-action">.AZ</span>
           </div>
-          <p className="text-sm text-muted leading-relaxed">
+          <p className="text-sm text-secondary dark:text-muted leading-relaxed">
             Azərbaycanın müasir elanlar bazarı. AI dəstəyi ilə sürətli və rahat alqı-satqı.
           </p>
         </div>

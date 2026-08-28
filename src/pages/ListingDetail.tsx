@@ -54,7 +54,7 @@ export default function ListingDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8">
         {/* GALLERY */}
         <div>
-          <div className="aspect-[4/3] bg-offwhite dark:bg-graphite border border-line dark:border-line-dark overflow-hidden">
+          <div className="market-surface aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden">
             {current ? (
               current.type === 'video' ? (
                 <video src={current.url} controls className="w-full h-full object-contain" />
@@ -123,13 +123,13 @@ export default function ListingDetail() {
           <div className="mt-3"><ActiveViewersFull listingId={listing.id} /></div>
 
           {/* SELLER */}
-          <div className="mt-6 border border-line dark:border-line-dark p-5">
+          <div className="market-surface mt-6 p-5">
             <div className="flex items-center gap-3">
               <Avatar size={44} icon={<UserOutlined />} className="bg-graphite" />
               <div>
                 <p className="font-semibold text-ink dark:text-white">{listing.ownerName}</p>
                 <p className="text-xs text-muted inline-flex items-center gap-1">
-                  <StarFilled className="text-premium" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
+                  <StarFilled className="text-action" /> {listing.ratingCount > 0 ? listing.ratingAvg.toFixed(1) : 'Yeni satıcı'}
                 </p>
               </div>
             </div>

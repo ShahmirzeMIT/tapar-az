@@ -45,6 +45,8 @@ ${buildCategoryContext()}
   "subcategory": string | null,
   "price": number | null,
   "city": string | null,
+  "phone": string | null,
+  "address": string | null,
   "attributes": { [fieldName: string]: string | number | boolean },
   "keywords": string[],
   "tags": string[],
@@ -59,7 +61,7 @@ interface GeminiResponse {
   candidates?: { content?: { parts?: GeminiCandidatePart[] } }[];
 }
 
-export async function generateListingDraft(userInput: string): Promise<AIListingDraft> {
+export async function generateListingDraft(userInput: string, selectedCategory?: CategoryKey | null, selectedSubcategory?: string | null): Promise<AIListingDraft> {
   if (!GEMINI_API_KEY) {
     throw new GeminiUnavailableError('AI xidməti hazırda əlçatan deyil.');
   }
@@ -71,7 +73,7 @@ export async function generateListingDraft(userInput: string): Promise<AIListing
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-        contents: [{ role: 'user', parts: [{ text: userInput }] }],
+        contents: [{ role: 'user', parts: [{ text: `The seller selected category: ${selectedCategory ?? 'not selected'} and subcategory: ${selectedSubcategory ?? 'not selected'}. Keep these selections exactly when they are provided.\n\nSeller text:\n${userInput}` }] }],
         generationConfig: { temperature: 0.4, responseMimeType: 'application/json' },
       }),
     });
@@ -135,6 +137,8 @@ function normalizeDraft(raw: Partial<AIListingDraft>): AIListingDraft {
     subcategory: raw.subcategory ?? null,
     price: typeof raw.price === 'number' ? raw.price : null,
     city: raw.city ?? null,
+    phone: raw.phone ?? null,
+    address: raw.address ?? null,
     attributes: raw.attributes ?? {},
     keywords: Array.isArray(raw.keywords) ? raw.keywords : [],
     tags: Array.isArray(raw.tags) ? raw.tags : [],

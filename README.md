@@ -124,3 +124,18 @@ wired up as UI stubs), phone number reveal backed by real data, and category
 field sets for electronics/home & garden are intentionally smaller than
 cars/real estate/vacancies — extend `categories.ts` the same way to add more
 fields, they render automatically.
+## Admin təsdiqi və email
+
+Yeni elanlar əvvəlcə `pending` statusu ilə yaradılır və `/admin/elanlar` səhifəsində görünür. Admin hesabının Firebase Authentication custom claim-i belə olmalıdır:
+
+```json
+{ "admin": true }
+```
+
+Admin girişində Firebase custom claim istifadə olunmur. Hesabın admin olub-olmaması həmişə `tapar_admins` kolleksiyasındakı aktiv sənədlə yoxlanılır. Demo hesab: `demo.admin@tapar.az` / `TaparDemo123!`. Email yalnız server-side Brevo SMTP function ilə göndərilir; SMTP parolu frontend-ə ötürülmür.
+
+Email API lokalda `http://localhost:3000/api/email-smtp/email-send` endpoint-i ilə test edilir. Production-da frontend build zamanı `VITE_EMAIL_API_URL` dəyərini real email API endpoint-inə dəyişin.
+
+### Brevo SMTP
+
+Email serverinin Brevo SMTP ilə işləməsi üçün SMTP məlumatlarını həmin API serverinin environment variables hissəsində saxlayın. Frontend yalnız JSON email body-si göndərir; SMTP password frontend `.env`-də istifadə olunmur.

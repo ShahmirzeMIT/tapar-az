@@ -17,6 +17,8 @@ interface AuthContextValue {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
+  isAdmin: boolean;
+  loginAdmin: (email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
@@ -26,6 +28,8 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const DEMO_ADMIN_EMAIL = 'demo.admin@tapar.az';
+export const DEMO_ADMIN_PASSWORD = 'TaparDemo123!';
 
 async function ensureUserDoc(user: User) {
   const ref = doc(db, 'users', user.uid);
@@ -45,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -53,8 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await ensureUserDoc(u);
         const snap = await getDoc(doc(db, 'users', u.uid));
         if (snap.exists()) setProfile(snap.data() as UserProfile);
+        const emailKey = u.email?.trim().toLowerCase() ?? '';
+        const roleDoc = emailKey ? await getDoc(doc(db, 'tapar_admins', emailKey)) : null;
+        const uidRoleDoc = await getDoc(doc(db, 'tapar_admins', u.uid));
+        setIsAdmin(Boolean(roleDoc?.exists() && roleDoc.data()?.active !== false) || Boolean(uidRoleDoc.exists() && uidRoleDoc.data()?.active !== false));
       } else {
         setProfile(null);
+        setIsAdmin(false);
       }
       setLoading(false);
     });
@@ -73,6 +83,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginWithGoogle = async () => {
     await signInWithPopup(auth, googleProvider);
+  };
+
+  const loginAdmin = async (email: string, password: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    try {
+      await signInWithEmailAndPassword(auth, cleanEmail, password);
+    } catch (error) {
+      const code = (error as { code?: string }).code;
+      if (cleanEmail !== DEMO_ADMIN_EMAIL || !['auth/user-not-found', 'auth/invalid-credential'].includes(code ?? '')) throw error;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, cleanEmail, password);
+        await updateProfile(cred.user, { displayName: 'TAPAR Demo Admin' });
+        await ensureUserDoc(cred.user);
+      } catch (createError) {
+        if ((createError as { code?: string }).code === 'auth/email-already-in-use') {
+          throw new Error('Demo hesabı artıq mövcuddur, lakin parol uyğun deyil. Firebase Authentication bölməsində demo hesabının parolunu TaparDemo123! olaraq yeniləyin.');
+        }
+        throw createError;
+      }
+    }
+    if (cleanEmail === DEMO_ADMIN_EMAIL) await setDoc(doc(db, 'tapar_admins', DEMO_ADMIN_EMAIL), { email: DEMO_ADMIN_EMAIL, name: 'TAPAR Demo Admin', active: true, demo: true, updatedAt: Date.now() }, { merge: true });
   };
 
   const logout = async () => {
@@ -96,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, register, loginWithGoogle, logout, resetPassword, updateUserProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin, loginAdmin, login, register, loginWithGoogle, logout, resetPassword, updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   );

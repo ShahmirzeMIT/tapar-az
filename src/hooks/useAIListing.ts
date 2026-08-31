@@ -13,12 +13,12 @@ export function useAIListing() {
   const [unavailable, setUnavailable] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generate = useCallback(async (userInput: string) => {
+  const generate = useCallback(async (userInput: string, category?: CategoryKey | null, subcategory?: string | null) => {
     setLoading(true);
     setError(null);
     setUnavailable(false);
     try {
-      const result = await generateListingDraft(userInput);
+      const result = await generateListingDraft(userInput, category, subcategory);
       setDraft(result);
       return result;
     } catch (e) {

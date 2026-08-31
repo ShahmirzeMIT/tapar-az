@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Layout from '@/components/Layout';
@@ -18,6 +18,11 @@ import Register from '@/pages/auth/Register';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import NotFound from '@/pages/NotFound';
 import Messages from '@/pages/Messages';
+import AdminListings from '@/pages/AdminListings';
+import AdminLayout from '@/components/AdminLayout';
+import AdminDashboard from '@/pages/AdminDashboard';
+import AdminUsers from '@/pages/AdminUsers';
+import AdminSettings from '@/pages/AdminSettings';
 import { LanguageProvider } from '@/context/LanguageContext';
 
 export default function App() {
@@ -26,7 +31,7 @@ export default function App() {
       <LanguageProvider>
         <AuthProvider>
           <BrowserRouter>
-            <Layout>
+            <AppShell>
               <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/elanlar" element={<Listings />} />
@@ -40,15 +45,26 @@ export default function App() {
               <Route path="/favoriler" element={<Favorites />} />
               <Route path="/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/profil/elanlarim" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/elanlar" element={<AdminListings />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="*" element={<NotFound />} />
               </Routes>
-            </Layout>
+            </AppShell>
           </BrowserRouter>
         </AuthProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
+}
+
+function AppShell({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  return location.pathname.startsWith('/admin')
+    ? <AdminLayout>{children}</AdminLayout>
+    : <Layout>{children}</Layout>;
 }

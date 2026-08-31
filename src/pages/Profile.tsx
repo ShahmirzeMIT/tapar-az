@@ -7,8 +7,8 @@ import { useMyListings } from '@/hooks/useMyListings';
 import { formatDateTime, formatPrice, formatRelativeDate } from '@/utils/format';
 import type { Listing, ListingStatus } from '@/types';
 
-const STATUS_LABEL: Record<ListingStatus, string> = { active: 'Aktiv', inactive: 'Deaktiv', sold: 'Satılıb' };
-const STATUS_COLOR: Record<ListingStatus, string> = { active: 'green', inactive: 'default', sold: 'blue' };
+const STATUS_LABEL: Record<ListingStatus, string> = { pending: 'Admin təsdiqi gözləyir', active: 'Aktiv', inactive: 'Deaktiv', sold: 'Satılıb', rejected: 'Rədd edilib' };
+const STATUS_COLOR: Record<ListingStatus, string> = { pending: 'gold', active: 'green', inactive: 'default', sold: 'blue', rejected: 'red' };
 
 export default function Profile() {
   const { user, profile, updateUserProfile } = useAuth();
@@ -134,7 +134,7 @@ function MyListingsTab({
                 { key: 'edit', label: <Link to="/elan-yerlesdir">Redaktə et</Link> },
                 l.status === 'active'
                   ? { key: 'deactivate', label: 'Deaktiv et', onClick: () => onStatusChange(l.id, 'inactive') }
-                  : { key: 'activate', label: 'Aktivləşdir', onClick: () => onStatusChange(l.id, 'active') },
+                  : l.status === 'inactive' ? { key: 'activate', label: 'Aktivləşdir', onClick: () => onStatusChange(l.id, 'active') } : { key: 'status', label: 'Admin təsdiqindən sonra aktiv olacaq', disabled: true },
                 { key: 'sold', label: 'Satıldı kimi işarələ', onClick: () => onStatusChange(l.id, 'sold') },
                 {
                   key: 'delete',

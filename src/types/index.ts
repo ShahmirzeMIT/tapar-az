@@ -6,7 +6,7 @@ export type CategoryKey =
   | 'elektronika'
   | 'ev_bağ';
 
-export type ListingStatus = 'active' | 'inactive' | 'sold';
+export type ListingStatus = 'pending' | 'active' | 'inactive' | 'sold' | 'rejected';
 
 export interface MediaItem {
   url: string;
@@ -22,6 +22,7 @@ export interface Listing {
   id: string;
   ownerId: string;
   ownerName: string;
+  ownerEmail?: string;
   category: CategoryKey;
   subcategory: string;
   title: string;
@@ -42,6 +43,9 @@ export interface Listing {
   createdAt: number; // epoch ms
   updatedAt: number;
   aiAssisted?: boolean;
+  submittedAt?: number;
+  reviewedAt?: number;
+  rejectionReason?: string;
 }
 
 export interface UserProfile {
@@ -141,6 +145,8 @@ export interface AIListingDraft {
   subcategory: string | null;
   price: number | null;
   city: string | null;
+  phone: string | null;
+  address: string | null;
   attributes: ListingAttributes;
   keywords: string[];
   tags: string[];

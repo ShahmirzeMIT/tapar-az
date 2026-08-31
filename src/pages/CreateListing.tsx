@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert } from 'antd';
-import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert, Modal, Tag } from 'antd';
+import { doc, serverTimestamp, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES, getCategory } from '@/config/categories';
@@ -11,6 +11,8 @@ import { pruneHiddenValues } from '@/utils/conditionalFields';
 import { useAIListing } from '@/hooks/useAIListing';
 import type { CategoryKey, ListingAttributes, MediaItem } from '@/types';
 import { formatPrice } from '@/utils/format';
+import { sendBrevoEmail } from '@/utils/email';
+import { listingEmailCard } from '@/utils/emailTemplates';
 
 const { TextArea } = Input;
 const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
@@ -37,6 +39,8 @@ export default function CreateListing() {
   const [attributes, setAttributes] = useState<ListingAttributes>(prefill?.attributes ?? {});
   const [media, setMedia] = useState<MediaItem[]>([]);
   const [publishing, setPublishing] = useState(false);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
+  const [aiAssisted, setAiAssisted] = useState(Boolean(prefill));
 
   useEffect(() => {
     if (profile?.phone && !phone) setPhone(profile.phone);
@@ -63,15 +67,21 @@ export default function CreateListing() {
   const next = () => setStep((s) => Math.min(s + 1, STEP_LABELS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const applyAIDraft = () => {
-    if (!draft) return;
-    if (draft.title) setTitle(draft.title);
-    if (draft.description) setDescription(draft.description);
-    if (draft.price != null) setPrice(draft.price);
-    if (draft.city) setCity(draft.city);
-    if (draft.category) setCategory(draft.category);
-    if (draft.subcategory) setSubcategory(draft.subcategory);
-    setAttributes((prev) => ({ ...prev, ...draft.attributes }));
+  const applyAIDraft = (incoming = draft) => {
+    if (!incoming) return;
+    if (incoming.title) setTitle(incoming.title);
+    if (incoming.description) setDescription(incoming.description);
+    if (incoming.price != null) setPrice(incoming.price);
+    if (incoming.city) setCity(incoming.city);
+    if (incoming.phone) setPhone(incoming.phone);
+    if (incoming.address) setAddress(incoming.address);
+    if (incoming.category && incoming.category === category) setCategory(incoming.category);
+    if (incoming.subcategory && incoming.subcategory === subcategory) setSubcategory(incoming.subcategory);
+    const allowedAttributes = subConfig
+      ? Object.fromEntries(Object.entries(incoming.attributes).filter(([name]) => subConfig.fields.some((field) => field.name === name)))
+      : incoming.attributes;
+    setAttributes((prev) => ({ ...prev, ...allowedAttributes }));
+    setAiAssisted(true);
     message.success('AI təklifi tətbiq olundu — məlumatları yoxlayın.');
   };
 
@@ -88,9 +98,10 @@ export default function CreateListing() {
     try {
       const cleanedAttrs = subConfig ? pruneHiddenValues(subConfig.fields, attributes) : attributes;
       const ref = doc(db, 'listings', draftId);
-      await setDoc(ref, {
+      const listingData = {
         ownerId: user.uid,
         ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi',
+        ownerEmail: user.email ?? profile?.email ?? '',
         category, subcategory, title,
         price: priceHidden ? null : price ?? null,
         priceHidden,
@@ -98,15 +109,44 @@ export default function CreateListing() {
         city, phone: phone.trim(), address, description,
         media,
         attributes: cleanedAttrs,
-        status: 'active',
+        status: 'pending',
         viewCount: 0,
         ratingAvg: 0,
         ratingCount: 0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        aiAssisted: Boolean(prefill),
-      });
-      message.success('Elan uğurla dərc olundu!');
+        submittedAt: serverTimestamp(),
+        aiAssisted,
+      };
+      const batch = writeBatch(db);
+      batch.set(ref, listingData);
+      await batch.commit();
+      let collectionAdminEmails: string[] = [];
+      try {
+        const adminsSnapshot = await getDocs(collection(db, 'tapar_admins'));
+        collectionAdminEmails = adminsSnapshot.docs
+          .map((admin) => admin.data() as { email?: string; active?: boolean })
+          .filter((admin) => admin.active !== false && admin.email?.includes('@'))
+          .map((admin) => admin.email!.trim().toLowerCase());
+      } catch (error) {
+        console.warn('Admin email list could not be loaded; using configured recipients.', error);
+      }
+      const configuredAdminEmails = ((import.meta.env.VITE_BREVO_ADMIN_EMAILS as string | undefined) || '')
+        .split(',')
+        .map((email) => email.trim().toLowerCase())
+        .filter((email) => email.includes('@'));
+      const notificationRecipients = [...new Set([...collectionAdminEmails, ...configuredAdminEmails])];
+      if (notificationRecipients.length) {
+        const adminLink = `${window.location.origin}/admin/elanlar`;
+        const emailResult = await Promise.allSettled(notificationRecipients.map((adminEmail) => sendBrevoEmail({
+          to: "langdpdatabase@gmail.com",
+          subject: 'Yeni elan təsdiq gözləyir — TAPAR.AZ',
+          text: `Yeni elan daxil edildi: ${title}. Admin panelə daxil olub yoxlayın: ${adminLink}`,
+          html: listingEmailCard({ title, description, category: categoryConfig?.label, city, price: priceHidden ? null : price, media, link: adminLink, ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi', ownerEmail: user.email ?? profile?.email ?? '' }, 'Yeni elan daxil edildi. Zəhmət olmasa admin panelə daxil olub yoxlayın.'),
+        })));
+        if (emailResult.some((result) => result.status === 'rejected')) message.warning('Elan yadda saxlanıldı, lakin bəzi admin email-ləri göndərilmədi.');
+      }
+      message.success('Elanınız admin təsdiqinə göndərildi. Təsdiqdən sonra aktiv olacaq.');
       navigate(`/elanlar/${draftId}`);
     } catch (e) {
       message.error(e instanceof Error ? e.message : 'Elan dərc edilərkən xəta baş verdi.');
@@ -155,6 +195,12 @@ export default function CreateListing() {
       {/* STEP 2: UNIVERSAL + CATEGORY-SPECIFIC FIELDS */}
       {step === 2 && (
         <div className="space-y-8">
+          <div className="rounded-xl border border-action/30 bg-action/5 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div><p className="font-semibold text-ink dark:text-white">Bütün məlumatları AI ilə doldur</p><p className="text-xs text-muted mt-1">Prompt-u yazın, uyğun sahələr avtomatik doldurulsun.</p></div>
+              <Button type="primary" onClick={() => setAiModalOpen(true)}>✨ AI ilə doldur</Button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
             <div className="sm:col-span-2">
               <FieldLabel required>Başlıq</FieldLabel>
@@ -233,7 +279,7 @@ export default function CreateListing() {
           <div>
             <FieldLabel>Sərbəst mətndən yenidən yarat</FieldLabel>
             <TextArea rows={4} value={aiInput} onChange={(e) => setAiInput(e.target.value)} placeholder="Elanınızı sərbəst şəkildə təsvir edin..." />
-            <Button className="mt-2" loading={aiLoading} onClick={() => generate(aiInput)}>AI ilə sahələri doldur</Button>
+            <Button className="mt-2" loading={aiLoading} onClick={() => generate(aiInput, category, subcategory)}>AI ilə sahələri doldur</Button>
           </div>
           {draft && (
             <div className="border border-line dark:border-line-dark p-4">
@@ -246,8 +292,8 @@ export default function CreateListing() {
                 </ul>
               )}
               <div className="flex gap-2 mt-3">
-                <Button type="primary" onClick={applyAIDraft}>Redaktə et / Tətbiq et</Button>
-                <Button onClick={() => generate(aiInput)}>Yenidən yarat</Button>
+                <Button type="primary" onClick={() => applyAIDraft()}>Redaktə et / Tətbiq et</Button>
+                <Button onClick={() => generate(aiInput, category, subcategory)}>Yenidən yarat</Button>
               </div>
             </div>
           )}
@@ -272,10 +318,38 @@ export default function CreateListing() {
       {step === 6 && (
         <div className="text-center py-10">
           <p className="text-lg font-semibold text-ink dark:text-white mb-2">Elanı dərc etməyə hazırsınız</p>
-          <p className="text-sm text-muted mb-6">Dərc etdikdən sonra elanınız dərhal görünəcək.</p>
+          <p className="text-sm text-muted mb-6">Elanınız əvvəlcə admin yoxlamasına göndəriləcək. Təsdiqdən sonra saytda görünəcək və emailinizə link gələcək.</p>
           <Button type="primary" size="large" loading={publishing} onClick={handlePublish}>Elanı yerləşdir</Button>
         </div>
       )}
+
+      <Modal
+        title="AI ilə məlumatları doldur"
+        open={aiModalOpen}
+        onCancel={() => setAiModalOpen(false)}
+        footer={null}
+        destroyOnClose
+      >
+        <p className="text-sm text-muted mb-3">Seçilmiş kateqoriya: <Tag>{categoryConfig?.label}</Tag>{subConfig && <Tag>{subConfig.label}</Tag>}</p>
+        <TextArea
+          rows={7}
+          value={aiInput}
+          onChange={(e) => setAiInput(e.target.value)}
+          placeholder="Məs: 2015 Toyota Camry, 145000 km, Bakı, 24000 AZN, ideal vəziyyətdə..."
+        />
+        {unavailable && <Alert className="mt-3" type="warning" showIcon message="AI xidməti hazırda əlçatan deyil" />}
+        {draft?.warnings.length ? <Alert className="mt-3" type="warning" showIcon message={draft.warnings.join(' ')} /> : null}
+        <div className="flex justify-end gap-2 mt-4">
+          <Button onClick={() => setAiModalOpen(false)}>Bağla</Button>
+          <Button loading={aiLoading} type="primary" disabled={!aiInput.trim()} onClick={async () => {
+            const result = await generate(aiInput, category, subcategory);
+            if (result) {
+              applyAIDraft(result);
+              setAiModalOpen(false);
+            }
+          }}>AI ilə doldur</Button>
+        </div>
+      </Modal>
 
       {/* NAVIGATION */}
       <div className="flex justify-between mt-10 pt-6 border-t border-line dark:border-line-dark">

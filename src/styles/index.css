@@ -83,6 +83,150 @@ body {
   .market-secondary-action {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line dark:border-line-dark bg-paper dark:bg-graphite px-4 py-2.5 text-sm font-semibold text-ink dark:text-white transition-colors hover:border-action hover:text-action;
   }
+
+  /* A calmer, more tactile form language for the listing wizard. */
+  .listing-form-page .ant-input,
+  .listing-form-page .ant-input-affix-wrapper,
+  .listing-form-page .ant-input-number,
+  .listing-form-page .ant-select-selector {
+    @apply transition-all duration-200 ease-editorial;
+    min-height: 44px !important;
+    border-radius: 12px !important;
+    border-color: rgb(var(--color-border)) !important;
+    box-shadow: 0 1px 2px rgb(17 24 39 / 0.03) !important;
+  }
+
+  .listing-form-page .ant-input,
+  .listing-form-page .ant-input-affix-wrapper {
+    padding: 10px 14px !important;
+  }
+
+  .listing-form-page textarea.ant-input {
+    min-height: 104px !important;
+    padding: 13px 14px !important;
+    resize: vertical;
+  }
+
+  .listing-form-page .ant-input-number {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .listing-form-page .ant-input-number-input {
+    height: 42px !important;
+    padding: 0 14px !important;
+  }
+
+  .listing-form-page .ant-select-selector {
+    align-items: center;
+    padding: 0 14px !important;
+  }
+
+  .listing-form-page .ant-input:hover,
+  .listing-form-page .ant-input-affix-wrapper:hover,
+  .listing-form-page .ant-input-number:hover,
+  .listing-form-page .ant-select:hover .ant-select-selector {
+    border-color: rgb(var(--color-primary) / 0.55) !important;
+    box-shadow: 0 4px 14px rgb(var(--color-primary) / 0.08) !important;
+  }
+
+  .listing-form-page .ant-input:focus,
+  .listing-form-page .ant-input-affix-wrapper-focused,
+  .listing-form-page .ant-input-number-focused,
+  .listing-form-page .ant-select-focused .ant-select-selector {
+    border-color: rgb(var(--color-primary)) !important;
+    box-shadow: 0 0 0 4px rgb(var(--color-primary) / 0.1), 0 5px 18px rgb(var(--color-primary) / 0.08) !important;
+  }
+
+  .listing-form-page .listing-fields > div > label,
+  .listing-form-page .listing-dynamic-form > div > label {
+    @apply text-xs font-bold uppercase tracking-[.08em] text-ink/60 dark:text-muted;
+  }
+
+  .brand-logo {
+    @apply relative inline-block overflow-hidden py-1 transition-all duration-500 ease-editorial;
+    perspective: 500px;
+  }
+
+  .brand-logo::after {
+    content: '';
+    @apply pointer-events-none absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-gradient-to-r from-action via-premium to-transparent opacity-0;
+  }
+
+  .brand-logo:hover {
+    @apply -translate-y-0.5 scale-110;
+    text-shadow: 0 8px 24px rgb(var(--color-primary) / 0.2);
+  }
+
+  .brand-logo:hover::after {
+    animation: logo-line 650ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .brand-logo::before {
+    content: '';
+    @apply pointer-events-none absolute -inset-2 -z-10 rounded-full bg-action/20 opacity-0 blur-xl transition-opacity duration-500;
+  }
+
+  .brand-logo:hover::before {
+    @apply opacity-100;
+  }
+
+  .brand-logo-name {
+    @apply inline-flex;
+  }
+
+  .brand-letter {
+    @apply inline-block transition-all duration-500 ease-editorial;
+    transform-origin: 50% 100%;
+  }
+
+  .brand-logo:hover .brand-letter:nth-child(1) { transform: translateY(-2px) rotate(-5deg); transition-delay: 20ms; }
+  .brand-logo:hover .brand-letter:nth-child(2) { transform: translateY(2px) rotate(4deg); transition-delay: 55ms; }
+  .brand-logo:hover .brand-letter:nth-child(3) { transform: translateY(-3px) rotate(-3deg); transition-delay: 90ms; }
+  .brand-logo:hover .brand-letter:nth-child(4) { transform: translateY(2px) rotate(4deg); transition-delay: 125ms; }
+  .brand-logo:hover .brand-letter:nth-child(5) { transform: translateY(-2px) rotate(-4deg); transition-delay: 160ms; }
+
+  .brand-logo-domain {
+    @apply inline-block text-action transition-all duration-500 ease-editorial;
+    transform-origin: 80% 50%;
+  }
+
+  .brand-logo:hover .brand-logo-domain {
+    @apply scale-110;
+    filter: drop-shadow(0 0 8px rgb(var(--color-primary) / 0.65));
+    animation: domain-pulse 900ms 180ms ease-out both;
+  }
+}
+
+@keyframes logo-line {
+  0% { transform: scaleX(0); opacity: 0; }
+  35% { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes domain-pulse {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.18) rotate(-3deg); }
+  100% { transform: scale(1.1) rotate(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo,
+  .brand-logo-name,
+  .brand-logo-domain {
+    transition: none;
+  }
+
+  .brand-logo:hover::after {
+    animation: none;
+  }
+
+  .brand-logo:hover .brand-letter,
+  .brand-logo:hover .brand-logo-domain {
+    animation: none;
+    transform: none;
+  }
 }
 
 /* Thin, editorial scrollbars — avoid the "generic SaaS" look */

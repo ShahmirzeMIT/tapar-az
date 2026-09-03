@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert, Modal, Tag } from 'antd';
+import { ArrowRightOutlined, CarOutlined, GiftOutlined, HomeOutlined, LaptopOutlined, SettingOutlined, TeamOutlined } from '@ant-design/icons';
 import { doc, serverTimestamp, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
@@ -156,22 +157,31 @@ export default function CreateListing() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white mb-6">Elan yerləşdir</h1>
+    <div className="listing-form-page mx-auto max-w-5xl px-6 py-8 md:py-12">
+      <div className="mb-8 flex items-end justify-between gap-4">
+        <div>
+          <p className="market-section-label mb-2">TAPAR.AZ marketplace</p>
+          <h1 className="font-display text-3xl font-bold tracking-tightest text-ink dark:text-white md:text-4xl">Elan yerləşdir</h1>
+          <p className="mt-2 text-sm text-muted">Məlumatları daxil edin, elanınızı minlərlə alıcı ilə paylaşın.</p>
+        </div>
+        <span className="hidden rounded-full border border-action/20 bg-action/10 px-3 py-1.5 text-xs font-semibold text-action sm:block">Yeni elan</span>
+      </div>
 
       <Steps current={step} size="small" items={STEP_LABELS.map((label) => ({ title: label }))} className="mb-10 hidden md:flex" />
       <p className="md:hidden text-sm text-muted mb-6">Addım {step + 1} / {STEP_LABELS.length}: {STEP_LABELS[step]}</p>
 
       {/* STEP 0: CATEGORY */}
       {step === 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
           {CATEGORIES.map((c) => (
             <button
               key={c.key}
               onClick={() => { setCategory(c.key); setSubcategory(undefined); }}
-              className={`market-surface p-6 text-left transition-all ${category === c.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
+              className={`group flex min-h-[92px] items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-200 ${category === c.key ? 'border-action bg-action/10 shadow-[0_8px_20px_rgb(var(--color-primary)/0.12)]' : 'market-surface hover:-translate-y-0.5 hover:border-action'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{c.label}</p>
+              <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-lg transition-transform duration-300 group-hover:scale-105 ${category === c.key ? 'bg-action text-white' : 'bg-offwhite text-muted dark:bg-background'}`}><CategoryIcon name={c.icon} /></span>
+              <span className="min-w-0 flex-1"><span className="block text-sm font-bold text-ink dark:text-white">{c.label}</span><span className="mt-1 block text-xs text-muted">{c.subcategories.length} alt kateqoriya</span></span>
+              <ArrowRightOutlined className={`text-xs transition-all ${category === c.key ? 'translate-x-0.5 text-action' : 'text-muted opacity-0 group-hover:translate-x-0.5 group-hover:opacity-100'}`} />
             </button>
           ))}
         </div>
@@ -179,14 +189,15 @@ export default function CreateListing() {
 
       {/* STEP 1: SUBCATEGORY */}
       {step === 1 && categoryConfig && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {categoryConfig.subcategories.map((s) => (
             <button
               key={s.key}
               onClick={() => setSubcategory(s.key)}
-              className={`market-surface p-6 text-left transition-all ${subcategory === s.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
+              className={`group flex min-h-[76px] items-center justify-between gap-4 rounded-2xl border p-4 text-left transition-all duration-200 ${subcategory === s.key ? 'border-action bg-action/10 shadow-[0_8px_20px_rgb(var(--color-primary)/0.12)]' : 'market-surface hover:-translate-y-0.5 hover:border-action'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{s.label}</p>
+              <span><span className="block text-sm font-bold text-ink dark:text-white">{s.label}</span><span className="mt-1 block text-xs text-muted">Bu bölmədə elan yaradın</span></span>
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs transition-all ${subcategory === s.key ? 'border-action bg-action text-white' : 'border-line text-muted group-hover:border-action group-hover:text-action dark:border-line-dark'}`}><ArrowRightOutlined /></span>
             </button>
           ))}
         </div>
@@ -201,7 +212,7 @@ export default function CreateListing() {
               <Button type="primary" onClick={() => setAiModalOpen(true)}>✨ AI ilə doldur</Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+          <div className="listing-fields grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <FieldLabel required>Başlıq</FieldLabel>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Elanın başlığı" />
@@ -368,4 +379,12 @@ function FieldLabel({ children, required }: { children: React.ReactNode; require
       {children}{required && <span className="text-urgent ml-0.5">*</span>}
     </label>
   );
+}
+
+function CategoryIcon({ name }: { name: string }) {
+  const icons: Record<string, React.ReactNode> = {
+    car: <CarOutlined />, home: <HomeOutlined />, briefcase: <TeamOutlined />,
+    tool: <SettingOutlined />, laptop: <LaptopOutlined />, gift: <GiftOutlined />,
+  };
+  return icons[name] ?? <GiftOutlined />;
 }

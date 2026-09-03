@@ -42,9 +42,7 @@ export default function Header() {
       {/* Desktop / tablet header */}
       <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark shadow-[0_2px_12px_rgba(17,24,39,0.04)]">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
-          <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
-            <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
-          </Link>
+          <BrandLogo size="desktop" />
 
           <nav className="flex items-center gap-6 shrink-0">
             <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
@@ -97,9 +95,7 @@ export default function Header() {
       {/* Mobile top bar (logo + theme) */}
       <header className="md:hidden sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark">
         <div className="px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="font-display text-lg font-bold tracking-tightest text-ink dark:text-white">
-            <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
-          </Link>
+          <BrandLogo size="mobile" />
           <div className="flex items-center gap-4">
             {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
             <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
@@ -119,6 +115,17 @@ export default function Header() {
         </div>
       </nav>
     </>
+  );
+}
+
+function BrandLogo({ size }: { size: 'desktop' | 'mobile' }) {
+  return (
+    <Link to="/" className={`brand-logo group/logo font-display font-bold tracking-tightest text-ink dark:text-white ${size === 'desktop' ? 'text-2xl shrink-0' : 'text-xl'}`}>
+      <span className="brand-logo-name" aria-label="TAPAR">
+        {'TAPAR'.split('').map((letter, index) => <span key={`${letter}-${index}`} className="brand-letter">{letter}</span>)}
+      </span>
+      <span className="brand-logo-domain">.AZ</span>
+    </Link>
   );
 }
 

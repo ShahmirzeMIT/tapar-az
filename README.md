@@ -66,7 +66,7 @@ src/
   context/        AuthContext, ThemeContext
   firebase/       Client SDK initialization only
   hooks/          useListings, useFavorites, useRating, usePresence,
-                  useAIListing, useStorageUpload, useMyListings
+                  useAIListing, useStorageUpload
   pages/          Route-level pages (Home, Listings, ListingDetail,
                   CreateListing, AIListing, Profile, auth/*, ...)
   types/          Shared TypeScript types

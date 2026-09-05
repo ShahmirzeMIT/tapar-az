@@ -1,5 +1,4 @@
 export type CategoryKey =
-  | 'avtomobiller'
   | 'daşınmaz_əmlak'
   | 'iş_elanları'
   | 'xidmətlər'
@@ -42,10 +41,44 @@ export interface Listing {
   ratingCount: number;
   createdAt: number; // epoch ms
   updatedAt: number;
-  aiAssisted?: boolean;
   submittedAt?: number;
   reviewedAt?: number;
   rejectionReason?: string;
+}
+
+export type ExternalCategory = 'real_estate' | 'automobile' | 'electronics' | 'services' | 'jobs' | string;
+
+/** Unified shape used by TAPAR's cross-site listing aggregator. */
+export interface ExternalListing {
+  id: string;
+  source: string;
+  source_id: string;
+  title: string;
+  description: string | null;
+  category: ExternalCategory;
+  subcategory: string | null;
+  listing_type: 'sell' | 'rent' | 'exchange' | string;
+  price: number | null;
+  currency: string;
+  city: string | null;
+  district: string | null;
+  settlement: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  rooms: number | null;
+  area: number | null;
+  floor: number | null;
+  total_floors: number | null;
+  brand: string | null;
+  model: string | null;
+  year: number | null;
+  mileage: number | null;
+  images: string[];
+  seller_name: string | null;
+  seller_type: string | null;
+  original_url: string;
+  published_at: string | null;
 }
 
 export interface UserProfile {
@@ -71,20 +104,6 @@ export interface Favorite {
   userId: string;
   listingId: string;
   createdAt: number;
-}
-
-export interface ListingMessage {
-  id: string;
-  listingId: string;
-  listingTitle: string;
-  senderId: string;
-  senderName: string;
-  receiverId: string;
-  participants: string[];
-  text: string;
-  createdAt: unknown;
-  clientCreatedAt?: number;
-  readBy?: string[];
 }
 
 export type FieldType =
@@ -136,20 +155,4 @@ export interface CategoryConfig {
   label: string;
   icon: string;
   subcategories: SubcategoryConfig[];
-}
-
-export interface AIListingDraft {
-  title: string;
-  description: string;
-  category: CategoryKey | null;
-  subcategory: string | null;
-  price: number | null;
-  city: string | null;
-  phone: string | null;
-  address: string | null;
-  attributes: ListingAttributes;
-  keywords: string[];
-  tags: string[];
-  highlights: string[];
-  warnings: string[]; // e.g. "AI could not determine mileage — please fill manually"
 }

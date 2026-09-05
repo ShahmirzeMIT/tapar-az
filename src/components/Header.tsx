@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
-  HomeOutlined, BulbOutlined,
+  SearchOutlined, HeartOutlined, UserOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
-import { useMessages } from '@/hooks/useMessages';
 import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +17,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Header() {
   const { user, profile, logout } = useAuth();
-  const { unreadCount } = useMessages(user?.uid);
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -30,9 +28,7 @@ export default function Header() {
 
   const userMenuItems = [
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
-    { key: 'listings', label: <Link to="/profil/elanlarim">Mənim elanlarım</Link> },
     { key: 'favorites', label: <Link to="/favoriler">Sevimlilər</Link> },
-    { key: 'messages', label: <Link to="/mesajlar">Mesajlar</Link> },
     { type: 'divider' as const },
     { key: 'logout', label: 'Çıxış', onClick: () => logout() },
   ];
@@ -47,12 +43,8 @@ export default function Header() {
           <nav className="flex items-center gap-6 shrink-0">
             <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
             <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
-            <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
             <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
             <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
-            <NavLink to="/ai-elan" className={navLinkClass}>
-              <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
-            </NavLink>
           </nav>
 
           <div className="flex-1 max-w-md">
@@ -66,21 +58,8 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            {user && (
-              <Link to="/mesajlar" aria-label="Mesajlar" title="Mesajlar" className="relative text-muted hover:text-action text-lg transition-colors">
-                <MessageOutlined />
-                {unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}
-              </Link>
-            )}
-            <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
+            <Select aria-label="Language" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="!h-9 w-[68px]" />
             <ThemeToggle />
-            <Link
-              to="/elan-yerlesdir"
-              className="market-action px-4 py-2 shadow-[0_5px_12px_rgb(var(--color-primary)/0.2)]"
-            >
-              <PlusOutlined /> {t('placeAd')}
-            </Link>
-
             {user ? (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
                 <Avatar src={profile?.photoURL} icon={<UserOutlined />} className="cursor-pointer bg-graphite" />
@@ -97,8 +76,7 @@ export default function Header() {
         <div className="px-4 h-14 flex items-center justify-between">
           <BrandLogo size="mobile" />
           <div className="flex items-center gap-4">
-            {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
-            <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
+            <Select aria-label="Language" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="!h-9 w-[68px]" />
             <ThemeToggle />
           </div>
         </div>
@@ -109,7 +87,6 @@ export default function Header() {
         <div className="grid grid-cols-5 h-16">
           <MobileNavItem to="/" icon={<HomeOutlined />} label={t('home')} end />
           <MobileNavItem to="/elanlar" icon={<SearchOutlined />} label={t('search')} />
-          <MobileNavItem to="/elan-yerlesdir" icon={<PlusOutlined />} label={t('placeAd')} prominent />
           <MobileNavItem to="/favoriler" icon={<HeartOutlined />} label={t('favorites')} />
           <MobileNavItem to={user ? '/profil' : '/login'} icon={<UserOutlined />} label={t('login')} />
         </div>

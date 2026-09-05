@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 export default function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="hidden md:block border-t border-line dark:border-line-dark mt-20 bg-footer">
+    <footer className="relative z-40 hidden border-t border-line bg-footer dark:border-line-dark md:block">
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-4 gap-10">
         <div>
           <div className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white mb-3">
@@ -15,12 +15,11 @@ export default function Footer() {
           </p>
         </div>
         <FooterCol title={t('categories')} links={[
-          [t('cars'), '/avtomobiller'], [t('category.daşınmaz_əmlak'), '/kateqoriyalar'],
+          [t('category.daşınmaz_əmlak'), '/kateqoriyalar'],
           [t('category.iş_elanları'), '/kateqoriyalar'], [t('category.xidmətlər'), '/kateqoriyalar'],
         ]} />
         <FooterCol title="Platform" links={[
-          [t('placeAd'), '/elan-yerlesdir'], [t('aiListing'), '/ai-elan'],
-          [t('favorites'), '/favoriler'], [t('messages'), '/mesajlar'],
+          [t('favorites'), '/favoriler'],
         ]} />
         <FooterCol title="Account" links={[[t('login'), '/login'], ['Register', '/register']]} />
       </div>

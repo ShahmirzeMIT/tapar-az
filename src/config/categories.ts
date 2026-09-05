@@ -8,46 +8,6 @@ import type { CategoryConfig, CategoryKey, FieldSchema } from '@/types';
 export const UNIVERSAL_FIELD_NAMES = ['title', 'price', 'city', 'address', 'description'] as const;
 
 // ---------------------------------------------------------------------------
-// AVTOMOBİLLƏR (Cars)
-// ---------------------------------------------------------------------------
-const carFields: FieldSchema[] = [
-  { name: 'brand', label: 'Marka', type: 'select', required: true, colSpan: 1, options: [
-    { label: 'Toyota', value: 'toyota' }, { label: 'Mercedes-Benz', value: 'mercedes' },
-    { label: 'BMW', value: 'bmw' }, { label: 'Hyundai', value: 'hyundai' },
-    { label: 'Kia', value: 'kia' }, { label: 'Lada (VAZ)', value: 'lada' },
-    { label: 'Nissan', value: 'nissan' }, { label: 'Chevrolet', value: 'chevrolet' },
-    { label: 'Digər', value: 'other' },
-  ]},
-  { name: 'model', label: 'Model', type: 'text', required: true, colSpan: 1, placeholder: 'Məs: Camry' },
-  { name: 'year', label: 'Buraxılış ili', type: 'number', required: true, colSpan: 1, min: 1970, max: 2026 },
-  { name: 'mileage', label: 'Yürüş (km)', type: 'number', required: true, colSpan: 1, min: 0 },
-  { name: 'engineVolume', label: 'Mühərrik həcmi (L)', type: 'number', colSpan: 1 },
-  { name: 'fuel', label: 'Yanacaq növü', type: 'select', required: true, colSpan: 1, options: [
-    { label: 'Benzin', value: 'petrol' }, { label: 'Dizel', value: 'diesel' },
-    { label: 'Qaz', value: 'gas' }, { label: 'Hibrid', value: 'hybrid' },
-    { label: 'Elektrik', value: 'electric' },
-  ]},
-  { name: 'batteryCapacity', label: 'Batareya tutumu (kWh)', type: 'number', colSpan: 1,
-    showIf: { field: 'fuel', equals: 'electric' } },
-  { name: 'chargingRange', label: 'Enerji ehtiyatı (km)', type: 'number', colSpan: 1,
-    showIf: { field: 'fuel', equals: 'electric' } },
-  { name: 'transmission', label: 'Sürətlər qutusu', type: 'select', required: true, colSpan: 1, options: [
-    { label: 'Mexaniki', value: 'manual' }, { label: 'Avtomat', value: 'automatic' },
-    { label: 'Robot', value: 'robot' }, { label: 'Variator', value: 'cvt' },
-  ]},
-  { name: 'bodyType', label: 'Ban növü', type: 'select', colSpan: 1, options: [
-    { label: 'Sedan', value: 'sedan' }, { label: 'offRoader / SUV', value: 'suv' },
-    { label: 'Hetçbek', value: 'hatchback' }, { label: 'Universal', value: 'wagon' },
-    { label: 'Kupe', value: 'coupe' }, { label: 'Miniven', value: 'minivan' },
-  ]},
-  { name: 'color', label: 'Rəng', type: 'text', colSpan: 1 },
-  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 2, options: [
-    { label: 'Vurulmayıb', value: 'no_accident' }, { label: 'Vuruğu var', value: 'has_accident' },
-    { label: 'Ehtiyat hissələri üçün', value: 'for_parts' },
-  ]},
-];
-
-// ---------------------------------------------------------------------------
 // DAŞINMAZ ƏMLAK (Real Estate)
 // ---------------------------------------------------------------------------
 const realEstateFields: FieldSchema[] = [
@@ -181,10 +141,6 @@ const homeGardenFields: FieldSchema[] = [
 ];
 
 export const CATEGORIES: CategoryConfig[] = [
-  {
-    key: 'avtomobiller', label: 'Avtomobillər', icon: 'car',
-    subcategories: [{ key: 'minik_avtomobilleri', label: 'Minik avtomobilləri', fields: carFields }],
-  },
   {
     key: 'daşınmaz_əmlak', label: 'Daşınmaz Əmlak', icon: 'home',
     subcategories: [{ key: 'menzil_ev', label: 'Mənzil / Ev / Torpaq', fields: realEstateFields }],

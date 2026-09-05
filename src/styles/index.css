@@ -13,9 +13,9 @@
   --color-text-muted: 156 163 175;
   --color-border: 229 231 235;
   --color-border-light: 243 244 246;
-  --color-primary: 255 90 0;
-  --color-primary-hover: 230 79 0;
-  --color-primary-light: 255 241 232;
+  --color-primary: 107 168 216;
+  --color-primary-hover: 83 145 199;
+  --color-primary-light: 235 245 252;
   --color-success: 22 163 74;
   --color-success-hover: 21 128 61;
   --color-success-light: 236 253 243;
@@ -26,23 +26,23 @@
   --color-info-light: 239 246 255;
   --color-premium: 245 158 11;
   --color-premium-light: 255 251 235;
-  --color-footer: 255 248 243;
+  --color-footer: 244 249 253;
 }
 
 .dark {
-  --color-background: 15 15 15;
-  --color-overlay: 15 15 15;
-  --color-background-secondary: 23 23 23;
-  --color-card: 31 31 31;
-  --color-input: 38 38 38;
+  --color-background: 8 12 16;
+  --color-overlay: 8 12 16;
+  --color-background-secondary: 13 19 25;
+  --color-card: 17 24 31;
+  --color-input: 21 30 39;
   --color-text-primary: 255 255 255;
-  --color-text-secondary: 163 163 163;
-  --color-text-muted: 115 115 115;
-  --color-border: 51 51 51;
-  --color-border-light: 51 51 51;
-  --color-primary: 255 90 0;
-  --color-primary-hover: 230 79 0;
-  --color-primary-light: 68 35 20;
+  --color-text-secondary: 180 190 199;
+  --color-text-muted: 126 140 151;
+  --color-border: 39 53 65;
+  --color-border-light: 39 53 65;
+  --color-primary: 107 168 216;
+  --color-primary-hover: 83 145 199;
+  --color-primary-light: 22 45 62;
   --color-success: 34 197 94;
   --color-success-hover: 21 128 61;
   --color-success-light: 20 50 30;
@@ -50,10 +50,10 @@
   --color-danger-hover: 220 38 38;
   --color-danger-light: 69 25 25;
   --color-info: 59 130 246;
-  --color-info-light: 23 37 84;
-  --color-premium: 245 158 11;
-  --color-premium-light: 69 45 12;
-  --color-footer: 23 23 23;
+  --color-info-light: 18 40 61;
+  --color-premium: 151 199 232;
+  --color-premium-light: 24 48 65;
+  --color-footer: 10 15 20;
 }
 
 html, body {
@@ -145,7 +145,7 @@ body {
   }
 
   .brand-logo {
-    @apply relative inline-block overflow-hidden py-1 transition-all duration-500 ease-editorial;
+    @apply relative inline-block overflow-visible py-1 transition-all duration-500 ease-editorial;
     perspective: 500px;
   }
 
@@ -155,7 +155,6 @@ body {
   }
 
   .brand-logo:hover {
-    @apply -translate-y-0.5 scale-110;
     text-shadow: 0 8px 24px rgb(var(--color-primary) / 0.2);
   }
 
@@ -177,26 +176,55 @@ body {
   }
 
   .brand-letter {
-    @apply inline-block transition-all duration-500 ease-editorial;
-    transform-origin: 50% 100%;
+    @apply relative inline-block transition-all duration-300 ease-editorial;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    cursor: none;
   }
 
-  .brand-logo:hover .brand-letter:nth-child(1) { transform: translateY(-2px) rotate(-5deg); transition-delay: 20ms; }
-  .brand-logo:hover .brand-letter:nth-child(2) { transform: translateY(2px) rotate(4deg); transition-delay: 55ms; }
-  .brand-logo:hover .brand-letter:nth-child(3) { transform: translateY(-3px) rotate(-3deg); transition-delay: 90ms; }
-  .brand-logo:hover .brand-letter:nth-child(4) { transform: translateY(2px) rotate(4deg); transition-delay: 125ms; }
-  .brand-logo:hover .brand-letter:nth-child(5) { transform: translateY(-2px) rotate(-4deg); transition-delay: 160ms; }
+  /* Magnifier-like interaction: only the letter under the cursor enlarges. */
+  .brand-letter:hover {
+    z-index: 1;
+    transform: scale(1.35);
+    color: rgb(var(--color-primary));
+    text-shadow: 0 5px 14px rgb(var(--color-primary) / 0.3);
+  }
+
+  .brand-letter:hover::after,
+  .brand-logo-domain:hover::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.85em;
+    height: 1.85em;
+    border: 1.5px solid rgb(var(--color-primary) / 0.85);
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: 0 0 0 3px rgb(var(--color-primary) / 0.08), 0 4px 12px rgb(var(--color-primary) / 0.18);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: lens-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 
   .brand-logo-domain {
-    @apply inline-block text-action transition-all duration-500 ease-editorial;
+    @apply relative inline-block text-action transition-all duration-300 ease-editorial;
     transform-origin: 80% 50%;
+    cursor: none;
+    opacity: 1;
   }
 
-  .brand-logo:hover .brand-logo-domain {
-    @apply scale-110;
-    filter: drop-shadow(0 0 8px rgb(var(--color-primary) / 0.65));
-    animation: domain-pulse 900ms 180ms ease-out both;
+  .brand-logo-domain:hover {
+    transform: scale(1.2);
+    text-shadow: 0 4px 12px rgb(var(--color-primary) / 0.35);
   }
+
+  .brand-logo:has(.brand-letter:hover),
+  .brand-logo:has(.brand-logo-domain:hover) {
+    cursor: none;
+  }
+
+  .brand-logo-domain { filter: drop-shadow(0 0 8px rgb(var(--color-primary) / 0.2)); }
 }
 
 @keyframes logo-line {
@@ -209,6 +237,11 @@ body {
   0% { transform: scale(1); }
   45% { transform: scale(1.18) rotate(-3deg); }
   100% { transform: scale(1.1) rotate(0); }
+}
+
+@keyframes lens-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.72); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -97,7 +97,7 @@ export default function MediaUploader({ listingId, media, onChange }: MediaUploa
           {Object.entries(progress).map(([name, pct]) => (
             <div key={name}>
               <p className="text-xs text-muted mb-0.5 truncate">{name}</p>
-              <Progress percent={pct} size="small" strokeColor="#FF5A00" />
+              <Progress percent={pct} size="small" strokeColor="#6BA8D8" />
             </div>
           ))}
         </div>

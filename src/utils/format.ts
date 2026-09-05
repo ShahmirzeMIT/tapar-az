@@ -40,7 +40,7 @@ export function formatDateTime(value: unknown): string {
   }).format(new Date(epochMs));
 }
 
-/** Stable full date for listings and messages; never changes to relative text. */
+/** Stable full date for listings; never changes to relative text. */
 export function formatFullDateTime(value: unknown): string {
   const epochMs = toEpochMs(value);
   if (!epochMs) return 'Tarix qeyd edilməyib';

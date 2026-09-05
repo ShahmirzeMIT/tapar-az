@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return <div className="min-h-screen bg-background text-ink flex flex-col">
     <header className="border-b border-line bg-paper shadow-card">
       <div className="max-w-[1500px] mx-auto px-5 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <Link to="/admin" className="flex items-center gap-3 font-semibold tracking-tight"><span className="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center"><SafetyOutlined /></span><span>TAPAR <span className="text-orange-400">ADMIN</span></span></Link>
+        <Link to="/admin" className="flex items-center gap-3 font-semibold tracking-tight"><span className="w-9 h-9 rounded-xl bg-action flex items-center justify-center"><SafetyOutlined /></span><span>TAPAR <span className="text-action">ADMIN</span></span></Link>
         <div className="flex items-center gap-3 text-sm text-muted"><span className="hidden sm:block">{user?.email ?? 'Demo panel'}</span>{user && <button onClick={() => void logout()} className="hover:text-action">Çıxış</button>}</div>
       </div>
     </header>

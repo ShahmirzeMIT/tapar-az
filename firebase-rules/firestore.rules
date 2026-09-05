@@ -75,6 +75,12 @@ service cloud.firestore {
       allow delete: if isOwner(resource.data.ownerId);
     }
 
+    // EXTERNAL LISTINGS — normalized read-only records imported by the scraper.
+    match /external_listings/{listingId} {
+      allow read: if true;
+      allow write: if hasAdminAccess();
+    }
+
     // ---------------------------------------------------------------------
     // RATINGS — one rating doc per (user, listing), id = `${listingId}_${userId}`.
     // A user may only create/update their own rating, once per listing.
@@ -102,29 +108,6 @@ service cloud.firestore {
         && favId == request.auth.uid + '_' + request.resource.data.listingId;
       allow delete: if isOwner(resource.data.userId);
       allow update: if false;
-    }
-
-    // ---------------------------------------------------------------------
-    // MESSAGES — conversations are scoped to listing participants. The
-    // client queries by participants only, so no composite index is needed.
-    // ---------------------------------------------------------------------
-    match /tapar_message/{messageId} {
-      allow read: if isSignedIn()
-        && request.auth.uid in resource.data.participants;
-      allow create: if isSignedIn()
-        && request.resource.data.senderId == request.auth.uid
-        && request.resource.data.receiverId is string
-        && request.resource.data.receiverId != request.auth.uid
-        && request.resource.data.participants is list
-        && request.auth.uid in request.resource.data.participants
-        && request.resource.data.receiverId in request.resource.data.participants
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 4000;
-      allow update: if isSignedIn()
-        && request.auth.uid in resource.data.participants
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readBy']);
-      allow delete: if false;
     }
 
     match /tapar_admins/{adminId} {

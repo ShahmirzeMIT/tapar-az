@@ -1,56 +1,35 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { ConfigProvider, theme as antdTheme } from 'antd';
-
-type ThemeMode = 'light' | 'dark';
-const STORAGE_KEY = 'tapar-az-theme';
+import { createContext, useContext, type ReactNode } from 'react';
+import { ConfigProvider } from 'antd';
 
 interface ThemeContextValue {
-  mode: ThemeMode;
+  mode: 'light';
   toggle: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
-function getInitialTheme(): ThemeMode {
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === 'light' || stored === 'dark') return stored;
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-}
+const ThemeContext = createContext<ThemeContextValue>({ mode: 'light', toggle: () => undefined });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<ThemeMode>(getInitialTheme);
-
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, mode);
-    const root = document.documentElement;
-    if (mode === 'dark') root.classList.add('dark');
-    else root.classList.remove('dark');
-  }, [mode]);
-
-  const toggle = () => setMode((m) => (m === 'light' ? 'dark' : 'light'));
-
   return (
-    <ThemeContext.Provider value={{ mode, toggle }}>
+    <ThemeContext.Provider value={{ mode: 'light', toggle: () => undefined }}>
       <ConfigProvider
         theme={{
-          algorithm: mode === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
           token: {
             colorPrimary: '#611F69',
             colorPrimaryHover: '#4F1956',
             colorPrimaryActive: '#3C1241',
-            colorSuccess: mode === 'dark' ? '#22C55E' : '#16A34A',
+            colorSuccess: '#16A34A',
             colorSuccessHover: '#15803D',
             colorError: '#EF4444',
             colorWarning: '#EF4444',
-            colorInfo: mode === 'dark' ? '#3B82F6' : '#2563EB',
+            colorInfo: '#2563EB',
             colorLink: '#611F69',
             colorLinkHover: '#4F1956',
-            colorText: mode === 'dark' ? '#FFFFFF' : '#111827',
-            colorTextSecondary: mode === 'dark' ? '#A3A3A3' : '#4B5563',
-            colorBgBase: mode === 'dark' ? '#0F0F0F' : '#FFFFFF',
-            colorBgContainer: mode === 'dark' ? '#1F1F1F' : '#FFFFFF',
-            colorFillSecondary: mode === 'dark' ? '#262626' : '#F9FAFB',
-            colorBorder: mode === 'dark' ? '#333333' : '#E5E7EB',
+            colorText: '#111827',
+            colorTextSecondary: '#4B5563',
+            colorBgBase: '#FFFFFF',
+            colorBgContainer: '#FFFFFF',
+            colorFillSecondary: '#F9FAFB',
+            colorBorder: '#E5E7EB',
             borderRadius: 8,
             fontFamily: '"Inter", system-ui, sans-serif',
           },
@@ -73,7 +52,5 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 }
 
 export function useTheme() {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
-  return ctx;
+  return useContext(ThemeContext);
 }

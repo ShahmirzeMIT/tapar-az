@@ -6,7 +6,6 @@ import {
   HomeOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
-import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from 'react-i18next';
 
@@ -59,7 +58,6 @@ export default function Header() {
 
           <div className="flex items-center gap-3 shrink-0">
             <Select aria-label="Language" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="!h-9 w-[68px]" />
-            <ThemeToggle />
             {user ? (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
                 <Avatar src={profile?.photoURL} icon={<UserOutlined />} className="cursor-pointer bg-graphite" />
@@ -77,7 +75,6 @@ export default function Header() {
           <BrandLogo size="mobile" />
           <div className="flex items-center gap-4">
             <Select aria-label="Language" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="!h-9 w-[68px]" />
-            <ThemeToggle />
           </div>
         </div>
       </header>

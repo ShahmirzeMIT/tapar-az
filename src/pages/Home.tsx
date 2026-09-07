@@ -42,9 +42,9 @@ export default function Home() {
   const goSearch = () => navigate(`/elanlar${search.trim() ? `?q=${encodeURIComponent(search.trim())}` : ''}`);
 
   return <div className="bg-paper dark:bg-background">
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#611F69] via-[#7b3285] to-[#b26abb] text-white dark:from-[#180d1a] dark:via-[#27132b] dark:to-[#3c1c42] dark:text-white">
-      <div className="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-white/35 blur-3xl dark:bg-[#611F69]/20" />
-      <div className="pointer-events-none absolute -bottom-40 left-1/4 h-80 w-80 rounded-full bg-[#3c1241]/25 blur-3xl dark:bg-black/35" />
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#611F69] via-[#7b3285] to-[#b26abb] text-white dark:from-[#070709] dark:via-[#1d120d] dark:to-[#3a2116] dark:text-white">
+      <div className="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-white/35 blur-3xl dark:bg-[#F97316]/10" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/4 h-80 w-80 rounded-full bg-[#3c1241]/20 blur-3xl dark:bg-[#C2410C]/20" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:grid-cols-[1.05fr_.95fr] md:py-24">
         <div className="w-full">
           <div className="mb-8 text-left">
@@ -52,7 +52,7 @@ export default function Home() {
           </div>
           <div className="flex w-full max-w-5xl gap-2 rounded-2xl border border-white/70 bg-white/95 p-2 shadow-[0_22px_60px_rgb(23_59_85/0.2)] dark:border-white/10 dark:bg-[#111820]/95 dark:shadow-[0_22px_60px_rgb(0_0_0/0.45)]">
             <Input bordered={false} size="large" prefix={<SearchOutlined className="mr-2 text-[#8d5b94] dark:text-[#c185c9]" />} placeholder="Elan, marka və ya model axtarın..." value={search} onChange={(e) => setSearch(e.target.value)} onPressEnter={goSearch} className="min-w-0 flex-1 !bg-transparent !text-[#3c1241] dark:!text-white" />
-            <button onClick={goSearch} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3c1241] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#3c1241]/20 transition hover:bg-[#2b0d2f] dark:bg-[#611F69] dark:text-white dark:hover:bg-[#7b3285]">Axtar <ArrowRightOutlined /></button>
+            <button onClick={goSearch} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3c1241] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#3c1241]/20 transition hover:bg-[#2b0d2f] dark:bg-[#F97316] dark:text-[#070709] dark:hover:bg-[#FB923C]">Axtar <ArrowRightOutlined /></button>
           </div>
           <div className="mt-5 flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 rounded-xl border border-white/40 bg-white/20 px-4 py-3 text-xs text-white/85 backdrop-blur-sm dark:border-white/10 dark:bg-white/5 dark:text-white/65">
             <div className="flex flex-wrap items-center gap-2"><span className="mr-1 font-semibold uppercase tracking-[.12em]">Sürətli axtarış</span>{categories.slice(0, 4).map((cat) => <button key={cat.key} onClick={() => navigate(`/elanlar?category=${cat.key}`)} className="rounded-full border border-white/45 bg-white/35 px-3 py-1.5 font-medium transition hover:border-white hover:bg-white/60 hover:text-[#3c1241] dark:border-white/15 dark:bg-white/10 dark:hover:bg-white/20 dark:hover:text-white">{cat.label}</button>)}</div>
@@ -61,11 +61,11 @@ export default function Home() {
         </div>
         <div className="relative hidden md:block">
           <div className="absolute -right-4 -top-5 h-24 w-24 rounded-full border border-white/40 bg-white/20 blur-[1px]" />
-          <div className="relative overflow-hidden rounded-[26px] border border-white/60 bg-white/55 p-3 shadow-[0_26px_80px_rgb(23_59_85/0.22)] backdrop-blur-xl dark:border-white/10 dark:bg-[#111820]/80 dark:shadow-[0_26px_80px_rgb(0_0_0/0.45)]">
+          <div className="relative overflow-hidden rounded-[26px] border border-white/60 bg-white/55 p-3 shadow-[0_26px_80px_rgb(23_59_85/0.22)] backdrop-blur-xl dark:border-white/10 dark:bg-[#141418]/90 dark:shadow-[0_26px_80px_rgb(0_0_0/0.45)]">
             <div className="relative aspect-[1.5] overflow-hidden rounded-[18px] bg-[#f3e8f5]"><img src={DEMO_EXTERNAL_LISTINGS[0].images[0]} alt="Seçilmiş elan" className="h-full w-full object-cover" /><span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold text-[#3c1241] shadow-sm">{DEMO_EXTERNAL_LISTINGS[0].source}</span><span className="absolute bottom-3 left-3 rounded-full bg-[#3c1241]/85 px-3 py-1.5 text-[11px] font-semibold text-white">Seçilmiş elan</span></div>
             <div className="px-2 pb-2 pt-4"><p className="truncate text-sm font-bold text-[#3c1241] dark:text-white">{DEMO_EXTERNAL_LISTINGS[0].title}</p><div className="mt-3 flex items-end justify-between"><span className="text-xs text-[#3c1241]/60 dark:text-white/55">{DEMO_EXTERNAL_LISTINGS[0].city} · {DEMO_EXTERNAL_LISTINGS[0].area} m²</span><span className="text-lg font-extrabold text-[#16a34a] dark:text-[#4ade80]">280 000 AZN</span></div></div>
           </div>
-          <div className="absolute -bottom-7 -left-8 grid grid-cols-2 gap-2 rounded-2xl border border-white/60 bg-white/75 p-2 shadow-xl backdrop-blur dark:border-white/10 dark:bg-[#111820]/90"><div className="rounded-xl bg-[#f7edf9] px-3 py-2.5 dark:bg-[#36163b]"><UsergroupAddOutlined className="text-[#611F69]" /><p className="mt-1 text-lg font-bold text-[#3c1241] dark:text-white">24K+</p><p className="text-[10px] text-[#3c1241]/60 dark:text-white/55">aktiv istifadəçi</p></div><div className="rounded-xl bg-[#f7edf9] px-3 py-2.5 dark:bg-[#36163b]"><DatabaseOutlined className="text-[#611F69]" /><p className="mt-1 text-lg font-bold text-[#3c1241] dark:text-white">4</p><p className="text-[10px] text-[#3c1241]/60 dark:text-white/55">elan mənbəyi</p></div></div>
+          <div className="absolute -bottom-7 -left-8 grid grid-cols-2 gap-2 rounded-2xl border border-white/60 bg-white/75 p-2 shadow-xl backdrop-blur dark:border-white/10 dark:bg-[#141418]/95"><div className="rounded-xl bg-[#f7edf9] px-3 py-2.5 dark:bg-[#202027]"><UsergroupAddOutlined className="text-[#611F69] dark:text-[#FB923C]" /><p className="mt-1 text-lg font-bold text-[#3c1241] dark:text-white">24K+</p><p className="text-[10px] text-[#3c1241]/60 dark:text-white/55">aktiv istifadəçi</p></div><div className="rounded-xl bg-[#f7edf9] px-3 py-2.5 dark:bg-[#202027]"><DatabaseOutlined className="text-[#611F69] dark:text-[#FB923C]" /><p className="mt-1 text-lg font-bold text-[#3c1241] dark:text-white">4</p><p className="text-[10px] text-[#3c1241]/60 dark:text-white/55">elan mənbəyi</p></div></div>
         </div>
       </div>
     </section>

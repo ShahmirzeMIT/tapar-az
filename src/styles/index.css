@@ -29,33 +29,6 @@
   --color-footer: 250 246 251;
 }
 
-.dark {
-  --color-background: 8 12 16;
-  --color-overlay: 8 12 16;
-  --color-background-secondary: 13 19 25;
-  --color-card: 17 24 31;
-  --color-input: 21 30 39;
-  --color-text-primary: 255 255 255;
-  --color-text-secondary: 180 190 199;
-  --color-text-muted: 126 140 151;
-  --color-border: 39 53 65;
-  --color-border-light: 39 53 65;
-  --color-primary: 97 31 105;
-  --color-primary-hover: 79 25 86;
-  --color-primary-light: 54 22 59;
-  --color-success: 34 197 94;
-  --color-success-hover: 21 128 61;
-  --color-success-light: 20 50 30;
-  --color-danger: 239 68 68;
-  --color-danger-hover: 220 38 38;
-  --color-danger-light: 69 25 25;
-  --color-info: 59 130 246;
-  --color-info-light: 18 40 61;
-  --color-premium: 193 133 201;
-  --color-premium-light: 56 28 61;
-  --color-footer: 18 11 19;
-}
-
 html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

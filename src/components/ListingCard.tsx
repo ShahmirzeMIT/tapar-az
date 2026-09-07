@@ -5,6 +5,7 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
 import { formatPrice } from '@/utils/format';
 import { externalListingLabel } from '@/hooks/useExternalListings';
+import { sourceLogo } from '@/utils/sourceLogos';
 
 const sourceStyles: Record<string, string> = {
   'bina.az': 'bg-[#e9f7ef] text-[#138a4b] dark:bg-[#123c28] dark:text-[#72dda2]',
@@ -35,7 +36,7 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
       <div className="relative aspect-[1.18] overflow-hidden bg-offwhite dark:bg-background">
         {coverImage ? <img src={coverImage} alt={listing.title} loading="lazy" className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
-        <div className={`absolute left-3 top-3 rounded-full px-3 py-1.5 text-[11px] font-extrabold tracking-tight shadow-sm ${sourceStyles[source] ?? 'bg-ink text-white'}`}>{source}</div>
+        <div className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-extrabold tracking-tight shadow-sm ${sourceStyles[source] ?? 'bg-ink text-white'}`}><img src={sourceLogo(source)} alt="" className="h-4 w-4 rounded-full bg-white object-contain" />{source}</div>
         <button onClick={handleFavorite} aria-label="Sevimlilərə əlavə et" className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm backdrop-blur transition hover:scale-110 hover:text-action dark:bg-graphite/90 dark:text-white">
           {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined />}
         </button>

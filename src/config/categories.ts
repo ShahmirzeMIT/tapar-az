@@ -140,9 +140,33 @@ const homeGardenFields: FieldSchema[] = [
   { name: 'material', label: 'Material', type: 'text', colSpan: 1 },
 ];
 
+const marketplaceFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Məhsul və ya xidmət növü', type: 'text', colSpan: 1 },
+  { name: 'brand', label: 'Marka', type: 'text', colSpan: 1 },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [
+    { label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' },
+  ]},
+];
+
 export const CATEGORIES: CategoryConfig[] = [
   {
-    key: 'daşınmaz_əmlak', label: 'Daşınmaz Əmlak', icon: 'home',
+    key: 'ev_bağ', label: 'Ev və bağ üçün', icon: 'home', image: 'home-garden',
+    subcategories: [{ key: 'ev_bag_esyalari', label: 'Mebel, dekor və bağ məhsulları', fields: homeGardenFields }],
+  },
+  {
+    key: 'elektronika', label: 'Elektronika', icon: 'laptop', image: 'electronics',
+    subcategories: [{ key: 'elektronika_esyalar', label: 'Telefon, kompüter və elektronika', fields: electronicsFields }],
+  },
+  {
+    key: 'nəqliyyat', label: 'Nəqliyyat', icon: 'car', image: 'transport',
+    subcategories: [{ key: 'neqliyyat', label: 'Avtomobil, motosiklet və nəqliyyat', fields: marketplaceFields }],
+  },
+  {
+    key: 'ehtiyat_hissələri', label: 'Ehtiyat hissələri və aksesuarlar', icon: 'tool', image: 'spare-parts',
+    subcategories: [{ key: 'ehtiyat_hisseleri', label: 'Avtomobil hissələri və aksesuarlar', fields: marketplaceFields }],
+  },
+  {
+    key: 'daşınmaz_əmlak', label: 'Daşınmaz Əmlak', icon: 'home', image: 'real-estate',
     subcategories: [{ key: 'menzil_ev', label: 'Mənzil / Ev / Torpaq', fields: realEstateFields }],
   },
   {
@@ -150,16 +174,32 @@ export const CATEGORIES: CategoryConfig[] = [
     subcategories: [{ key: 'vakansiyalar', label: 'Vakansiyalar', fields: vacancyFields }],
   },
   {
-    key: 'xidmətlər', label: 'Xidmətlər', icon: 'tool',
+    key: 'xidmətlər', label: 'Xidmətlər', icon: 'tool', image: 'services-business',
     subcategories: [{ key: 'servis_xidmetleri', label: 'Servis Xidmətləri', fields: serviceFields }],
   },
   {
-    key: 'elektronika', label: 'Elektronika', icon: 'laptop',
-    subcategories: [{ key: 'elektronika_esyalar', label: 'Elektronika Əşyaları', fields: electronicsFields }],
+    key: 'şəxsi_əşyalar', label: 'Şəxsi əşyalar', icon: 'gift', image: 'personal-items',
+    subcategories: [{ key: 'sexsi_esyalar', label: 'Geyim, ayaqqabı və aksesuarlar', fields: marketplaceFields }],
   },
   {
-    key: 'ev_bağ', label: 'Ev və Bağ', icon: 'gift',
-    subcategories: [{ key: 'ev_esyalari', label: 'Ev Əşyaları', fields: homeGardenFields }],
+    key: 'hobbi_asudə', label: 'Hobbi və asudə', icon: 'gift', image: 'hobby-leisure',
+    subcategories: [{ key: 'hobbi_asude', label: 'İdman, musiqi və istirahət', fields: marketplaceFields }],
+  },
+  {
+    key: 'məişət_texnikası', label: 'Məişət texnikası', icon: 'gift', image: 'home-appliances',
+    subcategories: [{ key: 'meiset_texnikasi', label: 'Ev üçün texnika və avadanlıq', fields: marketplaceFields }],
+  },
+  {
+    key: 'telefonlar', label: 'Telefonlar', icon: 'laptop', image: 'phones',
+    subcategories: [{ key: 'telefon_esyalari', label: 'Smartfon və telefon aksesuarları', fields: marketplaceFields }],
+  },
+  {
+    key: 'uşaq_aləmi', label: 'Uşaq aləmi', icon: 'gift', image: 'kids',
+    subcategories: [{ key: 'usaq_esyalari', label: 'Uşaq geyimi, arabalar və oyuncaqlar', fields: marketplaceFields }],
+  },
+  {
+    key: 'heyvanlar', label: 'Heyvanlar', icon: 'gift', image: 'animals',
+    subcategories: [{ key: 'heyvanlar', label: 'Ev heyvanları və heyvan məhsulları', fields: marketplaceFields }],
   },
 ];
 

@@ -33,7 +33,7 @@ export default function Categories() {
               <Link key={cat.key} to={`/elanlar?category=${cat.key}`} className="group relative overflow-hidden rounded-2xl border border-line bg-paper p-5 transition-all duration-300 ease-editorial hover:-translate-y-1 hover:border-action/40 hover:shadow-[0_18px_35px_rgb(17_24_39/0.1)] dark:border-line-dark dark:bg-graphite">
                 <span className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-action/5 transition-transform duration-500 group-hover:scale-150" />
                 <div className="relative flex items-start justify-between">
-                  <span className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-2xl shadow-sm transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 ${accents[index % accents.length]}`}><CategoryIcon name={cat.icon} /></span>
+                  <span className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br text-2xl shadow-sm transition-transform duration-500 group-hover:rotate-6 group-hover:scale-110 ${accents[index % accents.length]}`}>{cat.image ? <img src={`/category-icons/${cat.image}.png`} alt="" className="h-full w-full object-contain" /> : <CategoryIcon name={cat.icon} />}</span>
                   <span className="font-display text-4xl font-bold text-ink/10 dark:text-white/10">{String(index + 1).padStart(2, '0')}</span>
                 </div>
                 <div className="relative mt-8 flex items-end justify-between gap-3">

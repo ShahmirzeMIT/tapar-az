@@ -1,9 +1,17 @@
 export type CategoryKey =
-  | 'daşınmaz_əmlak'
-  | 'iş_elanları'
-  | 'xidmətlər'
+  | 'ev_bağ'
   | 'elektronika'
-  | 'ev_bağ';
+  | 'nəqliyyat'
+  | 'ehtiyat_hissələri'
+  | 'daşınmaz_əmlak'
+  | 'xidmətlər'
+  | 'iş_elanları'
+  | 'şəxsi_əşyalar'
+  | 'hobbi_asudə'
+  | 'məişət_texnikası'
+  | 'telefonlar'
+  | 'uşaq_aləmi'
+  | 'heyvanlar';
 
 export type ListingStatus = 'pending' | 'active' | 'inactive' | 'sold' | 'rejected';
 
@@ -154,5 +162,6 @@ export interface CategoryConfig {
   key: CategoryKey;
   label: string;
   icon: string;
+  image?: string;
   subcategories: SubcategoryConfig[];
 }

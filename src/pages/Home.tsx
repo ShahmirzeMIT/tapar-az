@@ -5,14 +5,34 @@ import { Input } from 'antd';
 import { DEMO_EXTERNAL_LISTINGS } from '@/data/externalListings';
 import { useExternalListings, externalListingLabel } from '@/hooks/useExternalListings';
 import ListingCard from '@/components/ListingCard';
+import { sourceLogo } from '@/utils/sourceLogos';
 
 const categories = [
-  { key: 'real_estate', label: 'Daşınmaz əmlak', icon: <HomeOutlined />, text: 'Bina və ev elanları' },
-  { key: 'automobile', label: 'Avtomobil', icon: <DashboardOutlined />, text: 'Turbo.az-dan avtomobillər' },
-  { key: 'electronics', label: 'Elektronika', icon: <MobileOutlined />, text: 'Telefon, kompüter və daha çox' },
-  { key: 'services', label: 'Xidmətlər', icon: <SettingOutlined />, text: 'Usta və peşəkar xidmətlər' },
-  { key: 'jobs', label: 'İş elanları', icon: <TeamOutlined />, text: 'Yeni iş imkanlarını tapın' },
-  { key: 'home_garden', label: 'Ev və bağ', icon: <AppstoreOutlined />, text: 'Ev üçün hər şey bir yerdə' },
+  { key: 'home_garden', label: 'Ev və bağ üçün', image: 'home-garden', text: 'Mebel, dekor və bağ məhsulları' },
+  { key: 'electronics', label: 'Elektronika', image: 'electronics', text: 'Telefon, kompüter və elektronika' },
+  { key: 'automobile', label: 'Nəqliyyat', image: 'transport', text: 'Avtomobil, motosiklet və nəqliyyat' },
+  { key: 'spare_parts', label: 'Ehtiyat hissələri və aksesuarlar', image: 'spare-parts', text: 'Avtomobil hissələri və aksesuarlar' },
+  { key: 'real_estate', label: 'Daşınmaz əmlak', image: 'real-estate', text: 'Mənzil, ev, torpaq və obyektlər' },
+  { key: 'services_business', label: 'Xidmətlər və biznes', image: 'services-business', text: 'Usta, xidmət və biznes elanları' },
+  { key: 'personal', label: 'Şəxsi əşyalar', image: 'personal-items', text: 'Geyim, ayaqqabı və aksesuarlar' },
+  { key: 'hobby', label: 'Hobbi və asudə', image: 'hobby-leisure', text: 'İdman, musiqi və istirahət' },
+  { key: 'appliances', label: 'Məişət texnikası', image: 'home-appliances', text: 'Ev üçün texnika və avadanlıq' },
+  { key: 'phones', label: 'Telefonlar', image: 'phones', text: 'Smartfon və telefon aksesuarları' },
+  { key: 'kids', label: 'Uşaq aləmi', image: 'kids', text: 'Uşaq geyimi, arabalar və oyuncaqlar' },
+  { key: 'animals', label: 'Heyvanlar', image: 'animals', text: 'Ev heyvanları və heyvan məhsulları' },
+];
+
+const sources = [
+  { key: 'tap.az', label: 'Tap.az', image: sourceLogo('tap.az') },
+  { key: 'bina.az', label: 'Bina.az', image: sourceLogo('bina.az') },
+  { key: 'turbo.az', label: 'Turbo.az', image: sourceLogo('turbo.az') },
+  { key: 'birmarket.az', label: 'Birmarket', image: sourceLogo('birmarket.az') },
+];
+
+const priceFilters = [
+  { label: '0–10K AZN', query: '?maxPrice=10000' },
+  { label: '10–50K AZN', query: '?minPrice=10000&maxPrice=50000' },
+  { label: '50K+ AZN', query: '?minPrice=50000' },
 ];
 
 export default function Home() {
@@ -30,7 +50,7 @@ export default function Home() {
           <div className="mb-8 text-left">
             <h1 className="font-display text-4xl font-bold leading-[.95] tracking-[-.04em] text-white sm:text-5xl md:text-6xl">Axtar.<br /><span className="text-[#f7edf9] dark:text-[#f0d9f3]">Müqayisə et.</span><br />Tap.</h1>
           </div>
-          <div className="flex w-full max-w-5xl rounded-2xl border border-white/70 bg-white/95 p-2 shadow-[0_22px_60px_rgb(23_59_85/0.2)] dark:border-white/10 dark:bg-[#111820]/95 dark:shadow-[0_22px_60px_rgb(0_0_0/0.45)]">
+          <div className="flex w-full max-w-5xl gap-2 rounded-2xl border border-white/70 bg-white/95 p-2 shadow-[0_22px_60px_rgb(23_59_85/0.2)] dark:border-white/10 dark:bg-[#111820]/95 dark:shadow-[0_22px_60px_rgb(0_0_0/0.45)]">
             <Input bordered={false} size="large" prefix={<SearchOutlined className="mr-2 text-[#8d5b94] dark:text-[#c185c9]" />} placeholder="Elan, marka və ya model axtarın..." value={search} onChange={(e) => setSearch(e.target.value)} onPressEnter={goSearch} className="min-w-0 flex-1 !bg-transparent !text-[#3c1241] dark:!text-white" />
             <button onClick={goSearch} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#3c1241] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#3c1241]/20 transition hover:bg-[#2b0d2f] dark:bg-[#611F69] dark:text-white dark:hover:bg-[#7b3285]">Axtar <ArrowRightOutlined /></button>
           </div>
@@ -55,12 +75,18 @@ export default function Home() {
         <div><p className="market-section-label mb-2">Kəşfə başla</p><h2 className="font-display text-2xl font-bold tracking-tight md:text-3xl">Nə axtarırsınız?</h2></div>
         <button onClick={() => navigate('/elanlar')} className="hidden items-center gap-2 text-sm font-semibold text-muted hover:text-action sm:flex">Bütün elanlar <ArrowRightOutlined /></button>
       </div>
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((cat, index) => <button key={cat.key} onClick={() => navigate(`/elanlar?category=${cat.key}`)} className="group flex min-h-[112px] items-center gap-4 rounded-2xl border border-line bg-paper px-4 py-4 text-left shadow-[0_4px_18px_rgb(17_24_39/0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-action/50 hover:shadow-card-hover dark:border-line-dark dark:bg-graphite md:min-h-[124px] md:px-5">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#f7edf9] text-[25px] text-[#611F69] shadow-inner dark:bg-[#36163b] dark:text-[#c185c9]">{cat.icon}</span>
-          <span className="min-w-0 flex-1"><span className="mb-1 block text-[10px] font-bold uppercase tracking-[.14em] text-action">0{index + 1} · Tapar</span><span className="block truncate font-display text-lg font-bold text-ink transition-colors group-hover:text-action dark:text-white">{cat.label}</span><span className="mt-1 block truncate text-xs text-muted">{cat.text}</span></span>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line text-muted transition-all group-hover:border-action group-hover:bg-action group-hover:text-white dark:border-line-dark"><ArrowRightOutlined className="text-xs" /></span>
-        </button>)}
+      <div className="mb-5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="mr-1 text-[10px] font-bold uppercase tracking-[.14em] text-muted">Kateqoriya</span>
+          <button onClick={() => navigate('/elanlar')} className="rounded-lg bg-action px-4 py-2 text-sm font-semibold text-white transition hover:bg-action/90">Hamısı</button>
+          {categories.map((cat, index) => <button key={`${cat.key}-${index}`} onClick={() => navigate(`/elanlar?category=${cat.key}`)} className="inline-flex items-center gap-2 rounded-lg border border-line bg-paper px-3 py-2 text-sm font-medium text-muted transition hover:border-action hover:text-action dark:border-line-dark dark:bg-graphite"><img src={`/category-icons/${cat.image}.png`} alt="" className="h-7 w-7 object-contain" />{cat.label}</button>)}
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-line pt-3 dark:border-line-dark">
+          <span className="mr-1 text-[10px] font-bold uppercase tracking-[.14em] text-muted">Mənbə</span>
+          {sources.map((source) => <button key={source.key} onClick={() => navigate(`/elanlar?source=${source.key}`)} className="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-action hover:text-action dark:border-line-dark"><img src={source.image} alt="" className="h-4 w-4 rounded-full bg-white object-contain" />{source.label}</button>)}
+          <span className="ml-1 mr-1 text-[10px] font-bold uppercase tracking-[.14em] text-muted">Qiymət</span>
+          {priceFilters.map((filter) => <button key={filter.label} onClick={() => navigate(`/elanlar${filter.query}`)} className="rounded-full border border-line px-3 py-1.5 text-xs font-medium text-muted transition hover:border-action hover:text-action dark:border-line-dark">{filter.label}</button>)}
+        </div>
       </div>
     </section>
 

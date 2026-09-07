@@ -22,12 +22,12 @@ export default function Categories() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((cat, index) => {
             const accents = [
-              'from-[#eaf4fb] to-[#f5faff] text-[#4f91c1] dark:from-[#18364d] dark:to-[#112536] dark:text-[#9ac8e8]',
+              'from-[#f7edf9] to-[#fcf7fd] text-[#611F69] dark:from-[#36163b] dark:to-[#241027] dark:text-[#c185c9]',
               'from-blue-100 to-blue-50 text-blue-600 dark:from-blue-950/60 dark:to-blue-900/20 dark:text-blue-300',
               'from-violet-100 to-violet-50 text-violet-600 dark:from-violet-950/60 dark:to-violet-900/20 dark:text-violet-300',
               'from-emerald-100 to-emerald-50 text-emerald-600 dark:from-emerald-950/60 dark:to-emerald-900/20 dark:text-emerald-300',
               'from-sky-100 to-sky-50 text-sky-600 dark:from-sky-950/60 dark:to-sky-900/20 dark:text-sky-300',
-              'from-[#eaf4fb] to-[#f5faff] text-[#4f91c1] dark:from-[#18364d] dark:to-[#112536] dark:text-[#9ac8e8]',
+              'from-[#f7edf9] to-[#fcf7fd] text-[#611F69] dark:from-[#36163b] dark:to-[#241027] dark:text-[#c185c9]',
             ];
             return (
               <Link key={cat.key} to={`/elanlar?category=${cat.key}`} className="group relative overflow-hidden rounded-2xl border border-line bg-paper p-5 transition-all duration-300 ease-editorial hover:-translate-y-1 hover:border-action/40 hover:shadow-[0_18px_35px_rgb(17_24_39/0.1)] dark:border-line-dark dark:bg-graphite">

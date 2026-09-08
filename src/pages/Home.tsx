@@ -4,7 +4,7 @@ import { Carousel, Input, Skeleton } from 'antd';
 import { collection, getCountFromServer } from 'firebase/firestore';
 import {
   SearchOutlined, ArrowRightOutlined, BulbFilled, CarOutlined, HomeOutlined,
-  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined, EnvironmentOutlined,
+  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined, EnvironmentOutlined, CalendarOutlined,
 } from '@ant-design/icons';
 import { CATEGORIES } from '@/config/categories';
 import { useListings } from '@/hooks/useListings';
@@ -12,7 +12,7 @@ import ListingCard from '@/components/ListingCard';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
-import { formatPrice } from '@/utils/format';
+import { formatPrice, formatRelativeDate } from '@/utils/format';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -116,7 +116,7 @@ function HeroStat({ value, label }: { value: string; label: string }) {
 
 function HeroListing({ listing }: { listing: import('@/types').Listing }) {
   const image = listing.media?.find((item) => item.type === 'image')?.url ?? listing.media?.[0]?.url;
-  return <Link to={`/elanlar/${listing.id}`} className="group block overflow-hidden rounded-2xl bg-offwhite dark:bg-graphite"><div className="relative aspect-[4/3] overflow-hidden bg-[#f3eee9] dark:bg-background">{image ? <img src={image} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}<div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" /><div className="absolute bottom-4 left-4 right-4"><p className="line-clamp-1 text-lg font-bold text-white">{listing.title}</p><div className="mt-1 flex items-center justify-between gap-2"><span className="text-sm text-white/80"><EnvironmentOutlined /> {listing.city}</span><span className="text-lg font-bold text-white">{listing.price == null ? 'Razılaşma' : formatPrice(listing.price)}</span></div></div></div></Link>;
+  return <Link to={`/elanlar/${listing.id}`} className="group block overflow-hidden rounded-[1.35rem] border border-line bg-white shadow-[0_10px_28px_rgba(17,24,39,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(17,24,39,.14)] dark:border-line-dark dark:bg-graphite"><div className="relative aspect-[1.45] overflow-hidden bg-[#f3eee9] dark:bg-background">{image ? <img src={image} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}<span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#16A34A] shadow-sm backdrop-blur">Yeni elan</span></div><div className="p-4"><h3 className="line-clamp-1 font-display text-base font-bold text-ink transition group-hover:text-[#16A34A] dark:text-white">{listing.title}</h3><div className="mt-2 flex items-center justify-between gap-3"><span className="text-lg font-extrabold text-[#16A34A]">{listing.price == null ? 'Razılaşma' : formatPrice(listing.price)}</span><span className="text-xs font-medium text-muted">{listing.category}</span></div><div className="mt-3 flex items-center justify-between border-t border-line pt-3 text-[11px] text-muted dark:border-line-dark"><span className="inline-flex items-center gap-1"><EnvironmentOutlined /> {listing.city}</span><span className="inline-flex items-center gap-1"><CalendarOutlined /> {formatRelativeDate(listing.createdAt)}</span></div></div></Link>;
 }
 
 function CategoryIcon({ name }: { name: string }) {

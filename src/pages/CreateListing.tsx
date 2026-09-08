@@ -143,7 +143,7 @@ export default function CreateListing() {
       if (notificationRecipients.length) {
         const adminLink = `${window.location.origin}/admin/elanlar`;
         const emailResult = await Promise.allSettled(notificationRecipients.map((adminEmail) => sendBrevoEmail({
-          to: "langdpdatabase@gmail.com",
+          to: adminEmail,
           subject: 'Yeni elan təsdiq gözləyir — TAPAR.AZ',
           text: `Yeni elan daxil edildi: ${title}. Admin panelə daxil olub yoxlayın: ${adminLink}`,
           html: listingEmailCard({ title, description, category: categoryConfig?.label, city, price: priceHidden ? null : price, media, link: adminLink, ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi', ownerEmail: user.email ?? profile?.email ?? '' }, 'Yeni elan daxil edildi. Zəhmət olmasa admin panelə daxil olub yoxlayın.'),

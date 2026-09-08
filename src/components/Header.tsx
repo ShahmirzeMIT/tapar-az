@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
+  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined,
   HomeOutlined, BulbOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
@@ -18,7 +18,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Header() {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, isAdmin } = useAuth();
   const { unreadCount } = useMessages(user?.uid);
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
@@ -63,6 +63,7 @@ export default function Header() {
             <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
             <NavLink to="/magazalar" className={navLinkClass}>Mağazalar</NavLink>
             <NavLink to={storePath} className={navLinkClass}>{storeLabel}</NavLink>
+            {isAdmin && <Link to="/admin" className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-2 text-xs font-bold text-white transition hover:bg-action dark:bg-white dark:text-ink dark:hover:bg-orange-100"><SettingOutlined /> Admin</Link>}
             <NavLink to="/ai-elan" className={navLinkClass}>
               <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
             </NavLink>

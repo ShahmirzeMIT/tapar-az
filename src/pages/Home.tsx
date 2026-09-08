@@ -29,17 +29,17 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="w-full min-w-0 overflow-x-hidden">
       {/* HERO */}
-      <section className="overflow-visible bg-[#FF6C2C]">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] md:py-16 lg:gap-16">
+      <section className="w-full min-w-0 overflow-visible bg-[#FF6C2C]">
+        <div className="mx-auto grid w-full max-w-full min-w-0 grid-cols-1 items-center gap-10 px-4 py-10 sm:px-6 md:py-16 lg:max-w-7xl lg:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] lg:gap-16">
           <div className="relative z-10"><p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-white/85">{t('heroKicker')}</p><h1 className="max-w-2xl font-display text-4xl font-bold leading-[1.05] tracking-tightest text-white md:text-6xl">{t('heroTitle')}</h1><p className="mt-5 max-w-xl text-base leading-7 text-white/85 md:text-lg">{t('heroText')}</p>
             <div className="mt-8 flex max-w-2xl gap-2 rounded-2xl border border-line bg-paper p-1.5 shadow-[0_14px_35px_rgba(255,90,0,.12)] dark:border-line-dark dark:bg-background"><Input size="large" bordered={false} placeholder={t('searchPlaceholder')} value={q} onChange={(e) => setQ(e.target.value)} onPressEnter={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)} className="flex-1 !bg-transparent" /><button onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)} className="market-action rounded-xl px-5"><SearchOutlined /> {t('search')}</button></div>
           </div>
-          <div className="relative pb-3 sm:pb-14">
+          <div className="relative pb-3 md:pb-14">
             <div className="absolute -inset-6 rounded-[2.5rem] bg-[#16A34A]/15 blur-3xl" />
             <div className="relative overflow-hidden rounded-[2rem] border border-white/90 bg-white p-4 shadow-[0_25px_70px_rgba(22,163,74,.22)] dark:border-line-dark dark:bg-background">
-              <div className="mb-4 flex items-center justify-between px-1">
+              <div className="mb-4 flex flex-col items-start gap-2 px-1 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <div className="inline-flex items-center gap-2 rounded-full bg-[#16A34A]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[.16em] text-[#16A34A]"><span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />Canlı elanlar</div>
                   <p className="mt-2 font-display text-xl font-bold text-ink dark:text-white">Son əlavə edilənlər</p>
@@ -48,10 +48,10 @@ export default function Home() {
               </div>
               <div>{latestLoading ? <div className="aspect-[4/3] animate-pulse rounded-[1.25rem] bg-offwhite dark:bg-graphite" /> : latestSix.length ? <Carousel autoplay autoplaySpeed={4200} pauseOnHover dots={{ className: '!bottom-3' }} className="hero-listing-carousel">{latestSix.map((listing) => <HeroListing key={listing.id} listing={listing} />)}</Carousel> : <div className="flex aspect-[4/3] items-center justify-center rounded-[1.25rem] bg-offwhite text-sm text-muted dark:bg-graphite">Hələ aktiv elan yoxdur</div>}</div>
             </div>
-            <div className="pointer-events-none relative mt-5 grid grid-cols-3 gap-2 sm:absolute sm:inset-0 sm:mt-0 sm:block">
-              <div className="z-20 sm:absolute sm:-right-[6.5rem] sm:top-14"><HeroStat value={latest.length ? `${latest.length}+` : '0'} label="Aktiv elan" delay="0ms" /></div>
-              <div className="z-20 sm:absolute sm:-left-[6.5rem] sm:top-1/2 sm:-translate-y-1/2"><HeroStat value={userCount == null ? '—' : `${userCount}+`} label="İstifadəçi" delay="180ms" /></div>
-              <div className="z-20 sm:absolute sm:bottom-[-3.5rem] sm:right-12"><HeroStat value="24/7" label="Axtarış imkanı" delay="360ms" /></div>
+            <div className="pointer-events-none relative mt-5 grid grid-cols-3 gap-2 lg:absolute lg:inset-0 lg:mt-0 lg:block">
+              <div className="z-20 lg:absolute lg:-right-[6.5rem] lg:top-14"><HeroStat value={latest.length ? `${latest.length}+` : '0'} label="Aktiv elan" delay="0ms" /></div>
+              <div className="z-20 lg:absolute lg:-left-[6.5rem] lg:top-1/2 lg:-translate-y-1/2"><HeroStat value={userCount == null ? '—' : `${userCount}+`} label="İstifadəçi" delay="180ms" /></div>
+              <div className="z-20 lg:absolute lg:bottom-[-3.5rem] lg:right-12"><HeroStat value="24/7" label="Axtarış imkanı" delay="360ms" /></div>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function Home() {
         </div>
         <div className="mt-7 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
           {CATEGORIES.map((cat, index) => {
-            return <Link key={cat.key} to={`/elanlar?category=${cat.key}`} style={{ animationDelay: `${index * 70}ms` }} className="category-card-reveal group relative flex h-24 items-center gap-2 overflow-hidden rounded-xl border border-[#E7E7E7] bg-white px-3 shadow-[0_8px_16px_rgba(17,24,39,.08)] transition duration-500 hover:-translate-y-1 hover:border-[#FE6C2C]/35 hover:shadow-[0_14px_26px_rgba(254,108,44,.22)]"><div className="absolute -right-8 -top-8 z-0 h-28 w-28 rounded-full bg-[#FE6C2C]/75 opacity-0 blur-[1px] transition duration-500 group-hover:opacity-100 group-hover:scale-125" /><CategoryIcon name={cat.icon} /><p className="relative z-10 min-w-0 flex-1 pr-10 font-display text-xs font-bold leading-tight text-black sm:text-sm">{cat.label}</p><span className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-[#FE6C2C] text-[10px] font-extrabold text-white shadow-md transition duration-500 group-hover:rotate-6 group-hover:bg-white group-hover:text-[#FE6C2C]">{String(index + 1).padStart(2, '0')}</span></Link>;
+            return <Link key={cat.key} to={`/elanlar?category=${cat.key}`} style={{ animationDelay: `${index * 70}ms` }} className="category-card-reveal group relative flex h-24 items-center gap-2 overflow-hidden rounded-xl border border-[#E7E7E7] bg-white px-3 shadow-[0_8px_16px_rgba(17,24,39,.08)] transition duration-500 hover:-translate-y-1 hover:border-[#FE6C2C]/35 hover:shadow-[0_14px_26px_rgba(254,108,44,.22)]"><div className="absolute -right-8 -top-8 z-0 h-28 w-28 rounded-full bg-[#FE6C2C]/75 opacity-0 blur-[1px] transition duration-500 group-hover:opacity-100 group-hover:scale-125" /><CategoryIcon name={cat.icon} /><p className="relative z-10 min-w-0 flex-1 pr-10 font-display text-xs font-bold leading-tight text-black sm:text-sm">{cat.label}</p><span className="absolute right-2 top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-[#FE6C2C] text-[10px] font-extrabold text-white shadow-md transition duration-500 group-hover:rotate-6 group-hover:bg-white group-hover:text-[#FE6C2C]">{index + 1}</span></Link>;
           })}
         </div>
         <Link to="/kateqoriyalar" className="mt-5 inline-flex rounded-full border border-[#FE6C2C]/25 px-4 py-2 text-sm font-bold text-[#FE6C2C] transition hover:bg-[#FE6C2C] hover:text-white sm:hidden">Hamısına bax</Link>

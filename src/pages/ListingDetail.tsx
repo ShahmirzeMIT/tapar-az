@@ -86,9 +86,9 @@ export default function ListingDetail() {
           )}
 
           {/* DESCRIPTION + SPECS */}
-          <div className="mt-8">
-            <h2 className="font-display text-lg font-bold text-ink dark:text-white mb-2">Təsvir</h2>
-            <p className="text-sm text-ink/90 dark:text-white/90 whitespace-pre-line leading-relaxed">{listing.description}</p>
+          <div className="market-surface mt-8 p-5 md:p-6">
+            <div className="flex items-center gap-3 border-b border-line pb-3 dark:border-line-dark"><span className="h-6 w-1 rounded-full bg-[#FE6C2C]" /><h2 className="font-display text-lg font-bold text-ink dark:text-white">Təsvir</h2></div>
+            <p className="mt-5 whitespace-pre-line text-[15px] leading-7 text-secondary dark:text-white/85">{listing.description || 'Bu elan üçün təsvir əlavə edilməyib.'}</p>
           </div>
 
           {specFields.length > 0 && (

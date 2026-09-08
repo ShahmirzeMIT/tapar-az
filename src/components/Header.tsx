@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Input, Avatar, Dropdown, Select } from 'antd';
+import { Input, Avatar, Dropdown, Drawer, Select } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined,
+  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined, MenuOutlined,
   HomeOutlined, BulbOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
@@ -26,6 +26,7 @@ export default function Header() {
   const location = useLocation();
   const { store, reload: reloadStore } = useMyStore(user?.uid);
   const [searchValue, setSearchValue] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => { void reloadStore(); }, [location.pathname, reloadStore]);
 
@@ -35,6 +36,8 @@ export default function Header() {
   const handleSearch = () => {
     navigate(`/elanlar${searchValue ? `?q=${encodeURIComponent(searchValue)}` : ''}`);
   };
+
+  const closeMenu = () => setMenuOpen(false);
 
   const userMenuItems = [
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
@@ -55,19 +58,7 @@ export default function Header() {
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
-          <nav className="flex items-center gap-6 shrink-0">
-            <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
-            <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
-            <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
-            <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
-            <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
-            <NavLink to="/magazalar" className={navLinkClass}>Mağazalar</NavLink>
-            <NavLink to={storePath} className={navLinkClass}>{storeLabel}</NavLink>
-            {isAdmin && <Link to="/admin" className="inline-flex items-center gap-1.5 rounded-lg bg-ink px-3 py-2 text-xs font-bold text-white transition hover:bg-action dark:bg-white dark:text-ink dark:hover:bg-orange-100"><SettingOutlined /> Admin</Link>}
-            <NavLink to="/ai-elan" className={navLinkClass}>
-              <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
-            </NavLink>
-          </nav>
+          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Menyunu aç" className="inline-flex items-center gap-2 rounded-xl border border-action/30 px-3 py-2 text-sm font-semibold text-action transition hover:bg-action/10"><MenuOutlined /> Menyu</button>
 
           <div className="flex-1 max-w-md">
             <Input
@@ -105,6 +96,20 @@ export default function Header() {
           </div>
         </div>
       </header>
+
+      <Drawer title={<span className="font-display text-xl font-bold text-[#FF5A00]">TAPAR.AZ Menyu</span>} placement="left" open={menuOpen} onClose={closeMenu} width={300} styles={{ body: { padding: 16 } }}>
+        <nav className="flex flex-col gap-1">
+          <NavLink to="/" end onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('home')}</NavLink>
+          <NavLink to="/elanlar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('listings')}</NavLink>
+          <NavLink to="/avtomobiller" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('cars')}</NavLink>
+          <NavLink to="/kateqoriyalar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('categories')}</NavLink>
+          <NavLink to="/favoriler" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('favorites')}</NavLink>
+          <NavLink to="/magazalar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">Mağazalar</NavLink>
+          <NavLink to={storePath} onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{storeLabel}</NavLink>
+          <NavLink to="/ai-elan" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]"><BulbOutlined /> {t('aiListing')}</NavLink>
+          {isAdmin && <Link to="/admin" onClick={closeMenu} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[#FF5A00] px-4 py-3 font-bold text-white transition hover:bg-[#e84f00]"><SettingOutlined /> Adminə daxil ol</Link>}
+        </nav>
+      </Drawer>
 
       {/* Mobile top bar (logo + theme) */}
       <header className="md:hidden sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark">

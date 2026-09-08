@@ -9,9 +9,9 @@ export default function Categories() {
   const { language } = useLanguage();
 
   return <main className="min-h-screen bg-offwhite pb-20 dark:bg-background">
-    <section className="relative overflow-hidden bg-[#101114] px-6 py-14 text-white md:py-20">
-      <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full bg-action/30 blur-3xl" />
-      <div className="absolute -bottom-40 left-1/3 h-80 w-80 rounded-full bg-orange-500/10 blur-3xl" />
+    <section className="relative overflow-hidden bg-[#FF5A00] px-6 py-14 text-white md:py-20">
+      <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full bg-white/20 blur-3xl" />
+      <div className="absolute -bottom-40 left-1/3 h-80 w-80 rounded-full bg-[#ffb07c]/30 blur-3xl" />
       <div className="relative mx-auto max-w-7xl">
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div className="max-w-2xl"><p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-orange-300">TAPAR.AZ marketplace</p><h1 className="font-display text-4xl font-bold tracking-tight md:text-6xl">{t('categories')}</h1><p className="mt-5 max-w-xl text-base leading-7 text-white/65 md:text-lg">Axtardığınız məhsulu kateqoriyalar üzrə daha tez tapın. Hər bölmədə özünə uyğun alt kateqoriyalar və filterlər mövcuddur.</p></div>

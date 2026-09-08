@@ -1,58 +1,44 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Input, Skeleton } from 'antd';
+import { Carousel, Input, Skeleton } from 'antd';
+import { collection, getCountFromServer } from 'firebase/firestore';
 import {
   SearchOutlined, ArrowRightOutlined, BulbFilled, CarOutlined, HomeOutlined,
-  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined,
+  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined, EnvironmentOutlined,
 } from '@ant-design/icons';
 import { CATEGORIES } from '@/config/categories';
 import { useListings } from '@/hooks/useListings';
 import ListingCard from '@/components/ListingCard';
 import { useTranslation } from 'react-i18next';
+import { db } from '@/firebase/config';
+import { useAuth } from '@/context/AuthContext';
+import { formatPrice } from '@/utils/format';
 
 export default function Home() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [q, setQ] = useState('');
+  const [userCount, setUserCount] = useState<number | null>(null);
   const { listings: latest, loading: latestLoading } = useListings({ sort: 'newest' });
   const { listings: cars, loading: carsLoading } = useListings({ category: 'nəqliyyat', sort: 'newest' });
+  const latestTen = latest.slice(0, 10);
+
+  useEffect(() => {
+    if (!user) { setUserCount(null); return; }
+    void getCountFromServer(collection(db, 'users')).then((result) => setUserCount(result.data().count)).catch(() => setUserCount(null));
+  }, [user]);
 
   return (
     <div>
       {/* HERO */}
-      <section className="border-b border-line dark:border-line-dark bg-offwhite dark:bg-graphite">
-        <div className="max-w-7xl mx-auto px-6 py-16 md:py-24 text-center">
-          <p className="market-section-label mb-4">{t('heroKicker')}</p>
-          <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tightest text-ink dark:text-white">
-            {t('heroTitle')}
-          </h1>
-          <p className="mt-4 text-base md:text-lg text-muted max-w-xl mx-auto">
-            {t('heroText')}
-          </p>
-
-          <div className="mt-8 max-w-xl mx-auto flex gap-2">
-            <Input
-              size="large"
-              placeholder={t('searchPlaceholder')}
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              onPressEnter={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
-              className="flex-1"
-            />
-            <button
-              onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)}
-              className="market-action px-6"
-            >
-              <SearchOutlined /> {t('search')}
-            </button>
+      <section className="overflow-hidden bg-[#fff7f2] dark:bg-graphite">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] md:py-16 lg:gap-16">
+          <div className="relative z-10"><p className="mb-4 text-xs font-bold uppercase tracking-[.22em] text-action">{t('heroKicker')}</p><h1 className="max-w-2xl font-display text-4xl font-bold leading-[1.05] tracking-tightest text-ink dark:text-white md:text-6xl">{t('heroTitle')}</h1><p className="mt-5 max-w-xl text-base leading-7 text-muted md:text-lg">{t('heroText')}</p>
+            <div className="mt-8 flex max-w-2xl gap-2 rounded-2xl border border-line bg-paper p-1.5 shadow-[0_14px_35px_rgba(255,90,0,.12)] dark:border-line-dark dark:bg-background"><Input size="large" bordered={false} placeholder={t('searchPlaceholder')} value={q} onChange={(e) => setQ(e.target.value)} onPressEnter={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)} className="flex-1 !bg-transparent" /><button onClick={() => navigate(`/elanlar${q ? `?q=${encodeURIComponent(q)}` : ''}`)} className="market-action rounded-xl px-5"><SearchOutlined /> {t('search')}</button></div>
+            <div className="mt-8 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-3"><HeroStat value={latest.length ? `${latest.length}+` : '0'} label="Aktiv elan" /><HeroStat value={userCount == null ? '—' : `${userCount}+`} label="İstifadəçi" /><HeroStat value="24/7" label="Axtarış imkanı" /></div>
           </div>
-          <div className="mt-5 flex flex-wrap justify-center gap-2 text-xs text-muted">
-            {['iPhone', 'Avtomobil', 'Laptop', 'PlayStation', 'Ev', 'Mebel'].map((item) => (
-              <button key={item} onClick={() => navigate(`/elanlar?q=${encodeURIComponent(item)}`)} className="rounded-full border border-line dark:border-line-dark bg-paper dark:bg-graphite px-3 py-1.5 hover:border-action hover:text-action transition-colors">
-                {item}
-              </button>
-            ))}
-          </div>
+          <div className="relative"><div className="absolute -inset-5 rounded-[2rem] bg-action/10 blur-2xl" /><div className="relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white p-3 shadow-[0_25px_70px_rgba(255,90,0,.2)] dark:border-line-dark dark:bg-background"><div className="mb-3 flex items-center justify-between px-2"><div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-action">Təzə elanlar</p><p className="mt-1 font-display text-lg font-bold text-ink dark:text-white">Son əlavə edilənlər</p></div><Link to="/elanlar" className="text-xs font-semibold text-action">Hamısına bax <ArrowRightOutlined /></Link></div>{latestLoading ? <div className="aspect-[4/3] animate-pulse rounded-2xl bg-offwhite dark:bg-graphite" /> : latestTen.length ? <Carousel autoplay autoplaySpeed={4200} pauseOnHover dots={{ className: '!bottom-3' }} className="hero-listing-carousel">{latestTen.map((listing) => <HeroListing key={listing.id} listing={listing} />)}</Carousel> : <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-offwhite text-sm text-muted dark:bg-graphite">Hələ aktiv elan yoxdur</div>}</div></div>
         </div>
       </section>
 
@@ -123,6 +109,15 @@ export default function Home() {
       </section>
     </div>
   );
+}
+
+function HeroStat({ value, label }: { value: string; label: string }) {
+  return <div className="rounded-xl border border-line bg-paper/80 px-3 py-3 dark:border-line-dark dark:bg-background"><p className="font-display text-xl font-bold text-ink dark:text-white">{value}</p><p className="mt-0.5 text-xs text-muted">{label}</p></div>;
+}
+
+function HeroListing({ listing }: { listing: import('@/types').Listing }) {
+  const image = listing.media?.find((item) => item.type === 'image')?.url ?? listing.media?.[0]?.url;
+  return <Link to={`/elanlar/${listing.id}`} className="group block overflow-hidden rounded-2xl bg-offwhite dark:bg-graphite"><div className="relative aspect-[4/3] overflow-hidden bg-[#f3eee9] dark:bg-background">{image ? <img src={image} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}<div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/70 to-transparent" /><div className="absolute bottom-4 left-4 right-4"><p className="line-clamp-1 text-lg font-bold text-white">{listing.title}</p><div className="mt-1 flex items-center justify-between gap-2"><span className="text-sm text-white/80"><EnvironmentOutlined /> {listing.city}</span><span className="text-lg font-bold text-white">{listing.price == null ? 'Razılaşma' : formatPrice(listing.price)}</span></div></div></div></Link>;
 }
 
 function CategoryIcon({ name }: { name: string }) {

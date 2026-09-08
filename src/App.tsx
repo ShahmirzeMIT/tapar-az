@@ -3,7 +3,6 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
-
 import Home from '@/pages/Home';
 import Listings from '@/pages/Listings';
 import ListingDetail from '@/pages/ListingDetail';

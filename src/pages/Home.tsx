@@ -29,7 +29,7 @@ export default function Home() {
   }, [user]);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* HERO */}
       <section className="overflow-visible bg-[#FF6C2C]">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_minmax(360px,500px)] md:py-16 lg:gap-16">

@@ -53,6 +53,7 @@ export default function Header() {
             <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
             <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
             <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
+            <NavLink to="/magaza-yarat" className={navLinkClass}>Mağaza yarat</NavLink>
             <NavLink to="/ai-elan" className={navLinkClass}>
               <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
             </NavLink>

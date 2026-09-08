@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { HeartOutlined, HeartFilled, EnvironmentOutlined, CalendarOutlined, CarOutlined, HomeOutlined, AppstoreOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import type { ExternalListing, Listing } from '@/types';
@@ -17,10 +18,13 @@ const sourceStyles: Record<string, string> = {
 export default function ListingCard({ listing }: { listing: ExternalListing | Listing }) {
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [favoriteOverride, setFavoriteOverride] = useState<boolean | null>(null);
   const external = 'source' in listing;
   const source = external ? listing.source : 'TAPAR.AZ';
   const coverImage = external ? listing.images[0] : listing.media[0]?.url;
-  const fav = isFavorite(listing.id);
+  const storedFavorite = isFavorite(listing.id);
+  const fav = favoriteOverride ?? storedFavorite;
+  useEffect(() => { setFavoriteOverride(null); }, [storedFavorite]);
   const categoryIcon = external && listing.category === 'real_estate' ? <HomeOutlined /> : external && listing.category === 'automobile' ? <CarOutlined /> : <AppstoreOutlined />;
   const categoryLabel = external ? externalListingLabel(listing) : 'Elan';
 
@@ -28,7 +32,12 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
     event.preventDefault();
     event.stopPropagation();
     if (!user) return message.info('Sevimlilərə əlavə etmək üçün daxil olun.');
-    try { await toggleFavorite(listing.id); } catch { message.error('Xəta baş verdi.'); }
+    const next = !fav;
+    setFavoriteOverride(next);
+    try { await toggleFavorite(listing.id); } catch (error) {
+      setFavoriteOverride(null);
+      message.error(error instanceof Error ? error.message : 'Favoritə əlavə etmək mümkün olmadı.');
+    }
   };
 
   return (
@@ -37,7 +46,7 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
         {coverImage ? <img src={coverImage} alt={listing.title} loading="lazy" className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
         <div className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-extrabold tracking-tight shadow-sm ${sourceStyles[source] ?? 'bg-ink text-white'}`}><img src={sourceLogo(source)} alt="" className="h-4 w-4 rounded-full bg-white object-contain" />{source}</div>
-        <button onClick={handleFavorite} aria-label="Sevimlilərə əlavə et" className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm backdrop-blur transition hover:scale-110 hover:text-action dark:bg-graphite/90 dark:text-white">
+        <button type="button" onClick={handleFavorite} aria-pressed={fav} aria-label={fav ? 'Favoritlərdən çıxar' : 'Sevimlilərə əlavə et'} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm backdrop-blur transition hover:scale-110 hover:text-action dark:bg-graphite/90 dark:text-white">
           {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined />}
         </button>
         <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] font-medium text-white/90"><span>{categoryLabel}</span><span className="rounded-full bg-black/25 px-2 py-1 backdrop-blur">{external ? 'Xarici elan' : 'TAPAR.AZ elanı'}</span></div>

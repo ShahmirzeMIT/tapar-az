@@ -4,7 +4,7 @@ import { Carousel, Input, Skeleton } from 'antd';
 import { collection, getCountFromServer } from 'firebase/firestore';
 import {
   SearchOutlined, ArrowRightOutlined, BulbFilled, CarOutlined, HomeOutlined,
-  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined, EnvironmentOutlined, CalendarOutlined,
+  LaptopOutlined, ToolOutlined, GiftOutlined, TeamOutlined, SafetyCertificateOutlined, EnvironmentOutlined,
 } from '@ant-design/icons';
 import { CATEGORIES } from '@/config/categories';
 import { useListings } from '@/hooks/useListings';
@@ -12,7 +12,7 @@ import ListingCard from '@/components/ListingCard';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
-import { formatPrice, formatRelativeDate } from '@/utils/format';
+import { formatPrice } from '@/utils/format';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -116,7 +116,7 @@ function HeroStat({ value, label }: { value: string; label: string }) {
 
 function HeroListing({ listing }: { listing: import('@/types').Listing }) {
   const image = listing.media?.find((item) => item.type === 'image')?.url ?? listing.media?.[0]?.url;
-  return <Link to={`/elanlar/${listing.id}`} className="group block overflow-hidden rounded-[1.35rem] border border-line bg-white shadow-[0_10px_28px_rgba(17,24,39,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(17,24,39,.14)] dark:border-line-dark dark:bg-graphite"><div className="relative aspect-[1.45] overflow-hidden bg-[#f3eee9] dark:bg-background">{image ? <img src={image} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}<span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#16A34A] shadow-sm backdrop-blur">Yeni elan</span></div><div className="p-4"><h3 className="line-clamp-1 font-display text-base font-bold text-ink transition group-hover:text-[#16A34A] dark:text-white">{listing.title}</h3><div className="mt-2 flex items-center justify-between gap-3"><span className="text-lg font-extrabold text-[#16A34A]">{listing.price == null ? 'Razılaşma' : formatPrice(listing.price)}</span><span className="text-xs font-medium text-muted">{listing.category}</span></div><div className="mt-3 flex items-center justify-between border-t border-line pt-3 text-[11px] text-muted dark:border-line-dark"><span className="inline-flex items-center gap-1"><EnvironmentOutlined /> {listing.city}</span><span className="inline-flex items-center gap-1"><CalendarOutlined /> {formatRelativeDate(listing.createdAt)}</span></div></div></Link>;
+  return <Link to={`/elanlar/${listing.id}`} className="group block"><div className="relative aspect-[1.2] overflow-hidden rounded-[1.5rem] bg-[#eee8e2] shadow-[0_18px_45px_rgba(17,24,39,.16)] dark:bg-background">{image ? <img src={image} alt={listing.title} className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}<div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" /><span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em] text-[#16A34A] shadow-sm">Yeni</span><div className="absolute inset-x-5 bottom-4"><h3 className="line-clamp-2 font-display text-xl font-bold leading-tight text-white drop-shadow-md">{listing.title}</h3><div className="mt-2 flex items-center gap-1.5 text-sm text-white/80"><EnvironmentOutlined /> {listing.city}</div></div></div><div className="flex items-center justify-between gap-3 px-1.5 pt-4"><p className="font-display text-2xl font-extrabold tracking-tight text-[#16A34A]">{listing.price == null ? 'Razılaşma' : formatPrice(listing.price)}</p><span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#16A34A] text-white shadow-[0_8px_18px_rgba(22,163,74,.28)] transition group-hover:translate-x-1"><ArrowRightOutlined /></span></div></Link>;
 }
 
 function CategoryIcon({ name }: { name: string }) {

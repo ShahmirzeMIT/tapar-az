@@ -104,6 +104,15 @@ body {
   overflow: hidden;
 }
 
+@keyframes hero-stat-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.hero-stat-float {
+  animation: hero-stat-float 3.8s ease-in-out infinite;
+}
+
 /* Centralized marketplace styling for all Ant Design controls. */
 .ant-btn {
   border-radius: 8px !important;

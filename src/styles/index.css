@@ -13,9 +13,9 @@
   --color-text-muted: 156 163 175;
   --color-border: 229 231 235;
   --color-border-light: 243 244 246;
-  --color-primary: 97 31 105;
-  --color-primary-hover: 79 25 86;
-  --color-primary-light: 247 237 249;
+  --color-primary: 255 90 0;
+  --color-primary-hover: 230 79 0;
+  --color-primary-light: 255 241 232;
   --color-success: 22 163 74;
   --color-success-hover: 21 128 61;
   --color-success-light: 236 253 243;
@@ -26,7 +26,34 @@
   --color-info-light: 239 246 255;
   --color-premium: 245 158 11;
   --color-premium-light: 255 251 235;
-  --color-footer: 250 246 251;
+  --color-footer: 255 248 243;
+}
+
+.dark {
+  --color-background: 15 15 15;
+  --color-overlay: 15 15 15;
+  --color-background-secondary: 23 23 23;
+  --color-card: 31 31 31;
+  --color-input: 38 38 38;
+  --color-text-primary: 255 255 255;
+  --color-text-secondary: 163 163 163;
+  --color-text-muted: 115 115 115;
+  --color-border: 51 51 51;
+  --color-border-light: 51 51 51;
+  --color-primary: 255 90 0;
+  --color-primary-hover: 230 79 0;
+  --color-primary-light: 68 35 20;
+  --color-success: 34 197 94;
+  --color-success-hover: 21 128 61;
+  --color-success-light: 20 50 30;
+  --color-danger: 239 68 68;
+  --color-danger-hover: 220 38 38;
+  --color-danger-light: 69 25 25;
+  --color-info: 59 130 246;
+  --color-info-light: 23 37 84;
+  --color-premium: 245 158 11;
+  --color-premium-light: 69 45 12;
+  --color-footer: 23 23 23;
 }
 
 html, body {

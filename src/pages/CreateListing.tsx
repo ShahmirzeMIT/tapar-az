@@ -4,7 +4,9 @@ import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert, Moda
 import { doc, serverTimestamp, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
-import { CATEGORIES, getCategory } from '@/config/categories';
+import { CATEGORIES, categoryLabel, getCategory, subcategoryLabel } from '@/config/categories';
+import { useLanguage } from '@/context/LanguageContext';
+import { AZERBAIJAN_LOCATIONS } from '@/config/locations';
 import DynamicForm from '@/components/DynamicForm';
 import MediaUploader from '@/components/MediaUploader';
 import { pruneHiddenValues } from '@/utils/conditionalFields';
@@ -13,14 +15,16 @@ import type { CategoryKey, ListingAttributes, MediaItem } from '@/types';
 import { formatPrice } from '@/utils/format';
 import { sendBrevoEmail } from '@/utils/email';
 import { listingEmailCard } from '@/utils/emailTemplates';
+import { useMyStore } from '@/hooks/useStore';
 
 const { TextArea } = Input;
-const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
 
 const STEP_LABELS = ['Kateqoriya', 'Alt kateqoriya', 'Məlumatlar', 'Media', 'AI yoxlanışı', 'Önizləmə', 'Dərc et'];
 
 export default function CreateListing() {
   const { user, profile } = useAuth();
+  const { language } = useLanguage();
+  const { store, loading: storeLoading } = useMyStore(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = (location.state as { aiDraft?: import('@/types').AIListingDraft } | null)?.aiDraft;
@@ -92,6 +96,7 @@ export default function CreateListing() {
 
   const handlePublish = async () => {
     if (!user) { message.error('Zəhmət olmasa daxil olun.'); return; }
+    if (storeLoading) { message.info('Mağaza məlumatları yüklənir, zəhmət olmasa bir az gözləyin.'); return; }
     if (!category || !subcategory || !title || !city || !phone.trim()) { message.error('Telefon nömrəsi daxil olmaqla bütün tələb olunan sahələri doldurun.'); return; }
 
     setPublishing(true);
@@ -102,6 +107,7 @@ export default function CreateListing() {
         ownerId: user.uid,
         ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi',
         ownerEmail: user.email ?? profile?.email ?? '',
+        ...(store?.id ? { storeId: store.id } : {}),
         category, subcategory, title,
         price: priceHidden ? null : price ?? null,
         priceHidden,
@@ -139,7 +145,7 @@ export default function CreateListing() {
       if (notificationRecipients.length) {
         const adminLink = `${window.location.origin}/admin/elanlar`;
         const emailResult = await Promise.allSettled(notificationRecipients.map((adminEmail) => sendBrevoEmail({
-          to: "langdpdatabase@gmail.com",
+          to: adminEmail,
           subject: 'Yeni elan təsdiq gözləyir — TAPAR.AZ',
           text: `Yeni elan daxil edildi: ${title}. Admin panelə daxil olub yoxlayın: ${adminLink}`,
           html: listingEmailCard({ title, description, category: categoryConfig?.label, city, price: priceHidden ? null : price, media, link: adminLink, ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi', ownerEmail: user.email ?? profile?.email ?? '' }, 'Yeni elan daxil edildi. Zəhmət olmasa admin panelə daxil olub yoxlayın.'),
@@ -171,7 +177,7 @@ export default function CreateListing() {
               onClick={() => { setCategory(c.key); setSubcategory(undefined); }}
               className={`market-surface p-6 text-left transition-all ${category === c.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{c.label}</p>
+              <p className="font-semibold text-ink dark:text-white">{categoryLabel(c.key, language)}</p>
             </button>
           ))}
         </div>
@@ -186,7 +192,7 @@ export default function CreateListing() {
               onClick={() => setSubcategory(s.key)}
               className={`market-surface p-6 text-left transition-all ${subcategory === s.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{s.label}</p>
+              <p className="font-semibold text-ink dark:text-white">{subcategoryLabel(s.key, language)}</p>
             </button>
           ))}
         </div>
@@ -215,7 +221,7 @@ export default function CreateListing() {
             </div>
             <div>
               <FieldLabel required>Şəhər</FieldLabel>
-              <Select className="w-full" value={city} onChange={setCity} options={CITIES.map((c) => ({ label: c, value: c }))} />
+              <Select showSearch optionFilterProp="label" className="w-full" value={city} onChange={setCity} options={AZERBAIJAN_LOCATIONS.map((c) => ({ label: c, value: c }))} placeholder="Şəhər və ya rayon seçin" />
             </div>
             <div>
               <FieldLabel required>Telefon nömrəsi</FieldLabel>

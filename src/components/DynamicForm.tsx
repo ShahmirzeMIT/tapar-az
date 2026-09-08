@@ -20,7 +20,7 @@ export default function DynamicForm({ fields, values, onChange, errors }: Dynami
   const toRender = visibleFields(fields, values);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+    <div className="listing-dynamic-form grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
       {toRender.map((field) => (
         <div key={field.name} className={field.colSpan === 2 ? 'sm:col-span-2' : ''}>
           <label className="block text-sm font-medium mb-1.5 text-ink dark:text-white">

@@ -6,6 +6,11 @@
 SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
 [[redirects]]
+  from = "/api/email-smtp/email-send"
+  to = "/.netlify/functions/email-smtp-email-send"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

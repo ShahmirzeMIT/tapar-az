@@ -7,7 +7,6 @@ import {
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import { useMessages } from '@/hooks/useMessages';
-import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from 'react-i18next';
 import { useMyStore } from '@/hooks/useStore';
@@ -84,7 +83,6 @@ export default function Header() {
               </Link>
             )}
             <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
-            <ThemeToggle />
             <Link
               to="/elan-yerlesdir"
               className="market-action px-4 py-2 shadow-[0_5px_12px_rgb(var(--color-primary)/0.2)]"
@@ -112,7 +110,6 @@ export default function Header() {
           <div className="flex items-center gap-4">
             {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
             <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
-            <ThemeToggle />
           </div>
         </div>
       </header>

@@ -40,7 +40,7 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
         <button onClick={handleFavorite} aria-label="Sevimlilərə əlavə et" className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm backdrop-blur transition hover:scale-110 hover:text-action dark:bg-graphite/90 dark:text-white">
           {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined />}
         </button>
-        <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] font-medium text-white/90"><span>{categoryLabel}</span><span className="rounded-full bg-black/25 px-2 py-1 backdrop-blur">Xarici elan</span></div>
+        <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] font-medium text-white/90"><span>{categoryLabel}</span><span className="rounded-full bg-black/25 px-2 py-1 backdrop-blur">{external ? 'Xarici elan' : 'TAPAR.AZ elanı'}</span></div>
       </div>
       <div className="p-5">
         <h3 className="min-h-[2.75em] text-[15px] font-bold leading-[1.35] tracking-[-.01em] text-ink transition-colors group-hover:text-action dark:text-white">{listing.title}</h3>

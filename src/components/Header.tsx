@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Input, Avatar, Dropdown, Drawer, Select } from 'antd';
+import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined, MenuOutlined,
-  HomeOutlined, BulbOutlined,
+  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import { useMessages } from '@/hooks/useMessages';
@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useMyStore } from '@/hooks/useStore';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `relative text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
+  `relative text-xs font-medium tracking-tight transition-colors duration-200 ease-editorial xl:text-sm ${
     isActive ? 'text-action after:absolute after:-bottom-5 after:left-0 after:right-0 after:h-0.5 after:bg-action' : 'text-muted hover:text-action'
   }`;
 
@@ -26,7 +26,6 @@ export default function Header() {
   const location = useLocation();
   const { store, reload: reloadStore } = useMyStore(user?.uid);
   const [searchValue, setSearchValue] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => { void reloadStore(); }, [location.pathname, reloadStore]);
 
@@ -36,8 +35,6 @@ export default function Header() {
   const handleSearch = () => {
     navigate(`/elanlar${searchValue ? `?q=${encodeURIComponent(searchValue)}` : ''}`);
   };
-
-  const closeMenu = () => setMenuOpen(false);
 
   const userMenuItems = [
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
@@ -53,14 +50,23 @@ export default function Header() {
     <>
       {/* Desktop / tablet header */}
       <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark shadow-[0_2px_12px_rgba(17,24,39,0.04)]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 xl:gap-6 xl:px-6">
           <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
-          <button type="button" onClick={() => setMenuOpen(true)} aria-label="Menyunu aç" className="inline-flex items-center gap-2 rounded-xl border border-action/30 px-3 py-2 text-sm font-semibold text-action transition hover:bg-action/10"><MenuOutlined /> Menyu</button>
+          <nav className="flex shrink-0 items-center gap-3 lg:gap-4 xl:gap-5">
+            <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
+            <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
+            <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
+            <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
+            <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
+            <NavLink to="/magazalar" className={navLinkClass}>Mağazalar</NavLink>
+            <NavLink to={storePath} className={navLinkClass}>{storeLabel}</NavLink>
+            {isAdmin && <Link to="/admin" className="inline-flex items-center gap-1 rounded-lg bg-action px-2.5 py-2 text-xs font-bold text-white transition hover:bg-[#e84f00]"><SettingOutlined /> Admin</Link>}
+          </nav>
 
-          <div className="flex-1 max-w-md">
+          <div className="min-w-0 max-w-[280px] flex-1">
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchValue}
@@ -96,20 +102,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      <Drawer title={<span className="font-display text-xl font-bold text-[#FF5A00]">TAPAR.AZ Menyu</span>} placement="left" open={menuOpen} onClose={closeMenu} width={300} styles={{ body: { padding: 16 } }}>
-        <nav className="flex flex-col gap-1">
-          <NavLink to="/" end onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('home')}</NavLink>
-          <NavLink to="/elanlar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('listings')}</NavLink>
-          <NavLink to="/avtomobiller" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('cars')}</NavLink>
-          <NavLink to="/kateqoriyalar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('categories')}</NavLink>
-          <NavLink to="/favoriler" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{t('favorites')}</NavLink>
-          <NavLink to="/magazalar" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">Mağazalar</NavLink>
-          <NavLink to={storePath} onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]">{storeLabel}</NavLink>
-          <NavLink to="/ai-elan" onClick={closeMenu} className="rounded-xl px-4 py-3 font-medium text-ink transition hover:bg-[#FF5A00]/10 hover:text-[#FF5A00]"><BulbOutlined /> {t('aiListing')}</NavLink>
-          {isAdmin && <Link to="/admin" onClick={closeMenu} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-[#FF5A00] px-4 py-3 font-bold text-white transition hover:bg-[#e84f00]"><SettingOutlined /> Adminə daxil ol</Link>}
-        </nav>
-      </Drawer>
 
       {/* Mobile top bar (logo + theme) */}
       <header className="md:hidden sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark">

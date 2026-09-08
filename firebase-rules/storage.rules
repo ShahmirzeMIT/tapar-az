@@ -34,6 +34,15 @@ service firebase.storage {
       allow delete: if isSignedIn() && request.auth.uid == userId;
     }
 
+    match /stores/{userId}/{storeId}/{fileName} {
+      allow read: if true;
+      allow write: if isSignedIn()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && request.resource.size < 8 * 1024 * 1024;
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
     // Default-deny everything else in the bucket
     match /{allPaths=**} {
       allow read, write: if false;

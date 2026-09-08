@@ -81,6 +81,15 @@ service cloud.firestore {
       allow update, delete: if isSignedIn() && resource.data.ownerId == request.auth.uid;
     }
 
+    match /store_followers/{followId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && followId == request.auth.uid + '_' + request.resource.data.storeId;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow update: if false;
+    }
+
     // EXTERNAL LISTINGS — normalized read-only records imported by the scraper.
     match /external_listings/{listingId} {
       allow read: if true;

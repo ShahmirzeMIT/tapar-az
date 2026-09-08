@@ -62,6 +62,7 @@ export interface Store {
   name: string;
   slug: string;
   description: string;
+  category?: CategoryKey;
   logoUrl?: string;
   coverUrl?: string;
   phone?: string;

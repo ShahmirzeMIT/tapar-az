@@ -22,7 +22,7 @@ const STEP_LABELS = ['Kateqoriya', 'Alt kateqoriya', 'Məlumatlar', 'Media', 'AI
 
 export default function CreateListing() {
   const { user, profile } = useAuth();
-  const { store } = useMyStore(user?.uid);
+  const { store, loading: storeLoading } = useMyStore(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = (location.state as { aiDraft?: import('@/types').AIListingDraft } | null)?.aiDraft;
@@ -94,6 +94,7 @@ export default function CreateListing() {
 
   const handlePublish = async () => {
     if (!user) { message.error('Zəhmət olmasa daxil olun.'); return; }
+    if (storeLoading) { message.info('Mağaza məlumatları yüklənir, zəhmət olmasa bir az gözləyin.'); return; }
     if (!category || !subcategory || !title || !city || !phone.trim()) { message.error('Telefon nömrəsi daxil olmaqla bütün tələb olunan sahələri doldurun.'); return; }
 
     setPublishing(true);
@@ -104,7 +105,7 @@ export default function CreateListing() {
         ownerId: user.uid,
         ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi',
         ownerEmail: user.email ?? profile?.email ?? '',
-        storeId: store?.id,
+        ...(store?.id ? { storeId: store.id } : {}),
         category, subcategory, title,
         price: priceHidden ? null : price ?? null,
         priceHidden,

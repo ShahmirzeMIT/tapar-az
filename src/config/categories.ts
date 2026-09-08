@@ -329,3 +329,45 @@ export function getSubcategory(categoryKey: CategoryKey | string | null | undefi
   const cat = getCategory(categoryKey);
   return cat?.subcategories.find((s) => s.key === subKey) ?? null;
 }
+
+export type CategoryLanguage = 'az' | 'en' | 'ru';
+type TranslationSet = { az: string; en: string; ru: string };
+
+const categoryTranslations: Record<string, TranslationSet> = {
+  'ev_bağ': { az: 'Ev və bağ üçün', en: 'Home and garden', ru: 'Для дома и сада' },
+  elektronika: { az: 'Elektronika', en: 'Electronics', ru: 'Электроника' },
+  nəqliyyat: { az: 'Nəqliyyat', en: 'Transport', ru: 'Транспорт' },
+  ehtiyat_hissələri: { az: 'Ehtiyat hissələri və aksesuarlar', en: 'Spare parts and accessories', ru: 'Запчасти и аксессуары' },
+  'daşınmaz_əmlak': { az: 'Daşınmaz əmlak', en: 'Real estate', ru: 'Недвижимость' },
+  'iş_elanları': { az: 'İş elanları', en: 'Jobs', ru: 'Работа' },
+  xidmətlər: { az: 'Xidmətlər', en: 'Services', ru: 'Услуги' },
+  'şəxsi_əşyalar': { az: 'Şəxsi əşyalar', en: 'Personal items', ru: 'Личные вещи' },
+  hobbi_asudə: { az: 'Hobbi və asudə', en: 'Hobbies and leisure', ru: 'Хобби и отдых' },
+  məişət_texnikası: { az: 'Məişət texnikası', en: 'Home appliances', ru: 'Бытовая техника' },
+  telefonlar: { az: 'Telefonlar', en: 'Phones', ru: 'Телефоны' },
+  uşaq_aləmi: { az: 'Uşaq aləmi', en: 'Kids', ru: 'Детский мир' },
+  heyvanlar: { az: 'Heyvanlar', en: 'Animals', ru: 'Животные' },
+};
+
+const subcategoryTranslations: Record<string, TranslationSet> = {
+  mebel: { az: 'Mebellər', en: 'Furniture', ru: 'Мебель' }, qab_qacaq: { az: 'Qab-qacaq və mətbəx ləvazimatları', en: 'Tableware and kitchenware', ru: 'Посуда и кухонные принадлежности' }, dekor: { az: 'Dekor və interyer', en: 'Decor and interior', ru: 'Декор и интерьер' }, bag_bostan: { az: 'Bağ və bostan', en: 'Garden and outdoor', ru: 'Сад и огород' }, ev_tekstili: { az: 'Ev tekstili', en: 'Home textiles', ru: 'Домашний текстиль' }, xalcalar: { az: 'Xalçalar və aksesuarlar', en: 'Carpets and accessories', ru: 'Ковры и аксессуары' }, isiqlandirma: { az: 'Ev üçün işıqlandırma', en: 'Home lighting', ru: 'Освещение для дома' }, bitkiler: { az: 'Bitkilər', en: 'Plants', ru: 'Растения' },
+  telefonlar: { az: 'Telefonlar', en: 'Phones', ru: 'Телефоны' }, audio_video: { az: 'Audio və video', en: 'Audio and video', ru: 'Аудио и видео' }, komponentler: { az: 'Komponentlər və monitorlar', en: 'Components and monitors', ru: 'Комплектующие и мониторы' }, noutbuklar: { az: 'Noutbuklar və netbuklar', en: 'Laptops and netbooks', ru: 'Ноутбуки и нетбуки' }, komputer_aksesuarlar: { az: 'Kompüter aksesuarları', en: 'Computer accessories', ru: 'Аксессуары для компьютеров' }, oyunlar: { az: 'Oyunlar, pultlar və proqramlar', en: 'Games, consoles and software', ru: 'Игры, приставки и программы' }, televizorlar: { az: 'Televizorlar və aksesuarlar', en: 'TVs and accessories', ru: 'Телевизоры и аксессуары' }, sebekeler: { az: 'Şəbəkə və server avadanlığı', en: 'Network and server equipment', ru: 'Сетевое и серверное оборудование' }, ofis_avadanligi: { az: 'Ofis avadanlığı və istehlak materialları', en: 'Office equipment and supplies', ru: 'Офисная техника и расходники' }, fototexnika: { az: 'Fototexnika', en: 'Photography equipment', ru: 'Фототехника' }, nomreler: { az: 'Nömrələr və SIM-kartlar', en: 'Numbers and SIM cards', ru: 'Номера и SIM-карты' }, smart_saatlar: { az: 'Smart saat və qolbaqlar', en: 'Smart watches and bands', ru: 'Смарт-часы и браслеты' }, masaustu_komputerler: { az: 'Masaüstü kompüterlər', en: 'Desktop computers', ru: 'Настольные компьютеры' }, plansetler: { az: 'Planşet və elektron kitablar', en: 'Tablets and e-readers', ru: 'Планшеты и электронные книги' },
+  minik_avtomobilleri: { az: 'Minik avtomobilləri', en: 'Passenger cars', ru: 'Легковые автомобили' }, motosikletler: { az: 'Motosikletlər', en: 'Motorcycles', ru: 'Мотоциклы' }, yuk_avtomobilleri: { az: 'Yük avtomobilləri', en: 'Trucks', ru: 'Грузовые автомобили' }, avtobuslar: { az: 'Avtobuslar', en: 'Buses', ru: 'Автобусы' }, xususi_texnika: { az: 'Xüsusi texnika', en: 'Special equipment', ru: 'Спецтехника' }, su_neqliyyati: { az: 'Su nəqliyyatı', en: 'Water transport', ru: 'Водный транспорт' },
+  muherrik_hisseleri: { az: 'Mühərrik hissələri', en: 'Engine parts', ru: 'Детали двигателя' }, kuzov_hisseleri: { az: 'Kuzov hissələri', en: 'Body parts', ru: 'Кузовные детали' }, tekerler: { az: 'Təkərlər və disklər', en: 'Tyres and wheels', ru: 'Шины и диски' }, elektrik: { az: 'Elektrik avadanlığı', en: 'Electrical equipment', ru: 'Электрооборудование' }, yağ_filterleri: { az: 'Yağ və hava filterləri', en: 'Oil and air filters', ru: 'Масляные и воздушные фильтры' }, aksesuarlar: { az: 'Aksesuarlar', en: 'Accessories', ru: 'Аксессуары' },
+  menziller: { az: 'Mənzillər', en: 'Apartments', ru: 'Квартиры' }, heyet_evleri: { az: 'Həyət evləri və villalar', en: 'Houses and villas', ru: 'Дома и виллы' }, torpaq: { az: 'Torpaq sahələri', en: 'Land plots', ru: 'Земельные участки' }, ofisler: { az: 'Ofislər', en: 'Offices', ru: 'Офисы' }, obyektler: { az: 'Obyektlər və mağazalar', en: 'Commercial properties and shops', ru: 'Коммерческие объекты и магазины' }, qarajlar: { az: 'Qarajlar', en: 'Garages', ru: 'Гаражи' },
+  vakansiyalar: { az: 'Vakansiyalar', en: 'Vacancies', ru: 'Вакансии' },
+  temir_tikinti: { az: 'Təmir və tikinti', en: 'Repair and construction', ru: 'Ремонт и строительство' }, gozellik_saglamliq: { az: 'Gözəllik və sağlamlıq', en: 'Beauty and health', ru: 'Красота и здоровье' }, tehsil: { az: 'Təhsil', en: 'Education', ru: 'Образование' }, dasima: { az: 'Daşıma və nəqliyyat', en: 'Transport and delivery', ru: 'Перевозки и транспорт' }, it_proqramlasdirma: { az: 'IT və proqramlaşdırma', en: 'IT and programming', ru: 'IT и программирование' }, digər_xidmət: { az: 'Digər xidmətlər', en: 'Other services', ru: 'Другие услуги' },
+  geyim: { az: 'Geyim', en: 'Clothing', ru: 'Одежда' }, ayaqqabi: { az: 'Ayaqqabı', en: 'Shoes', ru: 'Обувь' }, cantalar: { az: 'Çantalar', en: 'Bags', ru: 'Сумки' }, saatlar: { az: 'Saatlar', en: 'Watches', ru: 'Часы' },
+  soyuducular: { az: 'Soyuducular', en: 'Refrigerators', ru: 'Холодильники' }, paltaryuyanlar: { az: 'Paltaryuyanlar', en: 'Washing machines', ru: 'Стиральные машины' }, kondisionerler: { az: 'Kondisionerlər', en: 'Air conditioners', ru: 'Кондиционеры' }, tozsoranlar: { az: 'Tozsoranlar', en: 'Vacuum cleaners', ru: 'Пылесосы' }, aspiratorlar: { az: 'Aspiratorlar', en: 'Extractor hoods', ru: 'Вытяжки' }, qehve_masinlari: { az: 'Qəhvə maşınları', en: 'Coffee machines', ru: 'Кофемашины' }, su_filtrleri: { az: 'Su filtrləri və pompaları', en: 'Water filters and pumps', ru: 'Фильтры и насосы для воды' }, metbex_texnikasi: { az: 'Mətbəx texnikası', en: 'Kitchen appliances', ru: 'Кухонная техника' }, diger_texnika: { az: 'Digər məişət texnikası', en: 'Other home appliances', ru: 'Другая бытовая техника' },
+  smartfonlar: { az: 'Smartfonlar', en: 'Smartphones', ru: 'Смартфоны' }, telefon_aksesuarlar: { az: 'Telefon aksesuarları', en: 'Phone accessories', ru: 'Аксессуары для телефонов' },
+  usaq_geyimi: { az: 'Uşaq geyimi', en: 'Children’s clothing', ru: 'Детская одежда' }, oyuncaqlar: { az: 'Oyuncaqlar', en: 'Toys', ru: 'Игрушки' }, arabalar: { az: 'Uşaq arabaları', en: 'Strollers', ru: 'Детские коляски' }, mekteb: { az: 'Məktəb ləvazimatları', en: 'School supplies', ru: 'Школьные принадлежности' },
+  itler: { az: 'İtlər', en: 'Dogs', ru: 'Собаки' }, pisikler: { az: 'Pişiklər', en: 'Cats', ru: 'Кошки' }, quslar: { az: 'Quşlar', en: 'Birds', ru: 'Птицы' }, akvarium: { az: 'Akvarium heyvanları', en: 'Aquarium animals', ru: 'Аквариумные животные' }, yem_aksesuar: { az: 'Yem və aksesuarlar', en: 'Food and accessories', ru: 'Корма и аксессуары' },
+};
+
+export function categoryLabel(key: string, language: CategoryLanguage) {
+  return categoryTranslations[key]?.[language] ?? getCategory(key)?.label ?? key;
+}
+
+export function subcategoryLabel(key: string, language: CategoryLanguage) {
+  return subcategoryTranslations[key]?.[language] ?? getCategory(CATEGORIES.find((category) => category.subcategories.some((item) => item.key === key))?.key)?.subcategories.find((item) => item.key === key)?.label ?? key;
+}

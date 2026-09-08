@@ -1,26 +1,17 @@
 import { useEffect, useState } from 'react';
-import { HeartOutlined, HeartFilled, EnvironmentOutlined, CalendarOutlined, CarOutlined, HomeOutlined, AppstoreOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled, EnvironmentOutlined, CalendarOutlined, CarOutlined, HomeOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import type { ExternalListing, Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
 import { formatPrice } from '@/utils/format';
 import { externalListingLabel } from '@/hooks/useExternalListings';
-import { sourceLogo } from '@/utils/sourceLogos';
-
-const sourceStyles: Record<string, string> = {
-  'bina.az': 'bg-[#e9f7ef] text-[#138a4b] dark:bg-[#123c28] dark:text-[#72dda2]',
-  'tap.az': 'bg-[#fff1e8] text-[#ee5b12] dark:bg-[#4b2818] dark:text-[#ffae7c]',
-  'turbo.az': 'bg-[#e9f0ff] text-[#2563eb] dark:bg-[#172d57] dark:text-[#8eb4ff]',
-  'birmarket.az': 'bg-[#f2eaff] text-[#7c3aed] dark:bg-[#332052] dark:text-[#c6a9ff]',
-};
 
 export default function ListingCard({ listing }: { listing: ExternalListing | Listing }) {
   const { user } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [favoriteOverride, setFavoriteOverride] = useState<boolean | null>(null);
   const external = 'source' in listing;
-  const source = external ? listing.source : 'TAPAR.AZ';
   const coverImage = external ? listing.images[0] : listing.media[0]?.url;
   const storedFavorite = isFavorite(listing.id);
   const fav = favoriteOverride ?? storedFavorite;
@@ -45,11 +36,10 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
       <div className="relative aspect-[1.18] overflow-hidden bg-offwhite dark:bg-background">
         {coverImage ? <img src={coverImage} alt={listing.title} loading="lazy" className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-sm text-muted">Şəkil yoxdur</div>}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
-        <div className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-extrabold tracking-tight shadow-sm ${sourceStyles[source] ?? 'bg-ink text-white'}`}><img src={sourceLogo(source)} alt="" className="h-4 w-4 rounded-full bg-white object-contain" />{source}</div>
         <button type="button" onClick={handleFavorite} aria-pressed={fav} aria-label={fav ? 'Favoritlərdən çıxar' : 'Sevimlilərə əlavə et'} className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm backdrop-blur transition hover:scale-110 hover:text-action dark:bg-graphite/90 dark:text-white">
           {fav ? <HeartFilled className="text-urgent" /> : <HeartOutlined />}
         </button>
-        <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] font-medium text-white/90"><span>{categoryLabel}</span><span className="rounded-full bg-black/25 px-2 py-1 backdrop-blur">{external ? 'Xarici elan' : 'TAPAR.AZ elanı'}</span></div>
+        <div className="absolute bottom-3 left-4 text-[11px] font-medium text-white/90"><span>{categoryLabel}</span></div>
       </div>
       <div className="p-5">
         <h3 className="min-h-[2.75em] text-[15px] font-bold leading-[1.35] tracking-[-.01em] text-ink transition-colors group-hover:text-action dark:text-white">{listing.title}</h3>
@@ -61,7 +51,7 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
           {external && listing.year && <span>{listing.year}</span>}
           {external && listing.mileage !== null && listing.mileage !== undefined && <span>{listing.mileage.toLocaleString('az-AZ')} km</span>}
         </div>
-        <div className="mt-5 flex items-center justify-between border-t border-line pt-4 dark:border-line-dark"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted"><CalendarOutlined /> {external && listing.published_at ? new Date(listing.published_at).toLocaleDateString('az-AZ') : 'Yeni elan'}</span><span className="inline-flex items-center gap-1 text-xs font-extrabold text-action transition-transform group-hover:translate-x-0.5">{source}-da bax <ArrowRightOutlined /></span></div>
+        <div className="mt-5 flex items-center border-t border-line pt-4 dark:border-line-dark"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted"><CalendarOutlined /> {external && listing.published_at ? new Date(listing.published_at).toLocaleDateString('az-AZ') : 'Yeni elan'}</span></div>
       </div>
     </a>
   );

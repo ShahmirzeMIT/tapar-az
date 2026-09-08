@@ -4,7 +4,8 @@ import { Steps, Input, InputNumber, Select, Button, Switch, message, Alert, Moda
 import { doc, serverTimestamp, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
-import { CATEGORIES, getCategory } from '@/config/categories';
+import { CATEGORIES, categoryLabel, getCategory, subcategoryLabel } from '@/config/categories';
+import { useLanguage } from '@/context/LanguageContext';
 import DynamicForm from '@/components/DynamicForm';
 import MediaUploader from '@/components/MediaUploader';
 import { pruneHiddenValues } from '@/utils/conditionalFields';
@@ -22,6 +23,7 @@ const STEP_LABELS = ['Kateqoriya', 'Alt kateqoriya', 'Məlumatlar', 'Media', 'AI
 
 export default function CreateListing() {
   const { user, profile } = useAuth();
+  const { language } = useLanguage();
   const { store, loading: storeLoading } = useMyStore(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
@@ -175,7 +177,7 @@ export default function CreateListing() {
               onClick={() => { setCategory(c.key); setSubcategory(undefined); }}
               className={`market-surface p-6 text-left transition-all ${category === c.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{c.label}</p>
+              <p className="font-semibold text-ink dark:text-white">{categoryLabel(c.key, language)}</p>
             </button>
           ))}
         </div>
@@ -190,7 +192,7 @@ export default function CreateListing() {
               onClick={() => setSubcategory(s.key)}
               className={`market-surface p-6 text-left transition-all ${subcategory === s.key ? 'border-action bg-action/10' : 'hover:border-action hover:-translate-y-0.5'}`}
             >
-              <p className="font-semibold text-ink dark:text-white">{s.label}</p>
+              <p className="font-semibold text-ink dark:text-white">{subcategoryLabel(s.key, language)}</p>
             </button>
           ))}
         </div>

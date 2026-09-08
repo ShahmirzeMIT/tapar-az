@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
   SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
@@ -10,6 +10,7 @@ import { useMessages } from '@/hooks/useMessages';
 import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from 'react-i18next';
+import { useMyStore } from '@/hooks/useStore';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `relative text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
@@ -22,7 +23,14 @@ export default function Header() {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { store, reload: reloadStore } = useMyStore(user?.uid);
   const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => { void reloadStore(); }, [location.pathname, reloadStore]);
+
+  const storePath = store ? `/magaza/${store.slug}` : '/magaza-yarat';
+  const storeLabel = store ? 'Mağazam' : 'Mağaza yarat';
 
   const handleSearch = () => {
     navigate(`/elanlar${searchValue ? `?q=${encodeURIComponent(searchValue)}` : ''}`);
@@ -32,7 +40,7 @@ export default function Header() {
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
     { key: 'listings', label: <Link to="/profil/elanlarim">Mənim elanlarım</Link> },
     { key: 'favorites', label: <Link to="/favoriler">Sevimlilər</Link> },
-    { key: 'store', label: <Link to="/magaza-yarat">Mağazam</Link> },
+    { key: 'store', label: <Link to={storePath}>{storeLabel}</Link> },
     { key: 'messages', label: <Link to="/mesajlar">Mesajlar</Link> },
     { type: 'divider' as const },
     { key: 'logout', label: 'Çıxış', onClick: () => logout() },
@@ -53,7 +61,7 @@ export default function Header() {
             <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
             <NavLink to="/kateqoriyalar" className={navLinkClass}>{t('categories')}</NavLink>
             <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
-            <NavLink to="/magaza-yarat" className={navLinkClass}>Mağaza yarat</NavLink>
+            <NavLink to={storePath} className={navLinkClass}>{storeLabel}</NavLink>
             <NavLink to="/ai-elan" className={navLinkClass}>
               <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
             </NavLink>

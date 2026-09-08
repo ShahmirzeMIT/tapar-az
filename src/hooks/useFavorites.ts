@@ -15,18 +15,24 @@ export function useFavorites() {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
       setFavorites([]);
       setLoading(false);
+      setError(null);
       return;
     }
+    setError(null);
     const q = query(collection(db, 'favorites'), where('userId', '==', user.uid));
     const unsub = onSnapshot(q, (snap) => {
       setFavorites(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Favorite));
       setLoading(false);
-    }, () => setLoading(false));
+    }, (snapshotError) => {
+      setError(snapshotError.message);
+      setLoading(false);
+    });
     return unsub;
   }, [user]);
 
@@ -45,5 +51,5 @@ export function useFavorites() {
     }
   }, [user, isFavorite]);
 
-  return { favorites, loading, isFavorite, toggleFavorite };
+  return { favorites, loading, error, isFavorite, toggleFavorite };
 }

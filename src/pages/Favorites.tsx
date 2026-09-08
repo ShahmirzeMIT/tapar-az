@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 export default function Favorites() {
   const { user } = useAuth();
-  const { favorites, loading: favLoading } = useFavorites();
+  const { favorites, loading: favLoading, error: favoritesError } = useFavorites();
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,13 +19,13 @@ export default function Favorites() {
     if (favorites.length === 0) { setListings([]); setLoading(false); return; }
 
     setLoading(true);
-    Promise.all(
+    Promise.allSettled(
       favorites.map(async (f) => {
         const snap = await getDoc(doc(db, 'listings', f.listingId));
         return snap.exists() ? ({ id: snap.id, ...snap.data() } as Listing) : null;
       }),
     ).then((results) => {
-      setListings(results.filter((l): l is Listing => l !== null));
+      setListings(results.filter((result): result is PromiseFulfilledResult<Listing | null> => result.status === 'fulfilled').map((result) => result.value).filter((l): l is Listing => l !== null));
       setLoading(false);
     });
   }, [favorites, favLoading]);
@@ -44,6 +44,7 @@ export default function Favorites() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-8">
       <h1 className="font-display text-2xl font-bold tracking-tight text-ink dark:text-white mb-6">Sevimlilər</h1>
+      {favoritesError && <p className="mb-5 rounded-xl border border-urgent/30 bg-urgent/10 p-4 text-sm text-urgent">Favoritlər yüklənmədi: {favoritesError}</p>}
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => <Skeleton.Image key={i} active className="!w-full !h-48" />)}

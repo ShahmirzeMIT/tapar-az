@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Empty, Input, InputNumber, Select, Switch } from 'antd';
+import { Empty, Input, InputNumber, Radio, Select, Switch } from 'antd';
 import { SearchOutlined, SlidersOutlined } from '@ant-design/icons';
 import ListingCard from '@/components/ListingCard';
 import { useListings } from '@/hooks/useListings';
@@ -22,7 +22,8 @@ function isFieldVisible(field: FieldSchema, values: ListingAttributes) {
 function FilterField({ field, value, onChange }: { field: FieldSchema; value: ListingAttributes[string]; onChange: (value: ListingAttributes[string]) => void }) {
   if (field.type === 'switch' || field.type === 'checkbox') return <div className="flex items-center justify-between rounded-lg border border-line px-3 py-2 dark:border-line-dark"><span className="text-sm text-ink dark:text-white">{field.label}</span><Switch checked={Boolean(value)} onChange={onChange} /></div>;
   if (field.type === 'number') return <InputNumber className="w-full" min={field.min} max={field.max} value={typeof value === 'number' ? value : undefined} placeholder={field.placeholder ?? field.label} onChange={(next) => onChange(next ?? undefined)} />;
-  if (field.type === 'select' || field.type === 'radio') return <Select allowClear className="w-full" value={value as string | undefined} placeholder={field.label} options={field.options} onChange={onChange} />;
+  if (field.type === 'radio') return <Radio.Group value={value as string | undefined} onChange={(event) => onChange(event.target.value)} className="flex flex-col gap-2 [&_.ant-radio-wrapper]:mr-0 [&_.ant-radio-wrapper]:text-sm [&_.ant-radio-wrapper]:text-ink dark:[&_.ant-radio-wrapper]:text-white" options={field.options} />;
+  if (field.type === 'select') return <Select allowClear className="w-full" value={value as string | undefined} placeholder={field.label} options={field.options} onChange={onChange} />;
   if (field.type === 'multiselect') return <Select mode="multiple" allowClear className="w-full" value={Array.isArray(value) ? value : []} placeholder={field.label} options={field.options} onChange={onChange} />;
   if (field.type === 'tags') return <Select mode="tags" allowClear className="w-full" value={Array.isArray(value) ? value : []} placeholder={field.placeholder ?? field.label} onChange={onChange} />;
   return <Input value={typeof value === 'string' ? value : ''} placeholder={field.placeholder ?? field.label} onChange={(event) => onChange(event.target.value || undefined)} />;

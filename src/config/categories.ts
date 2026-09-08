@@ -148,6 +148,58 @@ const marketplaceFields: FieldSchema[] = [
   ]},
 ];
 
+const homeApplianceFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Texnika növü', type: 'radio', colSpan: 2, options: [
+    { label: 'Soyuducular', value: 'refrigerator' }, { label: 'Paltaryuyanlar', value: 'washing_machine' },
+    { label: 'Kondisionerlər', value: 'air_conditioner' }, { label: 'Tozsoranlar', value: 'vacuum_cleaner' },
+    { label: 'Tikiş maşınları', value: 'sewing_machine' }, { label: 'Aspiratorlar', value: 'hood' },
+    { label: 'Blenderlər, mikserlər, mətbəx kombaynları', value: 'kitchen_appliance' },
+    { label: 'Blinçik və vafli aparatları', value: 'waffle_maker' },
+    { label: 'Elektrik avadanlıqları və termostatlar', value: 'electrical_equipment' },
+    { label: 'Su filtrləri və pompaları', value: 'water_filter' }, { label: 'Qəhvə maşınları', value: 'coffee_machine' },
+    { label: 'Digər', value: 'other' },
+  ]},
+  { name: 'brand', label: 'Marka', type: 'text', colSpan: 1, placeholder: 'Marka axtarışı' },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+  { name: 'warranty', label: 'Zəmanət', type: 'radio', colSpan: 1, options: [{ label: 'Zəmanətli', value: 'yes' }, { label: 'Zəmanətsiz', value: 'no' }] },
+];
+
+const vehicleFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Nəqliyyat növü', type: 'select', colSpan: 1, options: [{ label: 'Minik avtomobili', value: 'car' }, { label: 'Motosiklet', value: 'motorcycle' }, { label: 'Yük avtomobili', value: 'truck' }, { label: 'Avtobus', value: 'bus' }, { label: 'Digər', value: 'other' }] },
+  { name: 'brand', label: 'Marka', type: 'text', colSpan: 1 }, { name: 'model', label: 'Model', type: 'text', colSpan: 1 },
+  { name: 'year', label: 'Buraxılış ili', type: 'number', colSpan: 1, min: 1900 },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+];
+
+const sparePartFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Hissə və aksesuar növü', type: 'text', colSpan: 1, placeholder: 'Məs: mühərrik, təkər, yağ filteri' },
+  { name: 'brand', label: 'Marka', type: 'text', colSpan: 1 }, { name: 'compatibleModel', label: 'Uyğun model', type: 'text', colSpan: 1 },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+];
+
+const phoneFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Məhsul növü', type: 'select', colSpan: 1, options: [{ label: 'Smartfon', value: 'smartphone' }, { label: 'Planşet', value: 'tablet' }, { label: 'Telefon aksesuarları', value: 'accessory' }, { label: 'Smart saat', value: 'smartwatch' }] },
+  { name: 'brand', label: 'Marka', type: 'text', colSpan: 1 }, { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+  { name: 'memory', label: 'Yaddaş', type: 'text', colSpan: 1, placeholder: 'Məs: 128 GB' },
+];
+
+const personalItemFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Məhsul növü', type: 'select', colSpan: 1, options: [{ label: 'Geyim', value: 'clothing' }, { label: 'Ayaqqabı', value: 'shoes' }, { label: 'Çanta', value: 'bags' }, { label: 'Saat və aksesuar', value: 'accessories' }, { label: 'Digər', value: 'other' }] },
+  { name: 'gender', label: 'Kim üçün', type: 'radio', colSpan: 1, options: [{ label: 'Qadın', value: 'female' }, { label: 'Kişi', value: 'male' }, { label: 'Uniseks', value: 'unisex' }] },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+];
+
+const kidsFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Məhsul növü', type: 'select', colSpan: 1, options: [{ label: 'Geyim', value: 'clothing' }, { label: 'Oyuncaq', value: 'toys' }, { label: 'Uşaq arabası', value: 'stroller' }, { label: 'Məktəb ləvazimatı', value: 'school' }, { label: 'Digər', value: 'other' }] },
+  { name: 'ageRange', label: 'Yaş qrupu', type: 'text', colSpan: 1, placeholder: 'Məs: 3-6 yaş' },
+  { name: 'condition', label: 'Vəziyyəti', type: 'radio', colSpan: 1, options: [{ label: 'Yeni', value: 'new' }, { label: 'İşlənmiş', value: 'used' }] },
+];
+
+const animalFields: FieldSchema[] = [
+  { name: 'itemType', label: 'Heyvan və ya məhsul növü', type: 'select', colSpan: 1, options: [{ label: 'İt', value: 'dog' }, { label: 'Pişik', value: 'cat' }, { label: 'Quş', value: 'bird' }, { label: 'Akvarium heyvanları', value: 'aquarium' }, { label: 'Yem və aksesuar', value: 'supplies' }, { label: 'Digər', value: 'other' }] },
+  { name: 'breed', label: 'Cins', type: 'text', colSpan: 1 }, { name: 'age', label: 'Yaş', type: 'text', colSpan: 1 },
+];
+
 export const CATEGORIES: CategoryConfig[] = [
   {
     key: 'ev_bağ', label: 'Ev və bağ üçün', icon: 'home', image: 'home-garden',
@@ -159,11 +211,11 @@ export const CATEGORIES: CategoryConfig[] = [
   },
   {
     key: 'nəqliyyat', label: 'Nəqliyyat', icon: 'car', image: 'transport',
-    subcategories: [{ key: 'neqliyyat', label: 'Avtomobil, motosiklet və nəqliyyat', fields: marketplaceFields }],
+    subcategories: [{ key: 'neqliyyat', label: 'Avtomobil, motosiklet və nəqliyyat', fields: vehicleFields }],
   },
   {
     key: 'ehtiyat_hissələri', label: 'Ehtiyat hissələri və aksesuarlar', icon: 'tool', image: 'spare-parts',
-    subcategories: [{ key: 'ehtiyat_hisseleri', label: 'Avtomobil hissələri və aksesuarlar', fields: marketplaceFields }],
+    subcategories: [{ key: 'ehtiyat_hisseleri', label: 'Avtomobil hissələri və aksesuarlar', fields: sparePartFields }],
   },
   {
     key: 'daşınmaz_əmlak', label: 'Daşınmaz Əmlak', icon: 'home', image: 'real-estate',
@@ -179,7 +231,7 @@ export const CATEGORIES: CategoryConfig[] = [
   },
   {
     key: 'şəxsi_əşyalar', label: 'Şəxsi əşyalar', icon: 'gift', image: 'personal-items',
-    subcategories: [{ key: 'sexsi_esyalar', label: 'Geyim, ayaqqabı və aksesuarlar', fields: marketplaceFields }],
+    subcategories: [{ key: 'sexsi_esyalar', label: 'Geyim, ayaqqabı və aksesuarlar', fields: personalItemFields }],
   },
   {
     key: 'hobbi_asudə', label: 'Hobbi və asudə', icon: 'gift', image: 'hobby-leisure',
@@ -187,19 +239,19 @@ export const CATEGORIES: CategoryConfig[] = [
   },
   {
     key: 'məişət_texnikası', label: 'Məişət texnikası', icon: 'gift', image: 'home-appliances',
-    subcategories: [{ key: 'meiset_texnikasi', label: 'Ev üçün texnika və avadanlıq', fields: marketplaceFields }],
+    subcategories: [{ key: 'meiset_texnikasi', label: 'Ev üçün texnika və avadanlıq', fields: homeApplianceFields }],
   },
   {
     key: 'telefonlar', label: 'Telefonlar', icon: 'laptop', image: 'phones',
-    subcategories: [{ key: 'telefon_esyalari', label: 'Smartfon və telefon aksesuarları', fields: marketplaceFields }],
+    subcategories: [{ key: 'telefon_esyalari', label: 'Smartfon və telefon aksesuarları', fields: phoneFields }],
   },
   {
     key: 'uşaq_aləmi', label: 'Uşaq aləmi', icon: 'gift', image: 'kids',
-    subcategories: [{ key: 'usaq_esyalari', label: 'Uşaq geyimi, arabalar və oyuncaqlar', fields: marketplaceFields }],
+    subcategories: [{ key: 'usaq_esyalari', label: 'Uşaq geyimi, arabalar və oyuncaqlar', fields: kidsFields }],
   },
   {
     key: 'heyvanlar', label: 'Heyvanlar', icon: 'gift', image: 'animals',
-    subcategories: [{ key: 'heyvanlar', label: 'Ev heyvanları və heyvan məhsulları', fields: marketplaceFields }],
+    subcategories: [{ key: 'heyvanlar', label: 'Ev heyvanları və heyvan məhsulları', fields: animalFields }],
   },
 ];
 

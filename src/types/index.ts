@@ -1,4 +1,5 @@
 export type CategoryKey =
+  | 'avtomobiller'
   | 'ev_bağ'
   | 'elektronika'
   | 'nəqliyyat'
@@ -90,15 +91,18 @@ export interface ExternalListing {
 }
 
 export interface AIListingDraft {
-  title?: string;
-  description?: string;
-  price?: number | null;
-  city?: string;
-  phone?: string;
-  address?: string;
-  category?: CategoryKey;
-  subcategory?: string;
+  title: string;
+  description: string;
+  category: CategoryKey | null;
+  subcategory: string | null;
+  price: number | null;
+  city: string | null;
+  phone: string | null;
+  address: string | null;
   attributes: ListingAttributes;
+  keywords: string[];
+  tags: string[];
+  highlights: string[];
   warnings: string[];
 }
 
@@ -125,6 +129,20 @@ export interface Favorite {
   userId: string;
   listingId: string;
   createdAt: number;
+}
+
+export interface ListingMessage {
+  id: string;
+  listingId: string;
+  listingTitle: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  participants: string[];
+  text: string;
+  createdAt: unknown;
+  clientCreatedAt?: number;
+  readBy?: string[];
 }
 
 export type FieldType =

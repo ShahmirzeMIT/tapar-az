@@ -1,46 +1,59 @@
 import { useCallback, useState } from 'react';
+import { generateListingDraft, improveDescription, GeminiUnavailableError } from '@/utils/gemini';
 import type { AIListingDraft, CategoryKey } from '@/types';
 
 /**
- * Small client-side fallback for the listing assistant. It keeps the form
- * usable when no AI endpoint is configured and provides a safe extension
- * point for a server-side provider later.
+ * Wraps Gemini calls for the AI listing assistant (PRD §7).
+ * The draft is ALWAYS returned to the caller for user review — this hook
+ * never writes to Firestore or publishes anything itself.
  */
 export function useAIListing() {
   const [draft, setDraft] = useState<AIListingDraft | null>(null);
   const [loading, setLoading] = useState(false);
-  const unavailable = false;
+  const [unavailable, setUnavailable] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const generate = useCallback(async (input: string, category?: CategoryKey, subcategory?: string) => {
-    const text = input.trim();
-    if (!text) return null;
+  const generate = useCallback(async (userInput: string, category?: CategoryKey | null, subcategory?: string | null) => {
     setLoading(true);
+    setError(null);
+    setUnavailable(false);
     try {
-      const next: AIListingDraft = {
-        title: text.length > 80 ? `${text.slice(0, 77)}...` : text,
-        description: text,
-        category,
-        subcategory,
-        attributes: {},
-        warnings: ['AI xidməti qoşulmadığı üçün mətn avtomatik qaralama kimi əlavə edildi.'],
-      };
-      setDraft(next);
-      return next;
+      const result = await generateListingDraft(userInput, category, subcategory);
+      setDraft(result);
+      return result;
+    } catch (e) {
+      if (e instanceof GeminiUnavailableError) {
+        setUnavailable(true);
+        setError(e.message);
+      } else {
+        setError(e instanceof Error ? e.message : 'Naməlum xəta baş verdi.');
+      }
+      return null;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const improve = useCallback(async (description: string, _category?: CategoryKey | null) => {
-    const text = description.trim();
-    if (!text) return '';
+  const improve = useCallback(async (text: string, category: CategoryKey | null) => {
     setLoading(true);
+    setError(null);
+    setUnavailable(false);
     try {
-      return text.replace(/\s+/g, ' ').trim();
+      return await improveDescription(text, category);
+    } catch (e) {
+      if (e instanceof GeminiUnavailableError) {
+        setUnavailable(true);
+        setError(e.message);
+      } else {
+        setError(e instanceof Error ? e.message : 'Naməlum xəta baş verdi.');
+      }
+      return null;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  return { draft, loading, unavailable, generate, improve };
+  const reset = () => { setDraft(null); setError(null); setUnavailable(false); };
+
+  return { draft, setDraft, loading, unavailable, error, generate, improve, reset };
 }

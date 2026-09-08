@@ -33,12 +33,13 @@ export default function Listings() {
   const [params, setParams] = useSearchParams();
   const [term, setTerm] = useState(params.get('q') ?? '');
   const [category, setCategory] = useState<CategoryKey | undefined>(params.get('category') as CategoryKey | undefined);
+  const [subcategory, setSubcategory] = useState(params.get('subcategory') ?? undefined);
   const [city, setCity] = useState<string | undefined>();
   const [minPrice, setMinPrice] = useState<number>();
   const [maxPrice, setMaxPrice] = useState<number>();
   const [attributes, setAttributes] = useState<ListingAttributes>({});
   const activeCategory = getCategory(category);
-  const activeSubcategory = activeCategory?.subcategories[0];
+  const activeSubcategory = activeCategory?.subcategories.find((item) => item.key === subcategory) ?? activeCategory?.subcategories[0];
   const visibleFields = activeSubcategory?.fields.filter((field) => isFieldVisible(field, attributes)) ?? [];
   const listingFilters = useMemo(() => ({ searchTerm: params.get('q') ?? undefined, category, city, minPrice, maxPrice, sort: 'newest' as const, subcategory: activeSubcategory?.key, attributes }), [params, category, city, minPrice, maxPrice, activeSubcategory?.key, attributes]);
   const { listings, loading, loadingMore, hasMore, loadMore, error } = useListings(listingFilters);
@@ -50,10 +51,16 @@ export default function Listings() {
     setParams(next);
   };
   const updateCategory = (value?: CategoryKey) => {
-    setCategory(value); setAttributes({});
+    const nextSubcategory = value ? getCategory(value)?.subcategories[0]?.key : undefined;
+    setCategory(value); setSubcategory(nextSubcategory); setAttributes({});
     const next = new URLSearchParams(params);
     value ? next.set('category', value) : next.delete('category');
+    nextSubcategory ? next.set('subcategory', nextSubcategory) : next.delete('subcategory');
     setParams(next);
+  };
+  const updateSubcategory = (value: string) => {
+    setSubcategory(value); setAttributes({});
+    const next = new URLSearchParams(params); next.set('subcategory', value); setParams(next);
   };
   const updateAttribute = (name: string, value: ListingAttributes[string]) => setAttributes((current) => {
     const next = { ...current };
@@ -61,8 +68,8 @@ export default function Listings() {
     return next;
   });
   const clearFilters = () => {
-    setCategory(undefined); setCity(undefined); setMinPrice(undefined); setMaxPrice(undefined); setAttributes({});
-    const next = new URLSearchParams(params); next.delete('category'); setParams(next);
+    setCategory(undefined); setSubcategory(undefined); setCity(undefined); setMinPrice(undefined); setMaxPrice(undefined); setAttributes({});
+    const next = new URLSearchParams(params); next.delete('category'); next.delete('subcategory'); setParams(next);
   };
 
   return <main className="min-h-screen bg-offwhite dark:bg-background"><div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
@@ -70,7 +77,7 @@ export default function Listings() {
     <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
       <aside className="market-surface p-4 lg:sticky lg:top-24"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><SlidersOutlined className="text-action" /><h2 className="font-semibold text-ink dark:text-white">Filterlər</h2></div><button type="button" onClick={clearFilters} className="text-xs font-semibold text-action">Təmizlə</button></div>
         <div className="mt-4 space-y-4"><label className="block"><span className="mb-1.5 block text-xs font-medium text-muted">Kateqoriya</span><Select allowClear showSearch optionFilterProp="label" listHeight={480} getPopupContainer={() => document.body} placeholder="Bütün kateqoriyalar" value={category} onChange={(value) => updateCategory(value as CategoryKey | undefined)} options={categories} optionRender={(option) => <div className="flex min-h-8 items-center gap-2"><img src={option.data.image ? `/category-icons/${option.data.image}.png` : undefined} alt="" width={20} height={20} className="!h-5 !w-5 max-h-5 max-w-5 shrink-0 object-contain" /><span className="truncate">{option.data.label}</span></div>} className="w-full" /></label>
-          {activeCategory && <div><span className="mb-1.5 block text-xs font-medium text-muted">Alt kateqoriya</span><Select disabled value={activeSubcategory?.key} options={activeCategory.subcategories.map((item) => ({ value: item.key, label: item.label }))} className="w-full" /></div>}
+          {activeCategory && <div><span className="mb-1.5 block text-xs font-medium text-muted">Alt kateqoriya</span><Select showSearch optionFilterProp="label" value={activeSubcategory?.key} options={activeCategory.subcategories.map((item) => ({ value: item.key, label: item.label }))} onChange={updateSubcategory} className="w-full" /></div>}
           <div><span className="mb-1.5 block text-xs font-medium text-muted">Şəhər</span><Select allowClear showSearch className="w-full" placeholder="Bütün şəhərlər" value={city} options={cities.map((item) => ({ value: item, label: item }))} onChange={setCity} /></div>
           <div><span className="mb-1.5 block text-xs font-medium text-muted">Qiymət (AZN)</span><div className="grid grid-cols-2 gap-2"><InputNumber min={0} className="w-full" placeholder="Min" value={minPrice} onChange={(value) => setMinPrice(value ?? undefined)} /><InputNumber min={0} className="w-full" placeholder="Maks" value={maxPrice} onChange={(value) => setMaxPrice(value ?? undefined)} /></div></div>
           {visibleFields.length > 0 && <div className="border-t border-line pt-4 dark:border-line-dark"><p className="mb-3 text-xs font-bold uppercase tracking-wide text-muted">{activeCategory?.label} filterləri</p><div className="space-y-3">{visibleFields.map((field) => <label key={field.name} className="block"><span className="mb-1.5 block text-xs font-medium text-muted">{field.label}</span><FilterField field={field} value={attributes[field.name]} onChange={(value) => updateAttribute(field.name, value)} /></label>)}</div></div>}

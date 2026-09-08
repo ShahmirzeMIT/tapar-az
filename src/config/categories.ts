@@ -1,4 +1,4 @@
-import type { CategoryConfig, CategoryKey, FieldSchema } from '@/types';
+import type { CategoryConfig, CategoryKey, FieldSchema, SubcategoryConfig } from '@/types';
 
 // ---------------------------------------------------------------------------
 // UNIVERSAL FIELDS — present on every listing regardless of category.
@@ -200,58 +200,124 @@ const animalFields: FieldSchema[] = [
   { name: 'breed', label: 'Cins', type: 'text', colSpan: 1 }, { name: 'age', label: 'Yaş', type: 'text', colSpan: 1 },
 ];
 
+function makeSubcategories(items: Array<[string, string]>, fields: FieldSchema[]): SubcategoryConfig[] {
+  return items.map(([key, label]) => ({ key, label, fields }));
+}
+
+const homeGardenSubcategories = makeSubcategories([
+  ['mebel', 'Mebellər'], ['qab_qacaq', 'Qab-qacaq və mətbəx ləvazimatları'], ['dekor', 'Dekor və interyer'],
+  ['bag_bostan', 'Bağ və bostan'], ['ev_tekstili', 'Ev tekstili'], ['xalcalar', 'Xalçalar və aksesuarlar'],
+  ['isiqlandirma', 'Ev üçün işıqlandırma'], ['bitkiler', 'Bitkilər'],
+], homeGardenFields);
+
+const electronicsSubcategories = makeSubcategories([
+  ['telefonlar', 'Telefonlar'], ['audio_video', 'Audio və video'], ['komponentler', 'Komponentlər və monitorlar'],
+  ['noutbuklar', 'Noutbuklar və netbuklar'], ['komputer_aksesuarlar', 'Kompüter aksesuarları'],
+  ['oyunlar', 'Oyunlar, pultlar və proqramlar'], ['televizorlar', 'Televizorlar və aksesuarlar'],
+  ['sebekeler', 'Şəbəkə və server avadanlığı'], ['ofis_avadanligi', 'Ofis avadanlığı və istehlak materialları'],
+  ['fototexnika', 'Fototexnika'], ['nomreler', 'Nömrələr və SIM-kartlar'], ['smart_saatlar', 'Smart saat və qolbaqlar'],
+  ['masaustu_komputerler', 'Masaüstü kompüterlər'], ['plansetler', 'Planşet və elektron kitablar'],
+], electronicsFields);
+
+const transportSubcategories = makeSubcategories([
+  ['minik_avtomobilleri', 'Minik avtomobilləri'], ['motosikletler', 'Motosikletlər'], ['yuk_avtomobilleri', 'Yük avtomobilləri'],
+  ['avtobuslar', 'Avtobuslar'], ['xususi_texnika', 'Xüsusi texnika'], ['su_neqliyyati', 'Su nəqliyyatı'],
+], vehicleFields);
+
+const realEstateSubcategories = makeSubcategories([
+  ['menziller', 'Mənzillər'], ['heyet_evleri', 'Həyət evləri və villalar'], ['torpaq', 'Torpaq sahələri'],
+  ['ofisler', 'Ofislər'], ['obyektler', 'Obyektlər və mağazalar'], ['qarajlar', 'Qarajlar'],
+], realEstateFields);
+
+const serviceSubcategories = makeSubcategories([
+  ['temir_tikinti', 'Təmir və tikinti'], ['gozellik_saglamliq', 'Gözəllik və sağlamlıq'], ['tehsil', 'Təhsil'],
+  ['dasima', 'Daşıma və nəqliyyat'], ['it_proqramlasdirma', 'IT və proqramlaşdırma'], ['digər_xidmət', 'Digər xidmətlər'],
+], serviceFields);
+
+const jobSubcategories = makeSubcategories([
+  ['it_proqramlasdirma', 'IT və proqramlaşdırma'], ['satis', 'Satış və müştəri xidmətləri'],
+  ['ofis_idareetme', 'Ofis və idarəetmə'], ['maliyye', 'Maliyyə və mühasibatlıq'], ['xidmet', 'Xidmət və restoran'],
+  ['tehsil_tibb', 'Təhsil və tibb'], ['digər_is', 'Digər vakansiyalar'],
+], vacancyFields);
+
+const sparePartSubcategories = makeSubcategories([
+  ['muherrik_hisseleri', 'Mühərrik hissələri'], ['kuzov_hisseleri', 'Kuzov hissələri'], ['tekerler', 'Təkərlər və disklər'],
+  ['elektrik', 'Elektrik avadanlığı'], ['yağ_filterleri', 'Yağ və hava filterləri'], ['aksesuarlar', 'Aksesuarlar'],
+], sparePartFields);
+const personalSubcategories = makeSubcategories([
+  ['geyim', 'Geyim'], ['ayaqqabi', 'Ayaqqabı'], ['cantalar', 'Çantalar'], ['saatlar', 'Saatlar'], ['aksesuarlar', 'Aksesuarlar'],
+], personalItemFields);
+const hobbySubcategories = makeSubcategories([
+  ['idman', 'İdman və fitnes'], ['musiqi', 'Musiqi alətləri'], ['kitablar', 'Kitablar və jurnallar'],
+  ['ovculuq', 'Ovçuluq və balıqçılıq'], ['kolleksiya', 'Kolleksiya'], ['digər_hobbi', 'Digər hobbi məhsulları'],
+], marketplaceFields);
+const applianceSubcategories = makeSubcategories([
+  ['soyuducular', 'Soyuducular'], ['paltaryuyanlar', 'Paltaryuyanlar'], ['kondisionerler', 'Kondisionerlər'],
+  ['tozsoranlar', 'Tozsoranlar'], ['aspiratorlar', 'Aspiratorlar'], ['qehve_masinlari', 'Qəhvə maşınları'],
+  ['su_filtrleri', 'Su filtrləri və pompaları'], ['metbex_texnikasi', 'Mətbəx texnikası'], ['diger_texnika', 'Digər məişət texnikası'],
+], homeApplianceFields);
+const phoneSubcategories = makeSubcategories([
+  ['smartfonlar', 'Smartfonlar'], ['plansetler', 'Planşetlər'], ['telefon_aksesuarlar', 'Telefon aksesuarları'], ['smart_saatlar', 'Smart saatlar'],
+], phoneFields);
+const kidsSubcategories = makeSubcategories([
+  ['usaq_geyimi', 'Uşaq geyimi'], ['oyuncaqlar', 'Oyuncaqlar'], ['arabalar', 'Uşaq arabaları'], ['mebel', 'Uşaq mebeli'], ['mekteb', 'Məktəb ləvazimatları'],
+], kidsFields);
+const animalSubcategories = makeSubcategories([
+  ['itler', 'İtlər'], ['pisikler', 'Pişiklər'], ['quslar', 'Quşlar'], ['akvarium', 'Akvarium heyvanları'], ['yem_aksesuar', 'Yem və aksesuarlar'],
+], animalFields);
+
 export const CATEGORIES: CategoryConfig[] = [
   {
     key: 'ev_bağ', label: 'Ev və bağ üçün', icon: 'home', image: 'home-garden',
-    subcategories: [{ key: 'ev_bag_esyalari', label: 'Mebel, dekor və bağ məhsulları', fields: homeGardenFields }],
+    subcategories: homeGardenSubcategories,
   },
   {
     key: 'elektronika', label: 'Elektronika', icon: 'laptop', image: 'electronics',
-    subcategories: [{ key: 'elektronika_esyalar', label: 'Telefon, kompüter və elektronika', fields: electronicsFields }],
+    subcategories: electronicsSubcategories,
   },
   {
     key: 'nəqliyyat', label: 'Nəqliyyat', icon: 'car', image: 'transport',
-    subcategories: [{ key: 'neqliyyat', label: 'Avtomobil, motosiklet və nəqliyyat', fields: vehicleFields }],
+    subcategories: transportSubcategories,
   },
   {
     key: 'ehtiyat_hissələri', label: 'Ehtiyat hissələri və aksesuarlar', icon: 'tool', image: 'spare-parts',
-    subcategories: [{ key: 'ehtiyat_hisseleri', label: 'Avtomobil hissələri və aksesuarlar', fields: sparePartFields }],
+    subcategories: sparePartSubcategories,
   },
   {
     key: 'daşınmaz_əmlak', label: 'Daşınmaz Əmlak', icon: 'home', image: 'real-estate',
-    subcategories: [{ key: 'menzil_ev', label: 'Mənzil / Ev / Torpaq', fields: realEstateFields }],
+    subcategories: realEstateSubcategories,
   },
   {
     key: 'iş_elanları', label: 'İş Elanları', icon: 'briefcase',
-    subcategories: [{ key: 'vakansiyalar', label: 'Vakansiyalar', fields: vacancyFields }],
+    subcategories: jobSubcategories,
   },
   {
     key: 'xidmətlər', label: 'Xidmətlər', icon: 'tool', image: 'services-business',
-    subcategories: [{ key: 'servis_xidmetleri', label: 'Servis Xidmətləri', fields: serviceFields }],
+    subcategories: serviceSubcategories,
   },
   {
     key: 'şəxsi_əşyalar', label: 'Şəxsi əşyalar', icon: 'gift', image: 'personal-items',
-    subcategories: [{ key: 'sexsi_esyalar', label: 'Geyim, ayaqqabı və aksesuarlar', fields: personalItemFields }],
+    subcategories: personalSubcategories,
   },
   {
     key: 'hobbi_asudə', label: 'Hobbi və asudə', icon: 'gift', image: 'hobby-leisure',
-    subcategories: [{ key: 'hobbi_asude', label: 'İdman, musiqi və istirahət', fields: marketplaceFields }],
+    subcategories: hobbySubcategories,
   },
   {
     key: 'məişət_texnikası', label: 'Məişət texnikası', icon: 'gift', image: 'home-appliances',
-    subcategories: [{ key: 'meiset_texnikasi', label: 'Ev üçün texnika və avadanlıq', fields: homeApplianceFields }],
+    subcategories: applianceSubcategories,
   },
   {
     key: 'telefonlar', label: 'Telefonlar', icon: 'laptop', image: 'phones',
-    subcategories: [{ key: 'telefon_esyalari', label: 'Smartfon və telefon aksesuarları', fields: phoneFields }],
+    subcategories: phoneSubcategories,
   },
   {
     key: 'uşaq_aləmi', label: 'Uşaq aləmi', icon: 'gift', image: 'kids',
-    subcategories: [{ key: 'usaq_esyalari', label: 'Uşaq geyimi, arabalar və oyuncaqlar', fields: kidsFields }],
+    subcategories: kidsSubcategories,
   },
   {
     key: 'heyvanlar', label: 'Heyvanlar', icon: 'gift', image: 'animals',
-    subcategories: [{ key: 'heyvanlar', label: 'Ev heyvanları və heyvan məhsulları', fields: animalFields }],
+    subcategories: animalSubcategories,
   },
 ];
 

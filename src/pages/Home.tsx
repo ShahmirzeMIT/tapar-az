@@ -90,26 +90,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SELL CTA */}
-      <section className="my-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="bg-action/10 border border-action/20 px-8 py-14 md:py-20 text-center relative overflow-hidden shadow-card">
-            <BulbFilled className="text-action text-3xl mb-4" />
-            <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tightest text-ink dark:text-white">
-              {t('sellEasy')}
-            </h2>
-            <p className="mt-4 text-sm md:text-base text-secondary dark:text-muted max-w-lg mx-auto">
-              Elanınızı yerləşdirin, doğru alıcıya çatın. İstəsəniz AI köməkçisi başlıq və təsviri də sizin üçün hazırlayar.
-            </p>
-            <Link
-              to="/ai-elan"
-              className="market-action mt-8 px-7 py-3"
-            >
-              {t('placeYourAd')} <ArrowRightOutlined />
-            </Link>
-          </div>
-        </div>
-      </section>
+  
 
       {/* POPULAR AUTOMOBILES */}
       <section className="max-w-7xl mx-auto px-6 pb-16">

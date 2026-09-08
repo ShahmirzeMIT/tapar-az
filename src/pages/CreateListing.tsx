@@ -6,6 +6,7 @@ import { db } from '@/firebase/config';
 import { useAuth } from '@/context/AuthContext';
 import { CATEGORIES, categoryLabel, getCategory, subcategoryLabel } from '@/config/categories';
 import { useLanguage } from '@/context/LanguageContext';
+import { AZERBAIJAN_LOCATIONS } from '@/config/locations';
 import DynamicForm from '@/components/DynamicForm';
 import MediaUploader from '@/components/MediaUploader';
 import { pruneHiddenValues } from '@/utils/conditionalFields';
@@ -17,7 +18,6 @@ import { listingEmailCard } from '@/utils/emailTemplates';
 import { useMyStore } from '@/hooks/useStore';
 
 const { TextArea } = Input;
-const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
 
 const STEP_LABELS = ['Kateqoriya', 'Alt kateqoriya', 'Məlumatlar', 'Media', 'AI yoxlanışı', 'Önizləmə', 'Dərc et'];
 
@@ -221,7 +221,7 @@ export default function CreateListing() {
             </div>
             <div>
               <FieldLabel required>Şəhər</FieldLabel>
-              <Select className="w-full" value={city} onChange={setCity} options={CITIES.map((c) => ({ label: c, value: c }))} />
+              <Select showSearch optionFilterProp="label" className="w-full" value={city} onChange={setCity} options={AZERBAIJAN_LOCATIONS.map((c) => ({ label: c, value: c }))} placeholder="Şəhər və ya rayon seçin" />
             </div>
             <div>
               <FieldLabel required>Telefon nömrəsi</FieldLabel>

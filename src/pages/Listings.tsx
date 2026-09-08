@@ -7,8 +7,8 @@ import { useListings } from '@/hooks/useListings';
 import type { CategoryKey, FieldSchema, ListingAttributes } from '@/types';
 import { CATEGORIES, categoryLabel, getCategory, subcategoryLabel } from '@/config/categories';
 import { useLanguage } from '@/context/LanguageContext';
+import { AZERBAIJAN_LOCATIONS } from '@/config/locations';
 
-const cities = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
 
 function isFieldVisible(field: FieldSchema, values: ListingAttributes) {
   const condition = field.showIf;
@@ -80,7 +80,7 @@ export default function Listings() {
       <aside className="market-surface p-4 lg:sticky lg:top-24"><div className="flex items-center justify-between"><div className="flex items-center gap-2"><SlidersOutlined className="text-action" /><h2 className="font-semibold text-ink dark:text-white">Filterlər</h2></div><button type="button" onClick={clearFilters} className="text-xs font-semibold text-action">Təmizlə</button></div>
         <div className="mt-4 space-y-4"><label className="block"><span className="mb-1.5 block text-xs font-medium text-muted">Kateqoriya</span><Select allowClear showSearch optionFilterProp="label" listHeight={480} getPopupContainer={() => document.body} placeholder="Bütün kateqoriyalar" value={category} onChange={(value) => updateCategory(value as CategoryKey | undefined)} options={categories} optionRender={(option) => <div className="flex min-h-8 items-center gap-2"><img src={option.data.image ? `/category-icons/${option.data.image}.png` : undefined} alt="" width={20} height={20} className="!h-5 !w-5 max-h-5 max-w-5 shrink-0 object-contain" /><span className="truncate">{option.data.label}</span></div>} className="w-full" /></label>
           {activeCategory && <div><span className="mb-1.5 block text-xs font-medium text-muted">Alt kateqoriya</span><Select showSearch optionFilterProp="label" value={activeSubcategory?.key} options={activeCategory.subcategories.map((item) => ({ value: item.key, label: subcategoryLabel(item.key, language) }))} onChange={updateSubcategory} className="w-full" /></div>}
-          <div><span className="mb-1.5 block text-xs font-medium text-muted">Şəhər</span><Select allowClear showSearch className="w-full" placeholder="Bütün şəhərlər" value={city} options={cities.map((item) => ({ value: item, label: item }))} onChange={setCity} /></div>
+          <div><span className="mb-1.5 block text-xs font-medium text-muted">Şəhər / rayon</span><Select allowClear showSearch optionFilterProp="label" className="w-full" placeholder="Bütün şəhərlər" value={city} options={AZERBAIJAN_LOCATIONS.map((item) => ({ value: item, label: item }))} onChange={setCity} /></div>
           <div><span className="mb-1.5 block text-xs font-medium text-muted">Qiymət (AZN)</span><div className="grid grid-cols-2 gap-2"><InputNumber min={0} className="w-full" placeholder="Min" value={minPrice} onChange={(value) => setMinPrice(value ?? undefined)} /><InputNumber min={0} className="w-full" placeholder="Maks" value={maxPrice} onChange={(value) => setMaxPrice(value ?? undefined)} /></div></div>
           {visibleFields.length > 0 && <div className="border-t border-line pt-4 dark:border-line-dark"><p className="mb-3 text-xs font-bold uppercase tracking-wide text-muted">{activeCategory ? categoryLabel(activeCategory.key, language) : ''} filterləri</p><div className="space-y-3">{visibleFields.map((field) => <label key={field.name} className="block"><span className="mb-1.5 block text-xs font-medium text-muted">{field.label}</span><FilterField field={field} value={attributes[field.name]} onChange={(value) => updateAttribute(field.name, value)} /></label>)}</div></div>}
         </div>

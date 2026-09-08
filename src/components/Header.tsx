@@ -2,23 +2,22 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Input, Avatar, Dropdown, Select } from 'antd';
 import {
-  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined,
-  HomeOutlined, BulbOutlined,
+  SearchOutlined, HeartOutlined, PlusOutlined, UserOutlined, MessageOutlined, SettingOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
 import { useMessages } from '@/hooks/useMessages';
-import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/context/LanguageContext';
 import { useTranslation } from 'react-i18next';
 import { useMyStore } from '@/hooks/useStore';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `relative text-sm font-medium tracking-tight transition-colors duration-200 ease-editorial ${
+  `relative text-xs font-medium tracking-tight transition-colors duration-200 ease-editorial xl:text-sm ${
     isActive ? 'text-action after:absolute after:-bottom-5 after:left-0 after:right-0 after:h-0.5 after:bg-action' : 'text-muted hover:text-action'
   }`;
 
 export default function Header() {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, isAdmin } = useAuth();
   const { unreadCount } = useMessages(user?.uid);
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
@@ -50,12 +49,12 @@ export default function Header() {
     <>
       {/* Desktop / tablet header */}
       <header className="hidden md:block sticky top-0 z-40 bg-paper/95 dark:bg-offwhite/95 backdrop-blur border-b border-line dark:border-line-dark shadow-[0_2px_12px_rgba(17,24,39,0.04)]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center gap-8">
+        <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-4 px-4 xl:gap-6 xl:px-6">
           <Link to="/" className="font-display text-xl font-bold tracking-tightest text-ink dark:text-white shrink-0">
             <span className="text-ink dark:text-white">TAPAR</span><span className="text-action">.AZ</span>
           </Link>
 
-          <nav className="flex items-center gap-6 shrink-0">
+          <nav className="flex shrink-0 items-center gap-3 lg:gap-4 xl:gap-5">
             <NavLink to="/" end className={navLinkClass}>{t('home')}</NavLink>
             <NavLink to="/elanlar" className={navLinkClass}>{t('listings')}</NavLink>
             <NavLink to="/avtomobiller" className={navLinkClass}>{t('cars')}</NavLink>
@@ -63,12 +62,10 @@ export default function Header() {
             <NavLink to="/favoriler" className={navLinkClass}>{t('favorites')}</NavLink>
             <NavLink to="/magazalar" className={navLinkClass}>Mağazalar</NavLink>
             <NavLink to={storePath} className={navLinkClass}>{storeLabel}</NavLink>
-            <NavLink to="/ai-elan" className={navLinkClass}>
-              <span className="inline-flex items-center gap-1"><BulbOutlined /> {t('aiListing')}</span>
-            </NavLink>
+            {isAdmin && <Link to="/admin" className="inline-flex items-center gap-1 rounded-lg bg-action px-2.5 py-2 text-xs font-bold text-white transition hover:bg-[#e84f00]"><SettingOutlined /> Admin</Link>}
           </nav>
 
-          <div className="flex-1 max-w-md">
+          <div className="min-w-0 max-w-[280px] flex-1">
             <Input
               placeholder={t('searchPlaceholder')}
               value={searchValue}
@@ -86,7 +83,6 @@ export default function Header() {
               </Link>
             )}
             <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
-            <ThemeToggle />
             <Link
               to="/elan-yerlesdir"
               className="market-action px-4 py-2 shadow-[0_5px_12px_rgb(var(--color-primary)/0.2)]"
@@ -114,7 +110,6 @@ export default function Header() {
           <div className="flex items-center gap-4">
             {user && <Link to="/mesajlar" aria-label="Mesajlar" className="relative text-lg text-muted hover:text-action"><MessageOutlined />{unreadCount > 0 && <span className="absolute -right-2 -top-2 min-w-4 rounded-full bg-urgent px-1 text-center text-[10px] leading-4 text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>}
             <Select aria-label="Language" size="small" value={language} onChange={setLanguage} options={[{ value: 'az', label: 'AZ' }, { value: 'en', label: 'EN' }, { value: 'ru', label: 'RU' }]} className="w-[68px]" />
-            <ThemeToggle />
           </div>
         </div>
       </header>

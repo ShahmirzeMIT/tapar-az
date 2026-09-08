@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Input, Select, message } from 'antd';
-import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { useNavigate } from 'react-router-dom';
 import { db, storage } from '@/firebase/config';
@@ -40,7 +40,10 @@ export default function CreateStore() {
         await uploadBytes(logoRef, logoFile, { contentType: logoFile.type });
         logoUrl = await getDownloadURL(logoRef);
       }
-      await setDoc(doc(db, 'stores', id), { ownerId: user.uid, name: cleanName, slug, description: description.trim(), phone: phone.trim(), city: city.trim(), category: category || null, logoUrl, verified: store?.verified ?? false, createdAt: store?.createdAt ?? serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
+      const storeRef = doc(db, 'stores', id);
+      const storeData = { name: cleanName, slug, description: description.trim(), phone: phone.trim(), city: city.trim(), category: category || null, logoUrl, updatedAt: serverTimestamp() };
+      if (store) await updateDoc(storeRef, storeData);
+      else await setDoc(storeRef, { ...storeData, ownerId: user.uid, verified: false, createdAt: serverTimestamp() });
       message.success(store ? 'Mağaza yeniləndi.' : 'Mağaza yaradıldı.');
       navigate(`/magaza/${slug}`);
     } catch (error) { message.error(error instanceof Error ? error.message : 'Mağazanı yadda saxlamaq olmadı.'); }

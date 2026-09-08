@@ -4,7 +4,7 @@ import { message } from 'antd';
 import type { ExternalListing, Listing } from '@/types';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useAuth } from '@/context/AuthContext';
-import { formatPrice } from '@/utils/format';
+import { formatDateTime, formatPrice } from '@/utils/format';
 import { externalListingLabel } from '@/hooks/useExternalListings';
 
 export default function ListingCard({ listing }: { listing: ExternalListing | Listing }) {
@@ -51,7 +51,7 @@ export default function ListingCard({ listing }: { listing: ExternalListing | Li
           {external && listing.year && <span>{listing.year}</span>}
           {external && listing.mileage !== null && listing.mileage !== undefined && <span>{listing.mileage.toLocaleString('az-AZ')} km</span>}
         </div>
-        <div className="mt-5 flex items-center border-t border-line pt-4 dark:border-line-dark"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted"><CalendarOutlined /> {external && listing.published_at ? new Date(listing.published_at).toLocaleDateString('az-AZ') : 'Yeni elan'}</span></div>
+        <div className="mt-5 flex items-center border-t border-line pt-4 dark:border-line-dark"><span className="inline-flex items-center gap-1.5 text-[11px] text-muted"><CalendarOutlined /> {external && listing.published_at ? new Date(listing.published_at).toLocaleDateString('az-AZ') : formatDateTime('createdAt' in listing ? listing.createdAt : undefined)}</span></div>
       </div>
     </a>
   );

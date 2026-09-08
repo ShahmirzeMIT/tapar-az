@@ -89,6 +89,19 @@ export interface ExternalListing {
   published_at: string | null;
 }
 
+export interface AIListingDraft {
+  title?: string;
+  description?: string;
+  price?: number | null;
+  city?: string;
+  phone?: string;
+  address?: string;
+  category?: CategoryKey;
+  subcategory?: string;
+  attributes: ListingAttributes;
+  warnings: string[];
+}
+
 export interface UserProfile {
   uid: string;
   displayName: string;

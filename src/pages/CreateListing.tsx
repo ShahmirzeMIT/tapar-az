@@ -13,6 +13,7 @@ import type { CategoryKey, ListingAttributes, MediaItem } from '@/types';
 import { formatPrice } from '@/utils/format';
 import { sendBrevoEmail } from '@/utils/email';
 import { listingEmailCard } from '@/utils/emailTemplates';
+import { useMyStore } from '@/hooks/useStore';
 
 const { TextArea } = Input;
 const CITIES = ['Bakı', 'Gəncə', 'Sumqayıt', 'Mingəçevir', 'Şəki', 'Naxçıvan', 'Lənkəran'];
@@ -21,6 +22,7 @@ const STEP_LABELS = ['Kateqoriya', 'Alt kateqoriya', 'Məlumatlar', 'Media', 'AI
 
 export default function CreateListing() {
   const { user, profile } = useAuth();
+  const { store } = useMyStore(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
   const prefill = (location.state as { aiDraft?: import('@/types').AIListingDraft } | null)?.aiDraft;
@@ -102,6 +104,7 @@ export default function CreateListing() {
         ownerId: user.uid,
         ownerName: profile?.displayName ?? user.displayName ?? 'İstifadəçi',
         ownerEmail: user.email ?? profile?.email ?? '',
+        storeId: store?.id,
         category, subcategory, title,
         price: priceHidden ? null : price ?? null,
         priceHidden,

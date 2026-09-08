@@ -18,6 +18,8 @@ import Register from '@/pages/auth/Register';
 import ForgotPassword from '@/pages/auth/ForgotPassword';
 import NotFound from '@/pages/NotFound';
 import Messages from '@/pages/Messages';
+import Store from '@/pages/Store';
+import CreateStore from '@/pages/CreateStore';
 import AdminListings from '@/pages/AdminListings';
 import AdminLayout from '@/components/AdminLayout';
 import AdminDashboard from '@/pages/AdminDashboard';
@@ -39,6 +41,8 @@ export default function App() {
               <Route path="/mesajlar" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/mesajlar/:listingId" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
               <Route path="/elan-yerlesdir" element={<ProtectedRoute><CreateListing /></ProtectedRoute>} />
+              <Route path="/magaza/:slug" element={<Store />} />
+              <Route path="/magaza-yarat" element={<ProtectedRoute><CreateStore /></ProtectedRoute>} />
               <Route path="/ai-elan" element={<AIListing />} />
               <Route path="/avtomobiller" element={<Automobiles />} />
               <Route path="/kateqoriyalar" element={<Categories />} />

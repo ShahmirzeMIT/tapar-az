@@ -31,6 +31,7 @@ export interface Listing {
   ownerId: string;
   ownerName: string;
   ownerEmail?: string;
+  storeId?: string;
   category: CategoryKey;
   subcategory: string;
   title: string;
@@ -53,6 +54,21 @@ export interface Listing {
   submittedAt?: number;
   reviewedAt?: number;
   rejectionReason?: string;
+}
+
+export interface Store {
+  id: string;
+  ownerId: string;
+  name: string;
+  slug: string;
+  description: string;
+  logoUrl?: string;
+  coverUrl?: string;
+  phone?: string;
+  city?: string;
+  verified: boolean;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export type ExternalCategory = 'real_estate' | 'automobile' | 'electronics' | 'services' | 'jobs' | string;

@@ -32,6 +32,7 @@ export default function Header() {
     { key: 'profile', label: <Link to="/profil">Profil</Link> },
     { key: 'listings', label: <Link to="/profil/elanlarim">Mənim elanlarım</Link> },
     { key: 'favorites', label: <Link to="/favoriler">Sevimlilər</Link> },
+    { key: 'store', label: <Link to="/magaza-yarat">Mağazam</Link> },
     { key: 'messages', label: <Link to="/mesajlar">Mesajlar</Link> },
     { type: 'divider' as const },
     { key: 'logout', label: 'Çıxış', onClick: () => logout() },

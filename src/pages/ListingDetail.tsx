@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Breadcrumb, Skeleton, Result, Avatar } from 'antd';
 import {
-  EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled,
+  EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled, WhatsAppOutlined, MessageOutlined,
+  LeftOutlined, RightOutlined,
 } from '@ant-design/icons';
 import { useListing } from '@/hooks/useListing';
 import { useListings } from '@/hooks/useListings';
@@ -19,6 +20,8 @@ export default function ListingDetail() {
   const { listing, loading, error } = useListing(id);
   const [activeMedia, setActiveMedia] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
+  const [mediaHover, setMediaHover] = useState(false);
+  const [mediaCursor, setMediaCursor] = useState({ x: 0, y: 0 });
 
   const { listings: similar } = useListings({ category: listing?.category, sort: 'newest' });
 
@@ -40,6 +43,11 @@ export default function ListingDetail() {
   const specFields = subcategory?.fields ?? [];
   const media = listing.media.length > 0 ? listing.media : [];
   const current = media[activeMedia];
+  // Older listings do not have the WhatsApp fields, so use their phone number
+  // as a backwards-compatible WhatsApp contact.
+  const whatsappContact = listing.whatsappEnabled === false
+    ? undefined
+    : listing.whatsappPhone || listing.phone;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-6 pb-28 md:pb-10">
@@ -56,7 +64,15 @@ export default function ListingDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8">
         {/* GALLERY */}
         <div>
-          <div className="market-surface aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden">
+          <div
+            className="group market-surface relative aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden cursor-none"
+            onMouseEnter={() => setMediaHover(true)}
+            onMouseLeave={() => setMediaHover(false)}
+            onMouseMove={(event) => {
+              const bounds = event.currentTarget.getBoundingClientRect();
+              setMediaCursor({ x: event.clientX - bounds.left + 16, y: event.clientY - bounds.top + 16 });
+            }}
+          >
             {current ? (
               current.type === 'video' ? (
                 <video src={current.url} controls className="w-full h-full object-contain" />
@@ -65,6 +81,34 @@ export default function ListingDetail() {
               )
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted">Şəkil yoxdur</div>
+            )}
+            {media.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Əvvəlki şəkil"
+                  onClick={() => setActiveMedia((index) => (index - 1 + media.length) % media.length)}
+                  className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-lg text-white opacity-100 transition hover:bg-action focus:opacity-100"
+                >
+                  <LeftOutlined />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Növbəti şəkil"
+                  onClick={() => setActiveMedia((index) => (index + 1) % media.length)}
+                  className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-lg text-white opacity-100 transition hover:bg-action focus:opacity-100"
+                >
+                  <RightOutlined />
+                </button>
+              </>
+            )}
+            {mediaHover && (
+              <span
+                className="pointer-events-none absolute z-20 rounded-md bg-[#111827]/90 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white shadow-lg"
+                style={{ left: mediaCursor.x, top: mediaCursor.y }}
+              >
+                TAPAR.AZ
+              </span>
             )}
           </div>
           {media.length > 1 && (
@@ -86,9 +130,9 @@ export default function ListingDetail() {
           )}
 
           {/* DESCRIPTION + SPECS */}
-          <div className="mt-8">
-            <h2 className="font-display text-lg font-bold text-ink dark:text-white mb-2">Təsvir</h2>
-            <p className="text-sm text-ink/90 dark:text-white/90 whitespace-pre-line leading-relaxed">{listing.description}</p>
+          <div className="market-surface mt-8 p-5 md:p-6">
+            <div className="flex items-center gap-3 border-b border-line pb-3 dark:border-line-dark"><span className="h-6 w-1 rounded-full bg-[#FE6C2C]" /><h2 className="font-display text-lg font-bold text-ink dark:text-white">Təsvir</h2></div>
+            <p className="mt-5 whitespace-pre-line text-[15px] leading-7 text-secondary dark:text-white/85">{listing.description || 'Bu elan üçün təsvir əlavə edilməyib.'}</p>
           </div>
 
           {specFields.length > 0 && (
@@ -144,6 +188,22 @@ export default function ListingDetail() {
               >
                 <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
               </button>
+              <Link
+                to={`/mesajlar/${listing.id}`}
+                className="mt-3 w-full bg-[#1677FF] text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
+              >
+                <MessageOutlined /> Mesaj yaz
+              </Link>
+              {whatsappContact && (
+                <a
+                  href={toWhatsAppUrl(whatsappContact)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 w-full bg-[#25D366] text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
+                >
+                  <WhatsAppOutlined /> WhatsApp
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -167,9 +227,24 @@ export default function ListingDetail() {
         >
           <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
         </button>
+        <Link to={`/mesajlar/${listing.id}`} className="mt-2 market-action w-full py-3 !bg-[#1677FF] !text-white">
+          <MessageOutlined /> Mesaj yaz
+        </Link>
+        {whatsappContact && (
+          <a href={toWhatsAppUrl(whatsappContact)} target="_blank" rel="noreferrer" className="mt-2 market-action w-full py-3 !bg-[#25D366] !text-white">
+            <WhatsAppOutlined /> WhatsApp
+          </a>
+        )}
       </div>
     </div>
   );
+}
+
+function toWhatsAppUrl(value: string) {
+  let digits = value.replace(/\D/g, '');
+  if (digits.startsWith('00')) digits = digits.slice(2);
+  if (digits.startsWith('0')) digits = `994${digits.slice(1)}`;
+  return `https://wa.me/${digits}`;
 }
 
 function formatAttrValue(value: unknown, field: { type: string; options?: { label: string; value: string }[] }): string {

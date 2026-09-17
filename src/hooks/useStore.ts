@@ -17,6 +17,9 @@ export function useMyStore(ownerId?: string) {
     try {
       const snapshot = await getDocs(query(collection(db, 'stores'), where('ownerId', '==', ownerId), limit(1)));
       setStore(snapshot.docs[0] ? toStore(snapshot.docs[0].data(), snapshot.docs[0].id) : null);
+    } catch {
+      // Keep the UI usable when the deployed Firestore rules reject the query.
+      setStore(null);
     } finally { setLoading(false); }
   }, [ownerId]);
 

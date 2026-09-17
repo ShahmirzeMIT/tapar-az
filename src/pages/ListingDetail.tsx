@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Breadcrumb, Skeleton, Result, Avatar } from 'antd';
 import {
-  EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled,
+  EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled, WhatsAppOutlined, MessageOutlined,
 } from '@ant-design/icons';
 import { useListing } from '@/hooks/useListing';
 import { useListings } from '@/hooks/useListings';
@@ -40,6 +40,11 @@ export default function ListingDetail() {
   const specFields = subcategory?.fields ?? [];
   const media = listing.media.length > 0 ? listing.media : [];
   const current = media[activeMedia];
+  // Older listings do not have the WhatsApp fields, so use their phone number
+  // as a backwards-compatible WhatsApp contact.
+  const whatsappContact = listing.whatsappEnabled === false
+    ? undefined
+    : listing.whatsappPhone || listing.phone;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-6 pb-28 md:pb-10">
@@ -144,6 +149,22 @@ export default function ListingDetail() {
               >
                 <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
               </button>
+              <Link
+                to={`/mesajlar/${listing.id}`}
+                className="mt-3 w-full bg-[#1677FF] text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
+              >
+                <MessageOutlined /> Mesaj yaz
+              </Link>
+              {whatsappContact && (
+                <a
+                  href={toWhatsAppUrl(whatsappContact)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 w-full bg-[#25D366] text-white py-2.5 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:opacity-85"
+                >
+                  <WhatsAppOutlined /> WhatsApp
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -167,9 +188,24 @@ export default function ListingDetail() {
         >
           <PhoneOutlined /> {showPhone ? (listing.phone || '—') : t('showPhone')}
         </button>
+        <Link to={`/mesajlar/${listing.id}`} className="mt-2 market-action w-full py-3 !bg-[#1677FF] !text-white">
+          <MessageOutlined /> Mesaj yaz
+        </Link>
+        {whatsappContact && (
+          <a href={toWhatsAppUrl(whatsappContact)} target="_blank" rel="noreferrer" className="mt-2 market-action w-full py-3 !bg-[#25D366] !text-white">
+            <WhatsAppOutlined /> WhatsApp
+          </a>
+        )}
       </div>
     </div>
   );
+}
+
+function toWhatsAppUrl(value: string) {
+  let digits = value.replace(/\D/g, '');
+  if (digits.startsWith('00')) digits = digits.slice(2);
+  if (digits.startsWith('0')) digits = `994${digits.slice(1)}`;
+  return `https://wa.me/${digits}`;
 }
 
 function formatAttrValue(value: unknown, field: { type: string; options?: { label: string; value: string }[] }): string {

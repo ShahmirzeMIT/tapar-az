@@ -38,6 +38,8 @@ export default function CreateListing() {
   const [priceHidden, setPriceHidden] = useState(false);
   const [city, setCity] = useState<string | undefined>(prefill?.city ?? undefined);
   const [phone, setPhone] = useState(profile?.phone ?? '');
+  const [whatsappEnabled, setWhatsappEnabled] = useState(false);
+  const [whatsappPhone, setWhatsappPhone] = useState(profile?.phone ?? '');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState(prefill?.description ?? '');
   const [attributes, setAttributes] = useState<ListingAttributes>(prefill?.attributes ?? {});
@@ -63,7 +65,7 @@ export default function CreateListing() {
     switch (s) {
       case 0: return Boolean(category);
       case 1: return Boolean(subcategory);
-      case 2: return Boolean(title && city && phone.trim() && description);
+      case 2: return Boolean(title && city && phone.trim() && description && (!whatsappEnabled || whatsappPhone.trim()));
       default: return true;
     }
   };
@@ -97,7 +99,7 @@ export default function CreateListing() {
   const handlePublish = async () => {
     if (!user) { message.error('Zəhmət olmasa daxil olun.'); return; }
     if (storeLoading) { message.info('Mağaza məlumatları yüklənir, zəhmət olmasa bir az gözləyin.'); return; }
-    if (!category || !subcategory || !title || !city || !phone.trim()) { message.error('Telefon nömrəsi daxil olmaqla bütün tələb olunan sahələri doldurun.'); return; }
+    if (!category || !subcategory || !title || !city || !phone.trim() || (whatsappEnabled && !whatsappPhone.trim())) { message.error('Telefon nömrəsi daxil olmaqla bütün tələb olunan sahələri doldurun.'); return; }
 
     setPublishing(true);
     try {
@@ -112,7 +114,7 @@ export default function CreateListing() {
         price: priceHidden ? null : price ?? null,
         priceHidden,
         currency: 'AZN',
-        city, phone: phone.trim(), address, description,
+        city, phone: phone.trim(), whatsappEnabled, ...(whatsappEnabled && whatsappPhone.trim() ? { whatsappPhone: whatsappPhone.trim() } : {}), address, description,
         media,
         attributes: cleanedAttrs,
         status: 'pending',
@@ -232,6 +234,30 @@ export default function CreateListing() {
                 inputMode="tel"
               />
               <p className="mt-1 text-xs text-muted">Alıcılar bu nömrəni “Telefonu göstər” düyməsi ilə görəcək.</p>
+            </div>
+            <div>
+              <FieldLabel>WhatsApp</FieldLabel>
+              <label className="flex items-center gap-2 text-sm text-ink dark:text-white">
+                <Switch
+                  size="small"
+                  checked={whatsappEnabled}
+                  onChange={(checked) => {
+                    setWhatsappEnabled(checked);
+                    if (checked && !whatsappPhone.trim()) setWhatsappPhone(phone);
+                  }}
+                />
+                WhatsApp nömrəsini əlavə et
+              </label>
+              {whatsappEnabled && (
+                <Input
+                  className="mt-2"
+                  value={whatsappPhone}
+                  onChange={(e) => setWhatsappPhone(e.target.value)}
+                  placeholder="Məs: +994 50 123 45 67"
+                  inputMode="tel"
+                />
+              )}
+              <p className="mt-1 text-xs text-muted">Alıcılar bu nömrə ilə WhatsApp-da sizə yaza biləcək.</p>
             </div>
             <div className="sm:col-span-2">
               <FieldLabel>Ünvan</FieldLabel>

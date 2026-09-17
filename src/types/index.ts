@@ -40,6 +40,8 @@ export interface Listing {
   currency: 'AZN';
   city: string;
   phone?: string;
+  whatsappPhone?: string;
+  whatsappEnabled?: boolean;
   district?: string;
   address?: string;
   description: string;

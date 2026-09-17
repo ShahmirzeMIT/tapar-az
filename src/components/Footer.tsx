@@ -24,9 +24,6 @@ export default function Footer() {
         ]} />
         <FooterCol title="Account" links={[[t('login'), '/login'], ['Register', '/register']]} />
       </div>
-      <div className="border-t border-line dark:border-line-dark py-5 text-center text-xs text-muted">
-        © {new Date().getFullYear()} TAPAR.AZ — Bütün hüquqlar qorunur.
-      </div>
     </footer>
   );
 }

@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Breadcrumb, Skeleton, Result, Avatar } from 'antd';
 import {
   EnvironmentOutlined, PhoneOutlined, UserOutlined, StarFilled, WhatsAppOutlined, MessageOutlined,
+  LeftOutlined, RightOutlined,
 } from '@ant-design/icons';
 import { useListing } from '@/hooks/useListing';
 import { useListings } from '@/hooks/useListings';
@@ -19,6 +20,8 @@ export default function ListingDetail() {
   const { listing, loading, error } = useListing(id);
   const [activeMedia, setActiveMedia] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
+  const [mediaHover, setMediaHover] = useState(false);
+  const [mediaCursor, setMediaCursor] = useState({ x: 0, y: 0 });
 
   const { listings: similar } = useListings({ category: listing?.category, sort: 'newest' });
 
@@ -61,7 +64,15 @@ export default function ListingDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8">
         {/* GALLERY */}
         <div>
-          <div className="market-surface aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden">
+          <div
+            className="group market-surface relative aspect-[4/3] bg-offwhite dark:bg-graphite overflow-hidden cursor-none"
+            onMouseEnter={() => setMediaHover(true)}
+            onMouseLeave={() => setMediaHover(false)}
+            onMouseMove={(event) => {
+              const bounds = event.currentTarget.getBoundingClientRect();
+              setMediaCursor({ x: event.clientX - bounds.left + 16, y: event.clientY - bounds.top + 16 });
+            }}
+          >
             {current ? (
               current.type === 'video' ? (
                 <video src={current.url} controls className="w-full h-full object-contain" />
@@ -70,6 +81,34 @@ export default function ListingDetail() {
               )
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted">Şəkil yoxdur</div>
+            )}
+            {media.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Əvvəlki şəkil"
+                  onClick={() => setActiveMedia((index) => (index - 1 + media.length) % media.length)}
+                  className="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-lg text-white opacity-100 transition hover:bg-action focus:opacity-100"
+                >
+                  <LeftOutlined />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Növbəti şəkil"
+                  onClick={() => setActiveMedia((index) => (index + 1) % media.length)}
+                  className="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/45 text-lg text-white opacity-100 transition hover:bg-action focus:opacity-100"
+                >
+                  <RightOutlined />
+                </button>
+              </>
+            )}
+            {mediaHover && (
+              <span
+                className="pointer-events-none absolute z-20 rounded-md bg-[#111827]/90 px-2.5 py-1 text-[11px] font-bold tracking-wide text-white shadow-lg"
+                style={{ left: mediaCursor.x, top: mediaCursor.y }}
+              >
+                TAPAR.AZ
+              </span>
             )}
           </div>
           {media.length > 1 && (
